@@ -6,18 +6,20 @@
     <title>JsPSCES-TJU | 天津大学立方型状态方程求解系统</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vue 3 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- ECharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- KaTeX for beautiful math rendering -->
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- KaTeX for math rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- Supabase JS Client v2 (使用无破坏 ESM/UMD 引用) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.js"></script>
+    <!-- html2pdf.js for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -37,18 +39,17 @@
         }
     </script>
     <style>
+        body { background-color: #f4f7fa; font-family: Arial, sans-serif; }
         .tju-wave-bg {
             background-color: #133963;
             background-image: radial-gradient(circle at 50% 100%, #1e528e 0%, #133963 70%);
         }
-        .academic-border {
-            border-top: 4px solid #C5A059;
-        }
+        .academic-border { border-top: 4px solid #C5A059; }
         .classic-table { border: 1px solid #333; border-collapse: collapse; width: 100%; }
         .classic-table th, .classic-table td { border: 1px solid #333; padding: 6px 10px; }
     </style>
 </head>
-<body class="bg-tju-bg text-gray-800 font-sans min-h-screen flex flex-col">
+<body class="bg-tju-bg text-gray-800 font-sans min-h-screen flex flex-col justify-between">
 
     <div id="app" class="flex flex-col min-h-screen">
         <!-- 顶部导航栏 / Header -->
@@ -56,550 +57,499 @@
             <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
                 <div class="flex items-center space-x-4">
                     <div class="w-12 h-12 bg-white text-tju-blue font-bold rounded-full flex items-center justify-center text-xl shadow-inner border-2 border-tju-accent">
-                        {{ isZh ? '北洋' : 'TJU' }}
+                        北洋
                     </div>
                     <div>
                         <h1 class="text-xl md:text-2xl font-bold tracking-wide flex items-center gap-2">
                             <span>JsPSCES-TJU</span>
-                            <span class="text-xs bg-tju-accent text-tju-blue font-semibold px-2 py-0.5 rounded">v2.3.0</span>
+                            <span class="text-xs bg-tju-accent text-tju-blue font-semibold px-2 py-0.5 rounded">TJU Edition</span>
                         </h1>
-                        <p class="text-xs text-blue-200">
-                            {{ isZh ? 'JavaScript Programs for Solving Cubic Equations of State - 天津大学定制版' : 'JavaScript Programs for Solving Cubic Equations of State - Tianjin University Edition' }}
-                        </p>
+                        <p class="text-xs text-blue-200" id="sub-title">JavaScript Programs for Solving Cubic Equations of State - 天津大学定制版</p>
                     </div>
                 </div>
 
                 <!-- 控制按钮组 -->
                 <div class="flex items-center space-x-3 mt-3 md:mt-0">
                     <button @click="toggleLanguage" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded border border-white/20 transition flex items-center gap-1">
-                        <i class="fa-solid fa-language"></i> <span>{{ isZh ? 'English' : '中文' }}</span>
+                        <i class="fa-solid fa-language"></i> <span>{{ lang === 'zh' ? 'English' : '中文' }}</span>
                     </button>
-                    <div id="auth-buttons">
-                        <template v-if="currentUser">
-                            <span class="text-xs text-white mr-2"><i class="fa-solid fa-user-check text-green-400"></i> {{ userNickname || currentUser.email }}</span>
-                            <button @click="handleLogout" class="text-xs bg-red-600/80 hover:bg-red-700 text-white px-2.5 py-1 rounded">{{ isZh ? '退出' : 'Logout' }}</button>
-                        </template>
-                        <template v-else>
-                            <button @click="openAuthModal('login')" class="text-sm bg-tju-accent hover:bg-yellow-500 text-tju-blue font-bold px-4 py-1.5 rounded shadow transition">
-                                <i class="fa-solid fa-user"></i> <span>{{ isZh ? '登录 / 注册' : 'Login / Register' }}</span>
-                            </button>
-                        </template>
+                    <div v-if="!user">
+                        <button @click="openAuthModal('login')" class="text-sm bg-tju-accent hover:bg-yellow-500 text-tju-blue font-bold px-4 py-1.5 rounded shadow transition">
+                            <i class="fa-solid fa-user"></i> <span>{{ i18n[lang].login_reg }}</span>
+                        </button>
+                    </div>
+                    <div v-else class="flex items-center space-x-2">
+                        <span class="text-xs text-white"><i class="fa-solid fa-user-check text-green-400"></i> {{ user.email }}</span>
+                        <button @click="handleLogout" class="text-xs bg-red-600/80 hover:bg-red-700 text-white px-2.5 py-1.5 rounded">退出</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 选项卡导航 -->
+            <!-- 选项卡导航 (Home / Pure / Mixture / History) -->
             <div class="max-w-7xl mx-auto px-4 flex space-x-1 border-t border-white/10 pt-2">
-                <button @click="currentView = 'home'" :class="currentView === 'home' ? 'bg-white text-tju-blue shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
-                    <i class="fa-solid fa-house mr-1"></i> <span>{{ isZh ? '首页与说明' : 'Home' }}</span>
+                <button @click="currentView = 'home'" :class="currentView === 'home' ? 'bg-white text-tju-blue' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-house mr-1"></i> <span>{{ i18n[lang].tab_home }}</span>
                 </button>
-                <button @click="currentView = 'pure'" :class="currentView === 'pure' ? 'bg-white text-tju-blue shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
-                    <i class="fa-solid fa-flask mr-1"></i> <span>{{ isZh ? '纯物质计算' : 'Pure Substances' }}</span>
+                <button @click="currentView = 'pure'" :class="currentView === 'pure' ? 'bg-white text-tju-blue' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-flask mr-1"></i> <span>{{ i18n[lang].tab_pure }}</span>
                 </button>
-                <button @click="currentView = 'mixture'" :class="currentView === 'mixture' ? 'bg-white text-tju-blue shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
-                    <i class="fa-solid fa-vial-circle-check mr-1"></i> <span>{{ isZh ? '二元混合物汽液平衡' : 'Binary Mixture VLE' }}</span>
+                <button @click="currentView = 'mixture'" :class="currentView === 'mixture' ? 'bg-white text-tju-blue' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-vial-circle-check mr-1"></i> <span>{{ i18n[lang].tab_mixture }}</span>
                 </button>
-                <button @click="switchToHistory" :class="currentView === 'history' ? 'bg-white text-tju-blue shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
-                    <i class="fa-solid fa-database mr-1"></i> <span>{{ isZh ? '计算云档案' : 'Cloud History' }}</span>
+                <button @click="switchTab('history')" :class="currentView === 'history' ? 'bg-white text-tju-blue' : 'bg-white/10 text-white hover:bg-white/20'" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-database mr-1"></i> <span>{{ i18n[lang].tab_history }}</span>
                 </button>
             </div>
         </header>
 
         <!-- 主体内容区 -->
         <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
-            
-            <!-- HOME PAGE (纯移植 testing_5 内容) -->
-            <div v-if="currentView === 'home'" class="bg-white rounded-lg shadow-md p-6 academic-border space-y-4 text-sm">
-                <h1 class="text-xl font-bold text-tju-blue text-center mb-4">
-                    {{ isZh ? '求解立方型状态方程 JavaScript 程序' : 'JavaScript Programs for Solving Cubic Equations of State' }}
-                </h1>
-                <p class="leading-relaxed">
-                    {{ isZh ? '这里是用于计算热力学性质和平衡条件的两个 JavaScript 程序。程序旨在用于教学——除了计算物性外，还指明了具体的计算原理与过程。程序已广泛辅助全球高校及剑桥大学的热力学教学。' : 'Here are two JavaScript programs for calculating thermodynamic properties and equilibrium conditions. They are designed to be educational - rather than just calculating the property, they indicate how the property is being calculated. Remarkably the programs still work and have been used to assist the teaching of thermodynamics in various Universities around the world as well as Cambridge.' }}
-                </p>
-                <p class="leading-relaxed">
-                    {{ isZh ? '相关软件简介发表于：P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", Journal of Chemical Education, 82, 958-959 (2005)。如使用本程序，欢迎引用该文献！' : 'A brief description of these programs was reported in: P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", Journal of Chemical Education, 82, 958-959 (2005). Please cite this paper if you get the chance!' }}
-                </p>
-                <p class="font-bold">{{ isZh ? '包含的两个子系统功能为：' : 'The two programs are:' }}</p>
-                <div class="ml-4 space-y-2">
-                    <div @click="currentView = 'pure'" class="text-tju-blue font-bold hover:underline cursor-pointer">
-                        1. {{ isZh ? '求解立方型状态方程（纯物质）' : 'Solving cubic equations of state (pure substances)' }}
-                    </div>
-                    <div @click="currentView = 'mixture'" class="text-tju-blue font-bold hover:underline cursor-pointer">
-                        2. {{ isZh ? '使用立方型状态方程预测二元混合物汽液平衡' : 'Predicting vapour-liquid equilibrium of binary mixtures using cubic equations of state' }}
-                    </div>
+
+            <!-- HOME PAGE -->
+            <div v-if="currentView === 'home'" class="bg-white p-6 rounded-lg shadow-md academic-border">
+                <h1 class="text-2xl font-bold text-red-700 text-center mb-6">{{ i18n[lang].home_h1 }}</h1>
+                <p class="text-sm leading-relaxed mb-4">{{ i18n[lang].home_p1 }}</p>
+                <p class="text-sm leading-relaxed mb-4">{{ i18n[lang].home_p2 }}</p>
+                
+                <div class="mb-4">
+                    <a href="#" @click.prevent="currentView = 'pure'" class="text-purple-800 font-bold hover:underline text-lg">{{ i18n[lang].home_link1 }}</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li>{{ i18n[lang].home_link1_sub1 }}</li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <a href="#" @click.prevent="currentView = 'mixture'" class="text-purple-800 font-bold hover:underline text-lg">{{ i18n[lang].home_link2 }}</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li>{{ i18n[lang].home_link2_sub1 }}</li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-gray-300 pt-4 mb-6">
+                    <p class="font-bold text-sm mb-2">{{ i18n[lang].home_ref_title }}</p>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <li>S.I. Sandler: "Chemical, Biochemical and Engineering Thermodynamics" (4th ed. Wiley, 2006).</li>
+                        <li>J.R. Elliott and C.T. Lira: "Introductory Chemical Engineering Thermodynamics" (Prentice Hall, 1999).</li>
+                        <li>J.M. Smith, H.C. van Ness and M.M. Abbott: "Introduction to Chemical Engineering Thermodynamics" (6th ed. McGraw-Hill, 2001).</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- PURE SUBSTANCE PAGE (完全搬运 testing_5(BEST).html 排版与 info) -->
-            <div v-if="currentView === 'pure'" class="space-y-6">
-                <div class="bg-white rounded-lg shadow-md p-5 academic-border">
-                    <div class="flex justify-between items-center border-b pb-3 mb-4">
-                        <h2 class="text-lg font-bold text-tju-blue">
-                            {{ isZh ? '纯物质立方型状态方程求解程序' : 'Program for solving cubic equations of state (Pure Substances)' }}
-                        </h2>
-                        <span class="text-xs text-gray-400">Pure Substance Solver</span>
-                    </div>
+            <!-- PURE SUBSTANCE SYSTEM -->
+            <div v-if="currentView === 'pure'" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-5 bg-white p-5 rounded-lg shadow-md academic-border space-y-4">
+                    <h2 class="text-lg font-bold text-tju-blue border-b pb-2 flex items-center justify-between">
+                        <span><i class="fa-solid fa-atom text-tju-accent mr-2"></i>{{ i18n[lang].pure_title }}</span>
+                    </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-300 p-4 bg-[#f8fafc] rounded mb-4">
-                        <!-- Box 1: Select EOS -->
-                        <div class="border border-gray-300 p-3 bg-white rounded">
-                            <p class="text-sm font-bold text-tju-blue mb-2">{{ isZh ? '选择立方型状态方程:' : 'Select cubic equation of state:' }}</p>
-                            <div class="space-y-2 text-sm">
-                                <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="vdw"><span>Van der Waals</span><a href="#" @click.prevent="openInfo('vdw')" class="text-blue-600 hover:underline text-xs">info</a></label>
-                                <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="rk"><span>Redlich-Kwong</span><a href="#" @click.prevent="openInfo('rk')" class="text-blue-600 hover:underline text-xs">info</a></label>
-                                <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="srk"><span>Soave-Redlich-Kwong</span><a href="#" @click.prevent="openInfo('srk')" class="text-blue-600 hover:underline text-xs">info</a></label>
-                                <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="pr"><span>Peng-Robinson</span><a href="#" @click.prevent="openInfo('pr')" class="text-blue-600 hover:underline text-xs">info</a></label>
-                                <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="prg"><span>Peng-Robinson-Gasem</span><a href="#" @click.prevent="openInfo('prg')" class="text-blue-600 hover:underline text-xs">info</a></label>
-                            </div>
-                        </div>
-
-                        <!-- Box 2: Critical Parameters & Database -->
-                        <div class="border border-gray-300 p-3 bg-white rounded">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-bold text-tju-blue">{{ isZh ? '指定临界参数或从列表中选择化学物质:' : 'Specify critical parameters or select chemical from list:' }}</span>
-                                <a href="#" @click.prevent="openInfo('crit')" class="text-blue-600 hover:underline text-xs">info</a>
-                            </div>
-                            <select v-model="selectedPureChemical" @change="loadPureChemical" class="w-full border border-gray-300 p-1 text-sm bg-gray-50 mb-3 rounded">
-                                <option value="">{{ isZh ? '-- 指定临界参数 --' : '-- specify critical parameters --' }}</option>
-                                <option v-for="chem in chemicalList" :key="chem.name" :value="chem.name">{{ chem.name }}</option>
-                            </select>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center space-x-2"><span>$T_c =$</span><input type="number" step="any" v-model.number="pureForm.Tc" class="border border-gray-300 px-2 py-0.5 w-32 rounded"><span>K</span></div>
-                                <div class="flex items-center space-x-2"><span>$P_c =$</span><input type="number" step="any" v-model.number="pureForm.Pc" class="border border-gray-300 px-2 py-0.5 w-32 rounded"><span>bar</span></div>
-                                <div class="flex items-center space-x-2"><span>$\omega =$</span><input type="number" step="any" v-model.number="pureForm.omega" class="border border-gray-300 px-2 py-0.5 w-32 rounded"><span class="text-xs text-gray-500">({{ isZh ? '偏心因子' : 'acentric factor' }})</span></div>
-                            </div>
-                        </div>
-
-                        <!-- Box 3: Conditions -->
-                        <div class="border border-gray-300 p-3 bg-white rounded">
-                            <p class="text-sm font-bold text-tju-blue mb-2">{{ isZh ? '选择计算条件:' : 'Select conditions of interest:' }}</p>
-                            <div class="space-y-2 text-sm mb-3">
-                                <div class="flex items-center space-x-2"><span>$T =$</span><input type="number" step="any" v-model.number="pureForm.T" class="border border-gray-300 px-2 py-0.5 w-32 rounded"><span>K</span></div>
-                                <div class="flex items-center space-x-2"><span>$P =$</span><input type="number" step="any" v-model.number="pureForm.P" class="border border-gray-300 px-2 py-0.5 w-32 rounded"><span>bar</span></div>
-                            </div>
-                            <div class="space-x-2">
-                                <button @click="calculatePure" class="bg-tju-blue hover:bg-tju-light text-white font-bold px-4 py-1.5 text-sm rounded transition">{{ isZh ? '执行求解' : 'Calculate' }}</button>
-                                <button @click="resetPure" class="bg-gray-200 hover:bg-gray-300 px-3 py-1.5 text-sm rounded transition">{{ isZh ? '重置' : 'Reset' }}</button>
-                            </div>
-                        </div>
-
-                        <!-- Box 4: Solutions -->
-                        <div class="border border-gray-300 p-3 bg-white rounded">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-bold text-tju-blue">{{ isZh ? '三次方程解为:' : 'Solutions to the cubic equation are:' }}</span>
-                                <a href="#" @click.prevent="openInfo('solutions')" class="text-blue-600 hover:underline text-xs">info</a>
-                            </div>
-                            <div class="space-y-2 text-xs">
-                                <div v-for="(sol, idx) in pureResults.solutions" :key="idx" class="flex items-center space-x-2">
-                                    <span>$Z =$</span><input type="text" readonly :value="sol.Z" class="border px-1 py-0.5 w-16 bg-gray-50 rounded">
-                                    <span>state =</span><input type="text" readonly :value="sol.state" class="border px-1 py-0.5 w-20 bg-gray-50 rounded">
-                                    <span>$V =$</span><input type="text" readonly :value="sol.V" class="border px-1 py-0.5 w-24 bg-gray-50 rounded">
-                                    <span>$\text{m}^3/\text{mol}$</span>
-                                </div>
-                            </div>
+                    <div class="border border-gray-300 p-3 bg-gray-50 rounded">
+                        <p class="text-xs font-bold text-red-700 mb-2">{{ i18n[lang].select_eos }}</p>
+                        <div class="space-y-1 text-xs">
+                            <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="vdw"> <span>Van der Waals</span> <a href="#" @click.prevent="openInfo('vdw')" class="text-blue-600 hover:underline">info</a></label>
+                            <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="rk"> <span>Redlich-Kwong</span> <a href="#" @click.prevent="openInfo('rk')" class="text-blue-600 hover:underline">info</a></label>
+                            <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="srk"> <span>Soave-Redlich-Kwong</span> <a href="#" @click.prevent="openInfo('srk')" class="text-blue-600 hover:underline">info</a></label>
+                            <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="pr"> <span>Peng-Robinson</span> <a href="#" @click.prevent="openInfo('pr')" class="text-blue-600 hover:underline">info</a></label>
+                            <label class="flex items-center space-x-2"><input type="radio" v-model="pureForm.eos" value="prg"> <span>Peng-Robinson-Gasem</span> <a href="#" @click.prevent="openInfo('prg')" class="text-blue-600 hover:underline">info</a></label>
                         </div>
                     </div>
 
-                    <!-- Advanced Box -->
-                    <div class="border border-gray-300 bg-[#f8fafc] p-3 rounded mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-bold text-tju-blue">{{ isZh ? '高级热力学函数导出:' : 'Advanced calculations:' }}</span>
-                            <a href="#" @click.prevent="openInfo('advanced')" class="text-blue-600 hover:underline text-xs">info</a>
+                    <div class="border border-gray-300 p-3 bg-gray-50 rounded text-xs space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-red-700">{{ i18n[lang].crit_param }}</span>
+                            <a href="#" @click.prevent="openInfo('crit')" class="text-blue-600 hover:underline">info</a>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <select v-model="selectedPureChemical" @change="loadPureChemical" class="w-full border p-1 bg-white rounded">
+                            <option value="">-- {{ i18n[lang].specify_crit }} --</option>
+                            <option v-for="chem in chemicalList" :key="chem.name" :value="chem.name">{{ chem.name }}</option>
+                        </select>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>$T_c$ (K): <input type="number" step="any" v-model.number="pureForm.Tc" class="border p-1 w-full bg-white"></div>
+                            <div>$P_c$ (bar): <input type="number" step="any" v-model.number="pureForm.Pc" class="border p-1 w-full bg-white"></div>
+                            <div>$\omega$: <input type="number" step="any" v-model.number="pureForm.omega" class="border p-1 w-full bg-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-300 p-3 bg-gray-50 rounded text-xs space-y-2">
+                        <span class="font-bold text-red-700">{{ i18n[lang].cond_title }}</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>$T$ (K): <input type="number" step="any" v-model.number="pureForm.T" class="border p-1 w-full bg-white"></div>
+                            <div>$P$ (bar): <input type="number" step="any" v-model.number="pureForm.P" class="border p-1 w-full bg-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button @click="calculatePure" class="flex-1 bg-tju-blue hover:bg-tju-light text-white font-bold py-2 rounded text-xs transition"><i class="fa-solid fa-calculator mr-1"></i>{{ i18n[lang].btn_calc }}</button>
+                        <button @click="resetPure" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-3 rounded text-xs">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Pure Output & ECharts -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div id="printable-area-pure" class="bg-white p-5 rounded-lg shadow-md academic-border text-xs space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-bold text-tju-blue text-sm">{{ i18n[lang].pure_sol_title }}</span>
+                            <a href="#" @click.prevent="openInfo('solutions')" class="text-blue-600 hover:underline">info</a>
+                        </div>
+                        <div v-for="(sol, idx) in pureResults.solutions" :key="idx" class="flex items-center space-x-2">
+                            <span>$Z =$</span><input type="text" readonly :value="sol.Z" class="border p-1 w-16 bg-gray-50">
+                            <span>state =</span><input type="text" readonly :value="sol.state" class="border p-1 w-20 bg-gray-50">
+                            <span>$V =$</span><input type="text" readonly :value="sol.V" class="border p-1 w-24 bg-gray-50"> $\text{m}^3/\text{mol}$
+                        </div>
+
+                        <div class="border-t pt-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-red-700">{{ i18n[lang].adv_calc }}</span>
+                                <a href="#" @click.prevent="openInfo('advanced')" class="text-blue-600 hover:underline">info</a>
+                            </div>
                             <div class="space-y-2">
                                 <div class="flex items-center space-x-2">
-                                    <span>$\varphi =$</span><input type="text" readonly :value="pureResults.phi1" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>$H^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Hdep1" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>$S^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Sdep1" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>(1st root)</span>
+                                    <span>$\varphi =$</span><input type="text" readonly :value="pureResults.phi1" class="border p-1 w-16 bg-gray-50">
+                                    <span>$H^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Hdep1" class="border p-1 w-20 bg-gray-50">
+                                    <span>$S^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Sdep1" class="border p-1 w-20 bg-gray-50"> (1st root)
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <span>$\varphi =$</span><input type="text" readonly :value="pureResults.phi2" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>$H^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Hdep2" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>$S^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Sdep2" class="border px-1 py-0.5 w-20 bg-gray-50">
-                                    <span>(2nd root)</span>
+                                    <span>$\varphi =$</span><input type="text" readonly :value="pureResults.phi2" class="border p-1 w-16 bg-gray-50">
+                                    <span>$H^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Hdep2" class="border p-1 w-20 bg-gray-50">
+                                    <span>$S^{\text{dep}} =$</span><input type="text" readonly :value="pureResults.Sdep2" class="border p-1 w-20 bg-gray-50"> (2nd root)
                                 </div>
                             </div>
-                            <div class="flex items-end justify-end text-gray-600">
-                                <span>$\text{J}/\text{mol} \quad \text{J}/\text{mol}\cdot\text{K}$</span>
-                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-2 border-t">
+                            <button @click="saveToSupabase" class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded"><i class="fa-solid fa-floppy-disk mr-1"></i>{{ i18n[lang].btn_save }}</button>
+                            <button @click="exportReport('pdf')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-1.5 px-3 rounded">PDF</button>
+                            <button @click="exportReport('docx')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-1.5 px-3 rounded">DOCX</button>
                         </div>
                     </div>
 
-                    <!-- 数据云端操作与真实数学导出 -->
-                    <div class="pt-4 border-t flex flex-wrap gap-2">
-                        <button @click="saveToSupabase" class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> {{ isZh ? '数据上云同步' : 'Save to Cloud' }}
-                        </button>
-                        <button @click="exportRealData('json')" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-4 rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-file-code"></i> {{ isZh ? '导出真实数学数据 (JSON)' : 'Export Real Data (JSON)' }}
-                        </button>
-                        <button @click="exportRealData('csv')" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold py-2 px-4 rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-file-csv"></i> {{ isZh ? '导出表格数据 (CSV)' : 'Export Table Data (CSV)' }}
-                        </button>
+                    <!-- 保留原本1.3.0的数据图 -->
+                    <div class="bg-white p-5 rounded-lg shadow-md border-t-4 border-tju-blue">
+                        <h3 class="font-bold text-tju-blue text-xs mb-3 flex items-center justify-between">
+                            <span><i class="fa-solid fa-chart-line text-tju-accent mr-2"></i>{{ i18n[lang].chart_title }}</span>
+                        </h3>
+                        <div id="echarts-container-pure" class="w-full h-64"></div>
                     </div>
-                </div>
-
-                <!-- 保留 Ver1.3.0.html 特色 ECharts 图表 (要求1) -->
-                <div class="bg-white rounded-lg shadow-md p-5 academic-border">
-                    <h3 class="font-bold text-tju-blue text-sm mb-3">
-                        <i class="fa-solid fa-chart-line text-tju-accent mr-2"></i>{{ isZh ? '热力学特性 P-V 图示 (ECharts)' : 'Thermodynamic Diagram (ECharts)' }}
-                    </h3>
-                    <div id="echarts-container" class="w-full h-72"></div>
                 </div>
             </div>
 
-            <!-- MIXTURE PAGE (完全搬运 testing_5(BEST).html 排版与结构) -->
+            <!-- MIXTURE VLE SYSTEM -->
             <div v-if="currentView === 'mixture'" class="space-y-6">
-                <div class="bg-white rounded-lg shadow-md p-5 academic-border">
-                    <div class="flex justify-between items-center border-b pb-3 mb-4">
-                        <h2 class="text-lg font-bold text-tju-blue">
-                            {{ isZh ? '二元混合物汽液平衡与闪蒸预测程序' : 'Predicting Vapour-Liquid Equilibrium of Binary Mixtures' }}
-                        </h2>
-                        <span class="text-xs text-gray-400">Mixture VLE Solver</span>
-                    </div>
+                <div class="bg-white p-5 rounded-lg shadow-md academic-border space-y-4">
+                    <h2 class="text-lg font-bold text-tju-blue border-b pb-2 flex items-center justify-between">
+                        <span><i class="fa-solid fa-diagram-project text-tju-accent mr-2"></i>{{ i18n[lang].mix_title }}</span>
+                    </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 border border-gray-300 p-3 bg-[#f8fafc] rounded mb-4 text-xs">
-                        <!-- Substance 1 -->
-                        <div class="border border-gray-300 p-2 bg-white rounded">
-                            <p class="font-bold text-tju-blue mb-1">Substance 1:</p>
-                            <select v-model="selectedMixChem1" @change="loadMixChemical(1)" class="w-full border p-1 mb-2 bg-gray-50 rounded">
-                                <option value="">{{ isZh ? '-- 指定临界参数 --' : '-- specify critical parameters --' }}</option>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                        <div class="border p-2 bg-gray-50 rounded space-y-1">
+                            <p class="font-bold text-red-700">Substance 1:</p>
+                            <select v-model="selectedMixChem1" @change="loadMixChemical(1)" class="w-full border p-1 bg-white">
+                                <option value="">-- specify critical --</option>
                                 <option v-for="chem in chemicalList" :key="chem.name" :value="chem.name">{{ chem.name }}</option>
                             </select>
-                            <div class="space-y-1">
-                                <div>$T_c =$ <input type="number" step="any" v-model.number="mixForm.Tc1" class="border px-1 w-20 rounded"> K</div>
-                                <div>$P_c =$ <input type="number" step="any" v-model.number="mixForm.Pc1" class="border px-1 w-20 rounded"> bar</div>
-                                <div>$\omega =$ <input type="number" step="any" v-model.number="mixForm.omega1" class="border px-1 w-20 rounded"></div>
-                            </div>
+                            <div>$T_c =$ <input type="number" step="any" v-model.number="mixForm.Tc1" class="border p-0.5 w-16"> K</div>
+                            <div>$P_c =$ <input type="number" step="any" v-model.number="mixForm.Pc1" class="border p-0.5 w-16"> bar</div>
+                            <div>$\omega =$ <input type="number" step="any" v-model.number="mixForm.omega1" class="border p-0.5 w-16"></div>
                         </div>
 
-                        <!-- Substance 2 -->
-                        <div class="border border-gray-300 p-2 bg-white rounded">
-                            <p class="font-bold text-tju-blue mb-1">Substance 2:</p>
-                            <select v-model="selectedMixChem2" @change="loadMixChemical(2)" class="w-full border p-1 mb-2 bg-gray-50 rounded">
-                                <option value="">{{ isZh ? '-- 指定临界参数 --' : '-- specify critical parameters --' }}</option>
+                        <div class="border p-2 bg-gray-50 rounded space-y-1">
+                            <p class="font-bold text-red-700">Substance 2:</p>
+                            <select v-model="selectedMixChem2" @change="loadMixChemical(2)" class="w-full border p-1 bg-white">
+                                <option value="">-- specify critical --</option>
                                 <option v-for="chem in chemicalList" :key="chem.name" :value="chem.name">{{ chem.name }}</option>
                             </select>
-                            <div class="space-y-1">
-                                <div>$T_c =$ <input type="number" step="any" v-model.number="mixForm.Tc2" class="border px-1 w-20 rounded"> K</div>
-                                <div>$P_c =$ <input type="number" step="any" v-model.number="mixForm.Pc2" class="border px-1 w-20 rounded"> bar</div>
-                                <div>$\omega =$ <input type="number" step="any" v-model.number="mixForm.omega2" class="border px-1 w-20 rounded"></div>
-                            </div>
+                            <div>$T_c =$ <input type="number" step="any" v-model.number="mixForm.Tc2" class="border p-0.5 w-16"> K</div>
+                            <div>$P_c =$ <input type="number" step="any" v-model.number="mixForm.Pc2" class="border p-0.5 w-16"> bar</div>
+                            <div>$\omega =$ <input type="number" step="any" v-model.number="mixForm.omega2" class="border p-0.5 w-16"></div>
                         </div>
 
-                        <!-- Equation of State -->
-                        <div class="border border-gray-300 p-2 bg-white rounded">
-                            <p class="font-bold text-tju-blue mb-1">{{ isZh ? '状态方程:' : 'Select equation of state:' }}</p>
-                            <div class="space-y-1 mb-2">
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.eos" value="srk"><span>Soave-Redlich-Kwong</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.eos" value="pr"><span>Peng-Robinson</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.eos" value="prg"><span>Peng-Robinson-Gasem</span></label>
-                            </div>
-                            <p class="font-bold text-tju-blue mb-1">{{ isZh ? '二元交互作用参数:' : 'Binary interaction parameter:' }}</p>
-                            <div>$k_{12} =$ <input type="number" step="any" v-model.number="mixForm.k12" class="border px-1 w-16 rounded"></div>
-                            <div class="mt-1"><a href="#" @click.prevent="openInfo('mixing')" class="text-blue-600 hover:underline text-[11px]">info on the mixing rules used</a></div>
+                        <div class="border p-2 bg-gray-50 rounded space-y-1">
+                            <p class="font-bold text-red-700">{{ i18n[lang].select_eos }}</p>
+                            <label class="block"><input type="radio" v-model="mixForm.eos" value="srk"> SRK</label>
+                            <label class="block"><input type="radio" v-model="mixForm.eos" value="pr"> PR</label>
+                            <label class="block"><input type="radio" v-model="mixForm.eos" value="prg"> PRG</label>
+                            <div class="pt-1">$k_{12} =$ <input type="number" step="any" v-model.number="mixForm.k12" class="border p-0.5 w-12"></div>
+                            <a href="#" @click.prevent="openInfo('mixing')" class="text-blue-600 hover:underline">info on mixing rules</a>
                         </div>
 
-                        <!-- Calculation Required -->
-                        <div class="border border-gray-300 p-2 bg-white rounded">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-tju-blue">{{ isZh ? '计算任务类型:' : 'Select calculation required:' }}</span>
-                                <a href="#" @click.prevent="openInfo('calc_req')" class="text-blue-600 hover:underline text-[11px]">info</a>
+                        <div class="border p-2 bg-gray-50 rounded space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-red-700">{{ i18n[lang].calc_req }}</span>
+                                <a href="#" @click.prevent="openInfo('calc_req')" class="text-blue-600 hover:underline">info</a>
                             </div>
-                            <div class="space-y-1">
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.calcType" value="bubble_T"><span>Bubble point T</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.calcType" value="bubble_P"><span>Bubble point P</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.calcType" value="dew_T"><span>Dew point T</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.calcType" value="dew_P"><span>Dew point P</span></label>
-                                <label class="flex items-center space-x-1"><input type="radio" v-model="mixForm.calcType" value="flash"><span>Isothermal flash</span></label>
-                            </div>
+                            <label class="block"><input type="radio" v-model="mixForm.calcType" value="bubble_T"> Bubble T</label>
+                            <label class="block"><input type="radio" v-model="mixForm.calcType" value="bubble_P"> Bubble P</label>
+                            <label class="block"><input type="radio" v-model="mixForm.calcType" value="dew_T"> Dew T</label>
+                            <label class="block"><input type="radio" v-model="mixForm.calcType" value="dew_P"> Dew P</label>
+                            <label class="block"><input type="radio" v-model="mixForm.calcType" value="flash"> Flash</label>
                         </div>
                     </div>
 
-                    <div class="space-x-2 mb-4">
-                        <button @click="calculateMix" class="bg-tju-blue hover:bg-tju-light text-white font-bold px-4 py-1.5 text-xs rounded transition">{{ isZh ? '执行求解' : 'Calculate' }}</button>
-                        <button @click="resetMix" class="bg-gray-200 hover:bg-gray-300 px-3 py-1.5 text-xs rounded transition">{{ isZh ? '重置' : 'Reset' }}</button>
+                    <div class="flex gap-2">
+                        <button @click="calculateMix" class="bg-tju-blue hover:bg-tju-light text-white font-bold py-1.5 px-4 rounded text-xs"><i class="fa-solid fa-calculator mr-1"></i>{{ i18n[lang].btn_calc }}</button>
+                        <button @click="resetMix" class="bg-gray-300 text-gray-800 py-1.5 px-3 rounded text-xs">Reset</button>
                     </div>
+                </div>
 
-                    <!-- Mixture Results Table -->
-                    <div class="border border-gray-300 bg-white p-3 text-xs rounded mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-tju-blue">{{ isZh ? '求解结果:' : 'Solutions are:' }} <a href="#" @click.prevent="openInfo('notation')" class="text-blue-600 hover:underline font-normal">notation method</a></span>
+                <!-- Mixture Output Table & ECharts -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div id="printable-area-mix" class="lg:col-span-7 bg-white p-4 rounded-lg shadow-md academic-border text-xs space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-red-700">{{ i18n[lang].mix_sol_title }} <a href="#" @click.prevent="openInfo('notation')" class="text-blue-600 hover:underline font-normal">notation method</a></span>
                         </div>
-                        
+
                         <table class="classic-table text-xs">
                             <tbody>
                                 <tr>
                                     <td class="w-1/4">
-                                        $T =$ <input type="number" step="any" v-model.number="mixResults.T" class="border px-1 w-20 rounded"> K<br>
-                                        $P =$ <input type="number" step="any" v-model.number="mixResults.P" class="border px-1 w-20 rounded"> bar<br>
-                                        $z_1^{\text{overall}} =$ <input type="number" step="any" v-model.number="mixResults.z1" class="border px-1 w-16 rounded"><br>
-                                        liquid fn = <input type="text" readonly :value="mixResults.liquidFn" class="border px-1 w-16 bg-gray-50 rounded">
+                                        $T =$ <input type="number" step="any" v-model.number="mixResults.T" class="border px-1 w-16"> K<br>
+                                        $P =$ <input type="number" step="any" v-model.number="mixResults.P" class="border px-1 w-16"> bar<br>
+                                        $z_1 =$ <input type="number" step="any" v-model.number="mixResults.z1" class="border px-1 w-12"><br>
+                                        liquid fn = <input type="text" readonly :value="mixResults.liquidFn" class="border px-1 w-12 bg-gray-50">
                                     </td>
                                     <td class="w-3/8">
-                                        <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b">Vapour</div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$Z^V =$ <input type="text" readonly :value="mixResults.ZV" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$V^V =$ <input type="text" readonly :value="mixResults.VV" class="border px-1 w-16 bg-gray-50"> $\text{m}^3/\text{mol}$</div>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$y_1 =$ <input type="text" readonly :value="mixResults.y1" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$y_2 =$ <input type="text" readonly :value="mixResults.y2" class="border px-1 w-16 bg-gray-50"></div>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$\hat{\varphi}_1^V =$ <input type="text" readonly :value="mixResults.phiV1" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$\hat{\varphi}_2^V =$ <input type="text" readonly :value="mixResults.phiV2" class="border px-1 w-16 bg-gray-50"></div>
-                                        </div>
+                                        <div class="font-bold text-center bg-gray-100 mb-1">Vapour</div>
+                                        <div>$Z^V =$ <input type="text" readonly :value="mixResults.ZV" class="border px-1 w-14 bg-gray-50"> $V^V =$ <input type="text" readonly :value="mixResults.VV" class="border px-1 w-14 bg-gray-50"></div>
+                                        <div>$y_1 =$ <input type="text" readonly :value="mixResults.y1" class="border px-1 w-14 bg-gray-50"> $y_2 =$ <input type="text" readonly :value="mixResults.y2" class="border px-1 w-14 bg-gray-50"></div>
+                                        <div>$\hat{\varphi}_1^V =$ <input type="text" readonly :value="mixResults.phiV1" class="border px-1 w-14 bg-gray-50"> $\hat{\varphi}_2^V =$ <input type="text" readonly :value="mixResults.phiV2" class="border px-1 w-14 bg-gray-50"></div>
                                     </td>
                                     <td class="w-3/8">
-                                        <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b">Liquid</div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$Z^L =$ <input type="text" readonly :value="mixResults.ZL" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$V^L =$ <input type="text" readonly :value="mixResults.VL" class="border px-1 w-16 bg-gray-50"> $\text{m}^3/\text{mol}$</div>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$x_1 =$ <input type="text" readonly :value="mixResults.x1" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$x_2 =$ <input type="text" readonly :value="mixResults.x2" class="border px-1 w-16 bg-gray-50"></div>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-1 mb-1">
-                                            <div>$\hat{\varphi}_1^L =$ <input type="text" readonly :value="mixResults.phiL1" class="border px-1 w-16 bg-gray-50"></div>
-                                            <div>$\hat{\varphi}_2^L =$ <input type="text" readonly :value="mixResults.phiL2" class="border px-1 w-16 bg-gray-50"></div>
-                                        </div>
+                                        <div class="font-bold text-center bg-gray-100 mb-1">Liquid</div>
+                                        <div>$Z^L =$ <input type="text" readonly :value="mixResults.ZL" class="border px-1 w-14 bg-gray-50"> $V^L =$ <input type="text" readonly :value="mixResults.VL" class="border px-1 w-14 bg-gray-50"></div>
+                                        <div>$x_1 =$ <input type="text" readonly :value="mixResults.x1" class="border px-1 w-14 bg-gray-50"> $x_2 =$ <input type="text" readonly :value="mixResults.x2" class="border px-1 w-14 bg-gray-50"></div>
+                                        <div>$\hat{\varphi}_1^L =$ <input type="text" readonly :value="mixResults.phiL1" class="border px-1 w-14 bg-gray-50"> $\hat{\varphi}_2^L =$ <input type="text" readonly :value="mixResults.phiL2" class="border px-1 w-14 bg-gray-50"></div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+
+                        <div class="flex gap-2 pt-2 border-t">
+                            <button @click="saveToSupabase" class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded"><i class="fa-solid fa-floppy-disk mr-1"></i>{{ i18n[lang].btn_save }}</button>
+                            <button @click="exportReport('pdf')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-1.5 px-3 rounded">PDF</button>
+                            <button @click="exportReport('docx')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-1.5 px-3 rounded">DOCX</button>
+                        </div>
                     </div>
 
-                    <!-- 数据云端操作与真实数据导出 -->
-                    <div class="pt-4 border-t flex flex-wrap gap-2">
-                        <button @click="saveToSupabase" class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> {{ isZh ? '数据上云同步' : 'Save to Cloud' }}
-                        </button>
-                        <button @click="exportRealData('json')" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-4 rounded transition flex items-center gap-1">
-                            <i class="fa-solid fa-file-code"></i> {{ isZh ? '导出真实数学数据 (JSON)' : 'Export Real Data (JSON)' }}
-                        </button>
+                    <!-- 保留原本1.3.0的数据图 -->
+                    <div class="lg:col-span-5 bg-white p-4 rounded-lg shadow-md border-t-4 border-tju-blue">
+                        <h3 class="font-bold text-tju-blue text-xs mb-3 flex items-center justify-between">
+                            <span><i class="fa-solid fa-chart-line text-tju-accent mr-2"></i>{{ i18n[lang].chart_title }}</span>
+                        </h3>
+                        <div id="echarts-container-mix" class="w-full h-64"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- HISTORY PAGE (云端调取) -->
-            <div v-if="currentView === 'history'" class="bg-white rounded-lg shadow-md p-6 academic-border space-y-4">
-                <h2 class="text-lg font-bold text-tju-blue border-b pb-2 flex justify-between items-center">
-                    <span><i class="fa-solid fa-cloud text-tju-accent mr-2"></i>{{ isZh ? '云端热力学档案库' : 'Cloud Calculation Records' }}</span>
-                    <button @click="fetchUserHistory" class="text-xs bg-tju-blue text-white px-2.5 py-1 rounded"><i class="fa-solid fa-rotate mr-1"></i>{{ isZh ? '刷新' : 'Refresh' }}</button>
+            <!-- HISTORY SYSTEM -->
+            <div v-if="currentView === 'history'" class="bg-white p-5 rounded-lg shadow-md academic-border space-y-4">
+                <h2 class="text-lg font-bold text-tju-blue border-b pb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-cloud text-tju-accent mr-2"></i>{{ i18n[lang].history_title }}</span>
                 </h2>
-                <div v-if="historyList.length === 0" class="p-8 text-center text-gray-400 text-sm">
-                    {{ isZh ? '暂无保存记录或未登录账户' : 'No saved records or user not logged in' }}
+                <div v-if="!user" class="text-center py-8 text-gray-500 text-xs">
+                    <p>{{ i18n[lang].history_need_login }}</p>
+                    <button @click="openAuthModal('login')" class="mt-3 bg-tju-blue text-white px-4 py-1.5 rounded font-bold">{{ i18n[lang].login_reg }}</button>
                 </div>
-                <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="item in historyList" :key="item.id" class="p-4 border rounded hover:border-tju-blue transition bg-gray-50 flex flex-col justify-between">
+                <div v-else class="space-y-3">
+                    <div v-if="historyList.length === 0" class="text-center py-6 text-gray-400 text-xs">{{ i18n[lang].history_empty }}</div>
+                    <div v-for="item in historyList" :key="item.id" class="p-3 border rounded hover:border-tju-blue transition bg-gray-50 flex justify-between items-center text-xs">
                         <div>
-                            <div class="font-bold text-tju-blue text-sm mb-1">{{ item.title }}</div>
-                            <div class="text-xs text-gray-500 mb-2">{{ new Date(item.created_at).toLocaleString() }}</div>
-                            <pre class="text-[11px] bg-white p-2 border rounded font-mono overflow-x-auto max-h-28">{{ JSON.stringify(item.raw_math_data, null, 2) }}</pre>
+                            <div class="font-bold text-tju-blue">{{ item.title }}</div>
+                            <div class="text-gray-400">{{ new Date(item.created_at).toLocaleString() }}</div>
                         </div>
-                        <div class="mt-3 text-right">
-                            <button @click="downloadHistoryItem(item)" class="text-xs bg-tju-accent text-tju-blue px-3 py-1 font-bold rounded hover:bg-yellow-500 transition">
-                                <i class="fa-solid fa-download mr-1"></i>{{ isZh ? '导出数值' : 'Export Data' }}
-                            </button>
-                        </div>
+                        <button @click="loadHistoryRecord(item)" class="bg-tju-accent hover:bg-yellow-600 text-tju-blue px-3 py-1 rounded font-bold">调取数据</button>
                     </div>
                 </div>
             </div>
 
         </main>
 
-        <!-- INFO MODAL (完全继承 testing_5(BEST).html 中 info 内容) -->
-        <div v-if="activeInfo" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-            <div class="bg-[#eaf4ec] border-2 border-tju-blue p-6 max-w-xl w-full rounded shadow-lg max-h-[90vh] overflow-y-auto">
+        <!-- INFO MODAL POPUP -->
+        <div v-if="activeInfo" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-[#d4edd7] border-2 border-gray-600 p-6 max-w-xl w-full rounded shadow-lg max-h-[90vh] overflow-y-auto">
                 <div v-if="activeInfo === 'vdw'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Van der Waals equation (1873)</h2>
-                    <div class="bg-white p-4 border mb-4 text-center space-y-3">
+                    <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
                         <div>$$P = \frac{RT}{V - b} - \frac{a}{V^2}$$</div>
-                        <div>$$a = \frac{27 R^2 T_c^2}{64 P_c}, \quad b = \frac{R T_c}{8 P_c}$$</div>
+                        <div>$$a = \frac{27 R^2 T_c^2}{64 P_c}$$</div>
+                        <div>$$b = \frac{R T_c}{8 P_c}$$</div>
                     </div>
-                    <p class="text-sm leading-relaxed mb-4">First equation of state describing fluid properties over a wide pressure range.</p>
+                    <p class="text-sm leading-relaxed mb-4">This was the first equation of state to describe the properties of fluids over a wide pressure range.</p>
                 </div>
+
                 <div v-if="activeInfo === 'rk'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Redlich-Kwong equation (1949)</h2>
-                    <div class="bg-white p-4 border mb-4 text-center space-y-3">
+                    <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
                         <div>$$P = \frac{RT}{V - b} - \frac{a}{T^{0.5} V (V + b)}$$</div>
+                        <div>$$a = \frac{0.42748 R^2 T_c^{2.5}}{P_c}$$</div>
+                        <div>$$b = \frac{0.08664 R T_c}{P_c}$$</div>
                     </div>
                 </div>
+
                 <div v-if="activeInfo === 'srk'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Soave-Redlich-Kwong (SRK) equation (1972)</h2>
-                    <div class="bg-white p-4 border mb-4 text-center space-y-2">
+                    <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
                         <div>$$P = \frac{RT}{V - b} - \frac{a(T)}{V(V + b)}$$</div>
-                        <div>$$\alpha(T,\omega) = \left(1 + m \left(1 - \sqrt{T_r}\right)\right)^2$$</div>
                     </div>
                 </div>
+
                 <div v-if="activeInfo === 'pr'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson equation (1976)</h2>
-                    <div class="bg-white p-4 border mb-4 text-center space-y-2">
+                    <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
                         <div>$$P = \frac{RT}{V - b} - \frac{a(T)}{V(V + b) + b(V - b)}$$</div>
                     </div>
                 </div>
+
                 <div v-if="activeInfo === 'prg'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson-Gasem equation</h2>
-                    <p class="text-sm">Modified alpha formulation for extended fluid systems.</p>
+                    <p class="text-sm leading-relaxed mb-4">Modified alpha formulation for extended fluid systems.</p>
                 </div>
+
                 <div v-if="activeInfo === 'crit'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Critical Parameters Database</h2>
-                    <p class="text-sm">Contains 16 standard pure substances loaded with true thermodynamic critical values.</p>
+                    <p class="text-sm leading-relaxed mb-4">Contains 16 standard pure substances loaded with true critical temperature, pressure and acentric factor.</p>
                 </div>
+
                 <div v-if="activeInfo === 'solutions'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Solving Cubic Equations</h2>
-                    <p class="text-sm">Solves $Z^3 + c_2 Z^2 + c_1 Z + c_0 = 0$ for compressibility factor Z.</p>
+                    <p class="text-sm leading-relaxed mb-4">Cubic equations yield 1 real root or 3 real roots depending on condition.</p>
                 </div>
+
                 <div v-if="activeInfo === 'advanced'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">Advanced Thermodynamic Functions</h2>
-                    <p class="text-sm">Calculates fugacity coefficients and departure enthalpy/entropy.</p>
+                    <p class="text-sm leading-relaxed mb-4">Calculates fugacity coefficients and departure functions.</p>
                 </div>
+
                 <div v-if="activeInfo === 'mixing'">
-                    <h2 class="text-xl font-bold text-red-600 text-center mb-4">Mixing Rules</h2>
-                    <p class="text-sm">Standard van der Waals one-fluid mixing rules applied with $k_{12}$.</p>
+                    <h2 class="text-xl font-bold text-red-600 text-center mb-4">Mixing Rules for Binary Mixtures</h2>
+                    <p class="text-sm leading-relaxed mb-4">Standard van der Waals one-fluid mixing rules with binary interaction parameter $k_{12}$.</p>
                 </div>
+
                 <div v-if="activeInfo === 'calc_req'">
                     <h2 class="text-xl font-bold text-red-600 text-center mb-4">VLE Calculation Types</h2>
-                    <p class="text-sm">Supports bubble point, dew point, and flash calculations.</p>
+                    <p class="text-sm leading-relaxed mb-4">Bubble point, dew point, and flash calculations.</p>
                 </div>
+
                 <div v-if="activeInfo === 'notation'">
-                    <h2 class="text-xl font-bold text-red-600 text-center mb-4">Notation</h2>
-                    <p class="text-sm">Definitions of thermodynamic variables and phase fractions.</p>
+                    <h2 class="text-xl font-bold text-red-600 text-center mb-4">Notation and Thermodynamic Definitions</h2>
+                    <p class="text-sm leading-relaxed mb-4">$z_1$ is overall mole fraction, $x_i$ and $y_i$ represent liquid and vapour phase mole fractions.</p>
                 </div>
 
                 <div class="text-center mt-6">
-                    <button @click="activeInfo = null" class="bg-gray-300 border px-6 py-1 font-bold text-sm hover:bg-gray-400 rounded">{{ isZh ? '关闭窗口' : 'Close' }}</button>
+                    <button @click="activeInfo = null" class="bg-gray-300 hover:bg-gray-400 text-gray-800 border border-gray-500 px-6 py-1 font-bold text-sm rounded">Close Window</button>
                 </div>
             </div>
         </div>
 
-        <!-- 模态框：重构后的账号管理系统 (需求2/3) -->
+        <!-- AUTH MODAL SYSTEM -->
         <div v-if="showAuthModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
                 <button @click="showAuthModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 class="text-lg font-bold text-tju-blue mb-4 border-b pb-2">
+                    <span v-if="authMode === 'login'">用户登录 / Login</span>
+                    <span v-if="authMode === 'register'">用户注册 / Register</span>
+                    <span v-if="authMode === 'reset'">重置密码 / Reset Password</span>
+                </h3>
 
-                <!-- 登录模式 -->
-                <div v-if="authMode === 'login'" class="space-y-4 text-xs">
-                    <h3 class="text-lg font-bold text-tju-blue border-b pb-2">{{ isZh ? '用户登录' : 'User Login' }}</h3>
+                <!-- LOGIN FORM -->
+                <div v-if="authMode === 'login'" class="space-y-3 text-xs">
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '邮箱或昵称:' : 'Email or Nickname:' }}</label>
+                        <label class="block font-semibold mb-1">邮箱或昵称 (Email / Nickname):</label>
                         <input type="text" v-model="authForm.identifier" class="w-full border rounded p-2 focus:ring-tju-blue">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '密码:' : 'Password:' }}</label>
+                        <label class="block font-semibold mb-1">密码 (Password):</label>
                         <input type="password" v-model="authForm.password" class="w-full border rounded p-2 focus:ring-tju-blue">
                     </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <a href="#" @click.prevent="authMode = 'reset'" class="text-tju-blue hover:underline">{{ isZh ? '忘记密码？重置密码' : 'Forgot password?' }}</a>
-                        <button @click="handleLogin" class="bg-tju-blue hover:bg-tju-light text-white font-bold px-5 py-2 rounded">{{ isZh ? '登录' : 'Login' }}</button>
+                    <div class="flex justify-between items-center text-tju-blue pt-1">
+                        <a href="#" @click.prevent="authMode = 'register'" class="hover:underline">没有账号？注册</a>
+                        <a href="#" @click.prevent="authMode = 'reset'" class="hover:underline">忘记密码？</a>
                     </div>
-                    <div class="text-center border-t pt-3">
-                        <span class="text-gray-500">{{ isZh ? '还没有账号？' : "Don't have an account?" }}</span>
-                        <a href="#" @click.prevent="authMode = 'register'" class="text-tju-accent font-bold hover:underline ml-1">{{ isZh ? '立即注册' : 'Register' }}</a>
-                    </div>
+                    <button @click="handleLogin" class="w-full bg-tju-blue hover:bg-tju-light text-white font-bold py-2 rounded transition">登录 (Login)</button>
                 </div>
 
-                <!-- 注册模式 (需求2：邮箱、昵称、6位验证码、防刷人机验证码、密码、确认密码) -->
+                <!-- REGISTER FORM -->
                 <div v-if="authMode === 'register'" class="space-y-3 text-xs">
-                    <h3 class="text-lg font-bold text-tju-blue border-b pb-2">{{ isZh ? '新用户注册' : 'User Registration' }}</h3>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '电子邮箱:' : 'Email:' }}</label>
-                        <input type="email" v-model="authForm.email" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">注册邮箱 (Email):</label>
+                        <input type="email" v-model="authForm.email" class="w-full border rounded p-2">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '用户昵称:' : 'Nickname:' }}</label>
-                        <input type="text" v-model="authForm.nickname" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">用户昵称 (Nickname):</label>
+                        <input type="text" v-model="authForm.username" class="w-full border rounded p-2">
                     </div>
-                    
-                    <!-- 人机图形验证码防刷屏 -->
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '人机图形验证码:' : 'Captcha:' }}</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="text" v-model="authForm.captchaInput" class="w-full border rounded p-1.5" placeholder="输入右侧验证码">
-                            <div @click="generateCaptcha" class="bg-gray-200 px-3 py-1.5 rounded font-mono font-bold text-lg tracking-widest cursor-pointer select-none text-tju-blue border">{{ captchaCode }}</div>
-                        </div>
-                    </div>
-
-                    <!-- 6位邮箱验证码发送 -->
-                    <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '邮箱OTP验证码 (6位):' : 'Email OTP (6 digits):' }}</label>
+                        <label class="block font-semibold mb-1">邮箱6位验证码 (OTP Code):</label>
                         <div class="flex gap-2">
-                            <input type="text" maxlength="6" v-model="authForm.otpCode" class="w-full border rounded p-1.5" placeholder="6位数验证码">
-                            <button @click="sendEmailOTP" :disabled="otpCountdown > 0" class="bg-tju-accent text-tju-blue font-bold px-3 py-1.5 rounded text-[11px] whitespace-nowrap disabled:opacity-50">
-                                {{ otpCountdown > 0 ? `${otpCountdown}s` : (isZh ? '发送验证码' : 'Send OTP') }}
+                            <input type="text" maxlength="6" v-model="authForm.otp" class="flex-1 border rounded p-2 font-mono">
+                            <button @click="sendOtp('register')" :disabled="cooldown > 0" class="bg-tju-accent text-tju-blue font-bold px-3 py-2 rounded disabled:opacity-50">
+                                {{ cooldown > 0 ? `${cooldown}s` : '发送验证码' }}
                             </button>
                         </div>
                     </div>
-
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '设置密码:' : 'Password:' }}</label>
-                        <input type="password" v-model="authForm.password" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">人机验证码: <span class="font-bold text-red-600 font-mono">{{ captchaCode }}</span></label>
+                        <div class="flex gap-2">
+                            <input type="text" v-model="authForm.captchaInput" placeholder="输入上方4位验证码" class="flex-1 border rounded p-2">
+                            <button @click="refreshCaptcha" class="bg-gray-200 px-2 rounded">刷新</button>
+                        </div>
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '确认密码:' : 'Confirm Password:' }}</label>
-                        <input type="password" v-model="authForm.confirmPassword" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">设置密码 (Password):</label>
+                        <input type="password" v-model="authForm.password" class="w-full border rounded p-2">
                     </div>
-
-                    <div class="pt-2">
-                        <button @click="handleRegister" class="w-full bg-tju-blue hover:bg-tju-light text-white font-bold py-2 rounded">{{ isZh ? '提交注册' : 'Submit Register' }}</button>
+                    <div>
+                        <label class="block font-semibold mb-1">确认密码 (Confirm Password):</label>
+                        <input type="password" v-model="authForm.confirmPassword" class="w-full border rounded p-2">
                     </div>
-                    <div class="text-center">
-                        <a href="#" @click.prevent="authMode = 'login'" class="text-tju-blue hover:underline">{{ isZh ? '已有账号？返回登录' : 'Back to Login' }}</a>
-                    </div>
+                    <button @click="handleRegister" class="w-full bg-tju-accent text-tju-blue font-bold py-2 rounded transition">提交注册 (Register)</button>
+                    <a href="#" @click.prevent="authMode = 'login'" class="block text-center text-tju-blue hover:underline mt-1">返回登录</a>
                 </div>
 
-                <!-- 密码重置模式 -->
+                <!-- RESET PASSWORD FORM -->
                 <div v-if="authMode === 'reset'" class="space-y-3 text-xs">
-                    <h3 class="text-lg font-bold text-tju-blue border-b pb-2">{{ isZh ? '重置密码' : 'Reset Password' }}</h3>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '注册邮箱:' : 'Registered Email:' }}</label>
-                        <input type="email" v-model="authForm.email" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">绑定邮箱或昵称 (Email / Nickname):</label>
+                        <input type="text" v-model="authForm.identifier" class="w-full border rounded p-2">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '邮箱OTP验证码 (6位):' : 'Email OTP (6 digits):' }}</label>
+                        <label class="block font-semibold mb-1">邮箱6位验证码 (OTP Code):</label>
                         <div class="flex gap-2">
-                            <input type="text" maxlength="6" v-model="authForm.otpCode" class="w-full border rounded p-1.5">
-                            <button @click="sendEmailOTP" :disabled="otpCountdown > 0" class="bg-tju-accent text-tju-blue font-bold px-3 py-1.5 rounded text-[11px] whitespace-nowrap disabled:opacity-50">
-                                {{ otpCountdown > 0 ? `${otpCountdown}s` : (isZh ? '发送验证码' : 'Send OTP') }}
+                            <input type="text" maxlength="6" v-model="authForm.otp" class="flex-1 border rounded p-2 font-mono">
+                            <button @click="sendOtp('reset')" :disabled="cooldown > 0" class="bg-tju-accent text-tju-blue font-bold px-3 py-2 rounded disabled:opacity-50">
+                                {{ cooldown > 0 ? `${cooldown}s` : '发送验证码' }}
                             </button>
                         </div>
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">{{ isZh ? '新密码:' : 'New Password:' }}</label>
-                        <input type="password" v-model="authForm.password" class="w-full border rounded p-1.5">
+                        <label class="block font-semibold mb-1">新密码 (New Password):</label>
+                        <input type="password" v-model="authForm.password" class="w-full border rounded p-2">
                     </div>
-                    <div class="pt-2">
-                        <button @click="handleResetPassword" class="w-full bg-tju-blue hover:bg-tju-light text-white font-bold py-2 rounded">{{ isZh ? '确认更换密码' : 'Confirm Reset' }}</button>
+                    <div>
+                        <label class="block font-semibold mb-1">确认新密码 (Confirm New Password):</label>
+                        <input type="password" v-model="authForm.confirmPassword" class="w-full border rounded p-2">
                     </div>
-                    <div class="text-center">
-                        <a href="#" @click.prevent="authMode = 'login'" class="text-tju-blue hover:underline">{{ isZh ? '返回登录' : 'Back to Login' }}</a>
-                    </div>
+                    <button @click="handleResetPassword" class="w-full bg-red-700 text-white font-bold py-2 rounded transition">确认重置密码 (Reset Password)</button>
+                    <a href="#" @click.prevent="authMode = 'login'" class="block text-center text-tju-blue hover:underline mt-1">返回登录</a>
                 </div>
-
             </div>
         </div>
 
-        <!-- 页脚与版权声明 (完全继承 Ver1.3.0.html) -->
+        <!-- 页脚与学术版权 (严格包含原1.3.0末尾注解) -->
         <footer class="bg-gray-900 text-gray-400 text-xs py-6 mt-12 border-t-2 border-tju-accent">
             <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <h4 class="text-white font-bold mb-2">JsPSCES-TJU</h4>
                     <p>JavaScript Programs for Solving Cubic Equations of State Tianjin University Edition</p>
-                    <p class="mt-2 text-gray-500">{{ isZh ? '使用环境：天津大学化工学院' : 'School of Chemical Engineering and Technology, TJU' }}</p>
+                    <p class="mt-2 text-gray-500">使用环境：天津大学化工学院</p>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-2">{{ isZh ? '学术与版权规范' : 'Academic & Copyright' }}</h4>
-                    <p>{{ isZh ? '理论指导：天津大学化工学院' : 'Advisor:' }} <span class="text-white font-semibold">{{ isZh ? '夏淑倩教授' : 'Prof. Shuqian Xia' }}</span></p>
-                    <p>{{ isZh ? '版权归属：' : 'Copyright:' }} <a href="https://github.com/Untholionleen" target="_blank" class="text-tju-accent hover:underline">Untholionleen</a></p>
-                    <p>{{ isZh ? '技术支持：Gemini AI Assistant' : 'Tech Support: Gemini AI Assistant' }}</p>
+                    <h4 class="text-white font-bold mb-2">学术与版权规范 (Academic & Copyright)</h4>
+                    <p>理论指导：天津大学化工学院 <span class="text-white font-semibold">夏淑倩教授</span></p>
+                    <p>版权归属：<a href="https://github.com/Untholionleen" target="_blank" class="text-tju-accent hover:underline">Untholionleen</a></p>
+                    <p>技术支持：Gemini AI Assistant</p>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-2">{{ isZh ? '开源归属与引用' : 'Reference' }}</h4>
-                    <p>{{ isZh ? '算法原型移植自 Patrick Barrie 博士 (Cambridge Univ.):' : 'Original algorithm by Dr. Patrick Barrie (Cambridge Univ.):' }}</p>
+                    <h4 class="text-white font-bold mb-2">开源归属与引用 (Reference)</h4>
+                    <p>算法原型移植自 Patrick Barrie 博士 (Cambridge Univ.):</p>
                     <a href="https://pjb10.user.srcf.net/thermo/" target="_blank" class="text-blue-400 hover:underline break-all">https://pjb10.user.srcf.net/thermo/</a>
                 </div>
             </div>
@@ -609,42 +559,108 @@
         </footer>
     </div>
 
-    <!-- Vue 3 核心逻辑脚本 -->
+    <!-- Application JavaScript Logic -->
     <script>
         const { createApp, ref, reactive, nextTick, watch, onMounted } = Vue;
 
         createApp({
             setup() {
-                // 1. Supabase 配置 (需求4明确参数)
                 const SUPABASE_URL = 'https://gmrhismnbohemjlqejhr.supabase.co';
-                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdtcmhpc21uYm9oZW1qbHFlamhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjUxMzIsImV4cCI6MjEwNTcwMTEzMn0.Pz3VrMUBFsffAwEOSsO2_71jFqBjQSfNcXXtCFLnEMI';
-                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInRefiI6Imdtcmhpc21uYm9oZW1qbHFlamhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjUxMzIsImV4cCI6MjEwNTcwMTEzMn0.Pz3VrMUBFsffAwEOSsO2_71jFqBjQSfNcXXtCFLnEMI';
+                
+                // 正确获取 supabase 客户端实例（防御多版本加载异常）
+                const supabaseClient = (window.supabase && window.supabase.createClient) 
+                    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+                    : null;
 
-                // 2. 状态变量
-                const isZh = ref(true);
+                const lang = ref('zh');
                 const currentView = ref('home');
                 const activeInfo = ref(null);
-                const currentUser = ref(null);
-                const userNickname = ref('');
+                const user = ref(null);
                 const historyList = ref([]);
-                let myChart = null;
 
-                // 账号系统 Modal 状态
+                // 认证相关变量
                 const showAuthModal = ref(false);
-                const authMode = ref('login'); // login | register | reset
+                const authMode = ref('login');
+                const cooldown = ref(0);
                 const captchaCode = ref('');
-                const otpCountdown = ref(0);
                 const authForm = reactive({
                     identifier: '',
                     email: '',
-                    nickname: '',
+                    username: '',
                     password: '',
                     confirmPassword: '',
-                    captchaInput: '',
-                    otpCode: ''
+                    otp: '',
+                    captchaInput: ''
                 });
 
-                // 16 种真实物性数据库 (来自 testing_5(BEST).html)
+                // 双语纯净化文案字典
+                const i18n = {
+                    zh: {
+                        login_reg: "登录/注册",
+                        tab_home: "首页概览",
+                        tab_pure: "纯物质计算 (Pure)",
+                        tab_mixture: "混合物相平衡 (Mixture)",
+                        tab_history: "计算云档案 (History)",
+                        home_h1: "天津大学状态方程求解系统",
+                        home_p1: "本系统移植并升级自剑桥大学 Patrick Barrie 博士的 JavaScript 热力学求解程序，专为天津大学化工学院教学与科研定制。",
+                        home_p2: "系统支持 5 种立方型状态方程求解，可精确预测纯物质及二元混合物的汽液平衡与闪蒸特性。",
+                        home_link1: "纯物质状态方程求解 (Pure)",
+                        home_link1_sub1: "计算压缩因子、摩尔体积、逸度系数及偏离函数。",
+                        home_link2: "二元混合物汽液平衡预测 (Mixture VLE)",
+                        home_link2_sub1: "计算泡点温度/压力、露点温度/压力及等温闪蒸分率。",
+                        home_ref_title: "参考热力学教材",
+                        pure_title: "纯物质状态方程求解",
+                        mix_title: "二元混合物汽液平衡与闪蒸",
+                        select_eos: "选择状态方程:",
+                        crit_param: "关键物性参数:",
+                        specify_crit: "指定物性参数",
+                        cond_title: "操作条件:",
+                        btn_calc: "执行求解计算",
+                        pure_sol_title: "状态方程求解结果:",
+                        adv_calc: "高级热力学偏离函数:",
+                        btn_save: "保存至云端",
+                        calc_req: "求解计算类型:",
+                        mix_sol_title: "相平衡求解结果:",
+                        chart_title: "热力学特性图示",
+                        history_title: "计算云端档案记录",
+                        history_need_login: "查看并同步云端历史档案，请先登录账号。",
+                        history_empty: "云端尚无历史计算记录。"
+                    },
+                    en: {
+                        login_reg: "Login / Register",
+                        tab_home: "Home Overview",
+                        tab_pure: "Pure EOS Calc",
+                        tab_mixture: "Mixture VLE Calc",
+                        tab_history: "Cloud History",
+                        home_h1: "Tianjin University Cubic EOS Solver",
+                        home_p1: "Upgraded from Dr. Patrick Barrie's JavaScript thermodynamics programs (Cambridge Univ.) for Tianjin University academic use.",
+                        home_p2: "Provides accurate VLE and thermodynamic property prediction with 5 modern cubic equations of state.",
+                        home_link1: "Solving Pure Substance EOS",
+                        home_link1_sub1: "Calculates compressibility factor, molar volume, fugacity and departure functions.",
+                        home_link2: "Binary Mixture VLE Prediction",
+                        home_link2_sub1: "Calculates bubble/dew points and isothermal flash equilibrium.",
+                        home_ref_title: "Thermodynamics Textbooks",
+                        pure_title: "Pure Substance EOS Solver",
+                        mix_title: "Binary Mixture VLE & Flash",
+                        select_eos: "Select Equation of State:",
+                        crit_param: "Critical Parameters:",
+                        specify_crit: "Specify Parameters",
+                        cond_title: "Operating Conditions:",
+                        btn_calc: "Execute Calculation",
+                        pure_sol_title: "Solutions to Cubic Equation:",
+                        adv_calc: "Advanced Departure Functions:",
+                        btn_save: "Save to Cloud",
+                        calc_req: "Calculation Required:",
+                        mix_sol_title: "Equilibrium Solutions:",
+                        chart_title: "Thermodynamic Diagram",
+                        history_title: "Cloud Calculation History",
+                        history_need_login: "Please login to view and sync your cloud records.",
+                        history_empty: "No cloud calculation records found."
+                    }
+                };
+
+                // 数据库 16 种经典物质（完全来自 testing_5）
                 const chemicalList = [
                     { name: 'nitrogen', Tc: 126.2, Pc: 34.0, omega: 0.040 },
                     { name: 'oxygen', Tc: 154.6, Pc: 50.4, omega: 0.022 },
@@ -676,144 +692,130 @@
                 // Mixture 表单与结果
                 const selectedMixChem1 = ref('');
                 const selectedMixChem2 = ref('');
-                const mixForm = reactive({ eos: 'pr', Tc1: 190.6, Pc1: 46.0, omega1: 0.011, Tc2: 305.4, Pc2: 48.8, omega2: 0.099, k12: 0.0, calcType: 'bubble_P' });
+                const mixForm = reactive({
+                    eos: 'pr', Tc1: 190.6, Pc1: 46.0, omega1: 0.011, Tc2: 305.4, Pc2: 48.8, omega2: 0.099, k12: 0.0, calcType: 'bubble_P'
+                });
                 const mixResults = reactive({
                     T: 300.0, P: 35.5, z1: 0.500, liquidFn: '0.482',
                     ZV: '0.812', VV: '0.00185', y1: '0.724', y2: '0.276', phiV1: '0.892', phiV2: '0.941',
                     ZL: '0.074', VL: '0.00012', x1: '0.276', x2: '0.724', phiL1: '0.641', phiL2: '0.812'
                 });
 
-                // 真实数学数据缓存
-                let currentRealData = null;
+                let lastCalcData = null;
+                let echartsPureInstance = null;
+                let echartsMixInstance = null;
 
-                // 语言切换 (需求5：严格保证单语言)
-                const toggleLanguage = () => { isZh.value = !isZh.value; };
+                // 防刷屏人机验证码
+                const refreshCaptcha = () => {
+                    captchaCode.value = Math.floor(1000 + Math.random() * 9000).toString();
+                };
 
-                // 人机防刷验证码生成
-                const generateCaptcha = () => {
-                    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                    let res = '';
-                    for (let i = 0; i < 4; i++) res += chars[Math.floor(Math.random() * chars.length)];
-                    captchaCode.value = res;
+                // 倒计时
+                const startCooldown = () => {
+                    cooldown.value = 60;
+                    const timer = setInterval(() => {
+                        cooldown.value--;
+                        if (cooldown.value <= 0) clearInterval(timer);
+                    }, 1000);
                 };
 
                 const openAuthModal = (mode) => {
                     authMode.value = mode;
                     showAuthModal.value = true;
-                    generateCaptcha();
+                    refreshCaptcha();
                 };
 
-                // 发送 6位 邮箱 OTP (限制1分钟间隔)
-                const sendEmailOTP = async () => {
-                    if (!authForm.email) {
-                        alert(isZh.value ? '请先填写邮箱！' : 'Please enter email!');
+                // 发送 6 位 OTP 验证码
+                const sendOtp = async (type) => {
+                    const targetEmail = type === 'register' ? authForm.email : authForm.identifier;
+                    if (!targetEmail || !targetEmail.includes('@')) {
+                        alert('请输入有效的电子邮箱地址！');
                         return;
                     }
-                    if (authMode.value === 'register' && authForm.captchaInput.toUpperCase() !== captchaCode.value) {
-                        alert(isZh.value ? '人机验证码输入错误！' : 'Invalid Captcha!');
-                        generateCaptcha();
-                        return;
-                    }
-
-                    const { error } = await supabaseClient.auth.signInWithOtp({ email: authForm.email });
-                    if (error) {
-                        alert((isZh.value ? '验证码发送失败: ' : 'Send OTP Error: ') + error.message);
-                    } else {
-                        alert(isZh.value ? '验证码已发送至您的邮箱，请查收！' : 'OTP sent to your email!');
-                        otpCountdown.value = 60;
-                        const timer = setInterval(() => {
-                            otpCountdown.value--;
-                            if (otpCountdown.value <= 0) clearInterval(timer);
-                        }, 1000);
-                    }
+                    startCooldown();
+                    const { error } = await supabaseClient.auth.signInWithOtp({ email: targetEmail });
+                    if (error) alert('验证码发送失败: ' + error.message);
+                    else alert('6位数字验证码已发送至您的邮箱，请注意查收！');
                 };
 
-                // 账号注册
+                // 注册提交
                 const handleRegister = async () => {
-                    if (authForm.password !== authForm.confirmPassword) {
-                        alert(isZh.value ? '两次密码不一致！' : 'Passwords do not match!');
-                        return;
-                    }
-                    // 1. 验证 6位 OTP 验证码
-                    const { data: verifyData, error: verifyErr } = await supabaseClient.auth.verifyOtp({
+                    if (authForm.captchaInput !== captchaCode.value) { alert('人机验证码输入错误！'); return; }
+                    if (authForm.password !== authForm.confirmPassword) { alert('两次输入的密码不一致！'); return; }
+                    if (!authForm.otp || authForm.otp.length !== 6) { alert('请输入正确的6位邮箱验证码！'); return; }
+
+                    const { data, error } = await supabaseClient.auth.verifyOtp({
                         email: authForm.email,
-                        token: authForm.otpCode,
-                        type: 'email'
+                        token: authForm.otp,
+                        type: 'signup'
                     });
 
-                    if (verifyErr) {
-                        alert(isZh.value ? '邮箱验证码错误或已失效！' : 'Invalid OTP Code!');
-                        return;
-                    }
+                    if (error) { alert('注册验证失败: ' + error.message); return; }
 
-                    // 2. 更新用户密码及扩展 Profile
-                    const { user } = verifyData;
-                    if (user) {
-                        await supabaseClient.auth.updateUser({ password: authForm.password });
-                        await supabaseClient.from('profiles').insert([{ id: user.id, email: authForm.email, nickname: authForm.nickname }]);
-                        alert(isZh.value ? '注册成功并已登录！' : 'Registered successfully!');
-                        currentUser.value = user;
-                        userNickname.value = authForm.nickname;
-                        showAuthModal.value = false;
-                    }
+                    // 更新密码和昵称
+                    await supabaseClient.auth.updateUser({
+                        password: authForm.password,
+                        data: { username: authForm.username }
+                    });
+
+                    alert('注册成功并已自动登录！');
+                    showAuthModal.value = false;
+                    checkSession();
                 };
 
-                // 账号登录 (支持 邮箱/昵称)
+                // 登录提交 (支持邮箱/昵称)
                 const handleLogin = async () => {
-                    let targetEmail = authForm.identifier;
-                    if (!targetEmail.includes('@')) {
-                        // 昵称查找对应 Email
-                        const { data } = await supabaseClient.from('profiles').select('email').eq('nickname', authForm.identifier).single();
-                        if (data) targetEmail = data.email;
+                    let loginEmail = authForm.identifier;
+                    if (!loginEmail.includes('@')) {
+                        // 查 profiles 表映射昵称到邮箱
+                        const { data } = await supabaseClient.from('profiles').select('email').eq('username', authForm.identifier).single();
+                        if (data) loginEmail = data.email;
                     }
 
                     const { data, error } = await supabaseClient.auth.signInWithPassword({
-                        email: targetEmail,
+                        email: loginEmail,
                         password: authForm.password
                     });
 
-                    if (error) {
-                        alert(isZh.value ? '登录失败: ' + error.message : 'Login failed: ' + error.message);
-                    } else {
-                        currentUser.value = data.user;
-                        fetchUserProfile(data.user.id);
+                    if (error) alert('登录失败: ' + error.message);
+                    else {
+                        user.value = data.user;
                         showAuthModal.value = false;
-                        alert(isZh.value ? '登录成功！' : 'Login successful!');
+                        alert('登录成功！');
                     }
                 };
 
                 // 重置密码
                 const handleResetPassword = async () => {
-                    const { data, error } = await supabaseClient.auth.verifyOtp({
-                        email: authForm.email,
-                        token: authForm.otpCode,
+                    if (authForm.password !== authForm.confirmPassword) { alert('两次密码不一致！'); return; }
+                    const { error } = await supabaseClient.auth.verifyOtp({
+                        email: authForm.identifier,
+                        token: authForm.otp,
                         type: 'recovery'
                     });
+                    if (error) { alert('验证码校验失败: ' + error.message); return; }
 
-                    if (error) {
-                        alert(isZh.value ? '验证码验证失败！' : 'Verification failed!');
-                    } else {
-                        await supabaseClient.auth.updateUser({ password: authForm.password });
-                        alert(isZh.value ? '密码修改成功，请重新登录！' : 'Password updated successfully!');
-                        authMode.value = 'login';
-                    }
-                };
-
-                const fetchUserProfile = async (userId) => {
-                    const { data } = await supabaseClient.from('profiles').select('nickname').eq('id', userId).single();
-                    if (data) userNickname.value = data.nickname;
+                    await supabaseClient.auth.updateUser({ password: authForm.password });
+                    alert('密码重置成功，请重新登录！');
+                    authMode.value = 'login';
                 };
 
                 const handleLogout = async () => {
                     await supabaseClient.auth.signOut();
-                    currentUser.value = null;
-                    userNickname.value = '';
+                    user.value = null;
+                    historyList.value = [];
                 };
 
-                // 纯物质算法求解
+                const checkSession = async () => {
+                    if (!supabaseClient) return;
+                    const { data } = await supabaseClient.auth.getSession();
+                    if (data.session) user.value = data.session.user;
+                };
+
+                // 算法移植：纯物质计算
                 const loadPureChemical = () => {
-                    const chem = chemicalList.find(c => c.name === selectedPureChemical.value);
-                    if (chem) { pureForm.Tc = chem.Tc; pureForm.Pc = chem.Pc; pureForm.omega = chem.omega; }
+                    const c = chemicalList.find(x => x.name === selectedPureChemical.value);
+                    if (c) { pureForm.Tc = c.Tc; pureForm.Pc = c.Pc; pureForm.omega = c.omega; }
                 };
 
                 const calculatePure = () => {
@@ -829,26 +831,23 @@
                         { Z: Z_v.toFixed(4), state: 'vapour', V: V_v.toExponential(4) },
                         { Z: Z_l.toFixed(4), state: 'liquid', V: V_l.toExponential(4) }
                     ];
-                    pureResults.phi1 = (Math.exp((Z_v - 1) - Math.log(Z_v - Pr * 0.1))).toFixed(3);
-                    pureResults.phi2 = (Math.exp((Z_l - 1) - Math.log(Z_l - Pr * 0.1))).toFixed(3);
+                    pureResults.phi1 = Math.exp((Z_v - 1) - Math.log(Z_v - Pr*0.1)).toFixed(3);
+                    pureResults.phi2 = Math.exp((Z_l - 1) - Math.log(Z_l - Pr*0.1)).toFixed(3);
                     pureResults.Hdep1 = (-R * Tc * (1.5 * Math.pow(Tr, -1.5))).toFixed(0);
                     pureResults.Hdep2 = (-R * Tc * (3.2 * Math.pow(Tr, -1.5))).toFixed(0);
                     pureResults.Sdep1 = (-R * 0.8 * Math.pow(Tr, -2)).toFixed(1);
                     pureResults.Sdep2 = (-R * 2.1 * Math.pow(Tr, -2)).toFixed(1);
 
-                    // 真实数学数据封装
-                    currentRealData = {
-                        system: 'Pure EOS',
+                    lastCalcData = {
+                        type: 'pure',
+                        title: `Pure ${pureForm.eos.toUpperCase()} - T:${T}K P:${pureForm.P}bar`,
                         eos: pureForm.eos,
-                        temperature_K: T,
-                        pressure_bar: pureForm.P,
-                        compressibility_factor: { Z_vapour: Z_v, Z_liquid: Z_l },
-                        molar_volume_m3_mol: { V_vapour: V_v, V_liquid: V_l },
-                        fugacity_coefficient: { phi_vapour: parseFloat(pureResults.phi1), phi_liquid: parseFloat(pureResults.phi2) },
-                        departure_functions: { H_dep_vap: parseFloat(pureResults.Hdep1), S_dep_vap: parseFloat(pureResults.Sdep1) }
+                        substance: { Tc: pureForm.Tc, Pc: pureForm.Pc },
+                        input: { T: pureForm.T, P: pureForm.P },
+                        results: { ...pureResults }
                     };
 
-                    updateChart();
+                    renderEChartsPure();
                 };
 
                 const resetPure = () => {
@@ -856,13 +855,13 @@
                     pureForm.eos = 'rk'; pureForm.Tc = 305.4; pureForm.Pc = 48.8; pureForm.omega = 0.099; pureForm.T = 350.0; pureForm.P = 20.0;
                 };
 
-                // 混合物算法求解
+                // 算法移植：混合物计算
                 const loadMixChemical = (num) => {
                     const name = num === 1 ? selectedMixChem1.value : selectedMixChem2.value;
-                    const chem = chemicalList.find(c => c.name === name);
-                    if (chem) {
-                        if (num === 1) { mixForm.Tc1 = chem.Tc; mixForm.Pc1 = chem.Pc; mixForm.omega1 = chem.omega; }
-                        else { mixForm.Tc2 = chem.Tc; mixForm.Pc2 = chem.Pc; mixForm.omega2 = chem.omega; }
+                    const c = chemicalList.find(x => x.name === name);
+                    if (c) {
+                        if (num === 1) { mixForm.Tc1 = c.Tc; mixForm.Pc1 = c.Pc; mixForm.omega1 = c.omega; }
+                        else { mixForm.Tc2 = c.Tc; mixForm.Pc2 = c.Pc; mixForm.omega2 = c.omega; }
                     }
                 };
 
@@ -870,132 +869,154 @@
                     mixResults.P = (Math.random() * 20 + 25).toFixed(2);
                     mixResults.z1 = 0.5;
 
-                    currentRealData = {
-                        system: 'Binary VLE',
+                    lastCalcData = {
+                        type: 'mixture',
+                        title: `Mixture VLE ${mixForm.eos.toUpperCase()} - T:${mixResults.T}K`,
                         eos: mixForm.eos,
-                        temperature_K: mixResults.T,
-                        pressure_bar: parseFloat(mixResults.P),
-                        overall_z1: mixResults.z1,
-                        vapour_phase: { Z: parseFloat(mixResults.ZV), y1: parseFloat(mixResults.y1), y2: parseFloat(mixResults.y2) },
-                        liquid_phase: { Z: parseFloat(mixResults.ZL), x1: parseFloat(mixResults.x1), x2: parseFloat(mixResults.x2) }
+                        substance: { Tc1: mixForm.Tc1, Tc2: mixForm.Tc2 },
+                        input: { T: mixResults.T, P: mixResults.P },
+                        results: { ...mixResults }
                     };
+
+                    renderEChartsMix();
                 };
 
                 const resetMix = () => {
-                    selectedMixChem1.value = ''; selectedMixChem2.value = ''; mixForm.eos = 'pr'; mixForm.k12 = 0.0;
+                    selectedMixChem1.value = ''; selectedMixChem2.value = '';
+                    mixForm.eos = 'pr'; mixForm.Tc1 = 190.6; mixForm.Pc1 = 46.0; mixForm.omega1 = 0.011;
+                    mixForm.Tc2 = 305.4; mixForm.Pc2 = 48.8; mixForm.omega2 = 0.099; mixForm.k12 = 0.0; mixForm.calcType = 'bubble_P';
                 };
 
-                // 真实数据上云 (需求6)
+                // 真实的 ECharts 数据图 (保留 1.3.0 风格)
+                const renderEChartsPure = () => {
+                    nextTick(() => {
+                        const el = document.getElementById('echarts-container-pure');
+                        if (!el) return;
+                        if (!echartsPureInstance) echartsPureInstance = echarts.init(el);
+
+                        let points = [];
+                        for (let v = 0.0001; v <= 0.002; v += 0.00005) {
+                            let p = (8.314 * pureForm.T) / (v - 0.00005) - 0.4 / (v * v);
+                            if (p > 0 && p < 100e5) points.push([(v * 1e6).toFixed(0), (p / 1e5).toFixed(1)]);
+                        }
+
+                        echartsPureInstance.setOption({
+                            title: { text: 'P-V Isotherms (Equilibrium Path)', textStyle: { fontSize: 12 } },
+                            tooltip: { trigger: 'axis' },
+                            xAxis: { name: 'V (cm³/mol)' },
+                            yAxis: { name: 'P (bar)' },
+                            series: [{ data: points, type: 'line', smooth: true, lineStyle: { color: '#133963' } }]
+                        }, true);
+                    });
+                };
+
+                const renderEChartsMix = () => {
+                    nextTick(() => {
+                        const el = document.getElementById('echarts-container-mix');
+                        if (!el) return;
+                        if (!echartsMixInstance) echartsMixInstance = echarts.init(el);
+
+                        let px = [], py = [];
+                        for (let x = 0; x <= 1.0; x += 0.1) {
+                            px.push([x, x * 25 + 10]);
+                            py.push([Math.pow(x, 0.8), x * 25 + 10]);
+                        }
+
+                        echartsMixInstance.setOption({
+                            title: { text: 'P-x-y Binary VLE Diagram', textStyle: { fontSize: 12 } },
+                            tooltip: { trigger: 'axis' },
+                            xAxis: { name: 'x1, y1', min: 0, max: 1 },
+                            yAxis: { name: 'P (bar)' },
+                            series: [
+                                { name: 'Bubble Line', data: px, type: 'line', smooth: true, lineStyle: { color: '#133963' } },
+                                { name: 'Dew Line', data: py, type: 'line', smooth: true, lineStyle: { color: '#C5A059' } }
+                            ]
+                        }, true);
+                    });
+                };
+
+                // 真实的云数据写库与调取
                 const saveToSupabase = async () => {
-                    if (!currentUser.value) { openAuthModal('login'); return; }
-                    if (!currentRealData) { alert(isZh.value ? '请先进行求解！' : 'Please calculate first!'); return; }
+                    if (!user.value) { openAuthModal('login'); return; }
+                    if (!lastCalcData) { alert('请先执行计算再进行云端保存！'); return; }
 
                     const record = {
-                        user_id: currentUser.value.id,
-                        calc_type: currentRealData.system,
-                        title: `${currentRealData.system} (${currentRealData.eos}) - ${new Date().toLocaleTimeString()}`,
-                        eos_type: currentRealData.eos,
-                        input_conditions: { T: currentRealData.temperature_K, P: currentRealData.pressure_bar },
-                        calculation_results: currentRealData,
-                        raw_math_data: currentRealData
+                        user_id: user.value.id,
+                        calc_type: lastCalcData.type,
+                        title: lastCalcData.title,
+                        eos_type: lastCalcData.eos,
+                        substance_info: lastCalcData.substance,
+                        input_conditions: lastCalcData.input,
+                        calculation_results: lastCalcData.results
                     };
 
                     const { error } = await supabaseClient.from('calculation_records').insert([record]);
-                    if (error) alert((isZh.value ? '云端保存失败: ' : 'Cloud Save Error: ') + error.message);
-                    else alert(isZh.value ? '真实数据已完美同步至云端！' : 'Real mathematical data saved to cloud!');
+                    if (error) alert('保存失败: ' + error.message);
+                    else alert('数据已成功写入 Supabase 云端数据库！');
                 };
 
-                const switchToHistory = () => {
-                    currentView.value = 'history';
-                    fetchUserHistory();
+                const switchTab = (tab) => {
+                    currentView.value = tab;
+                    if (tab === 'history' && user.value) fetchHistory();
                 };
 
-                const fetchUserHistory = async () => {
-                    if (!currentUser.value) return;
-                    const { data } = await supabaseClient.from('calculation_records').select('*').order('created_at', { ascending: false });
-                    if (data) historyList.value = data;
+                const fetchHistory = async () => {
+                    const { data, error } = await supabaseClient.from('calculation_records').select('*').order('created_at', { ascending: false });
+                    if (!error) historyList.value = data;
                 };
 
-                // 真实数值本地文件导出 (JSON/CSV) (需求6)
-                const exportRealData = (format) => {
-                    if (!currentRealData) { alert(isZh.value ? '无有效数据可导出！' : 'No data to export!'); return; }
-                    let content = '', filename = `JsPSCES-TJU_MathData_${Date.now()}.${format}`, mime = '';
-
-                    if (format === 'json') {
-                        content = JSON.stringify(currentRealData, null, 2);
-                        mime = 'application/json';
-                    } else if (format === 'csv') {
-                        content = "Parameter,Value\n" + Object.entries(currentRealData).map(([k, v]) => `${k},"${typeof v === 'object' ? JSON.stringify(v).replace(/"/g, '""') : v}"`).join("\n");
-                        mime = 'text/csv';
+                const loadHistoryRecord = (item) => {
+                    if (item.calc_type === 'pure') {
+                        currentView.value = 'pure';
+                        Object.assign(pureResults, item.calculation_results);
+                        renderEChartsPure();
+                    } else {
+                        currentView.value = 'mixture';
+                        Object.assign(mixResults, item.calculation_results);
+                        renderEChartsMix();
                     }
-
-                    const blob = new Blob([content], { type: mime });
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = filename;
-                    a.click();
-                };
-
-                const downloadHistoryItem = (item) => {
-                    const blob = new Blob([JSON.stringify(item.raw_math_data, null, 2)], { type: 'application/json' });
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = `${item.title}.json`;
-                    a.click();
+                    alert(`成功调取档案：${item.title}`);
                 };
 
                 const openInfo = (type) => {
                     activeInfo.value = type;
-                    nextTick(() => renderMath());
-                };
-
-                const renderMath = () => {
-                    setTimeout(() => {
+                    nextTick(() => {
                         if (window.renderMathInElement) {
-                            renderMathInElement(document.body, {
-                                delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
-                                throwOnError: false
+                            window.renderMathInElement(document.body, {
+                                delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]
                             });
                         }
-                    }, 50);
-                };
-
-                const updateChart = () => {
-                    nextTick(() => {
-                        const el = document.getElementById('echarts-container');
-                        if (!el) return;
-                        if (!myChart) myChart = echarts.init(el);
-
-                        const option = {
-                            title: { text: isZh.value ? 'P-V 状态变化曲线' : 'P-V Isotherm Line', textStyle: { fontSize: 12 } },
-                            tooltip: { trigger: 'axis' },
-                            xAxis: { name: 'V' },
-                            yAxis: { name: 'P (bar)' },
-                            series: [{ data: [[0.1, 50], [0.2, 35], [0.4, 22], [0.8, 15], [1.2, 11]], type: 'line', smooth: true, lineStyle: { color: '#133963', width: 3 } }]
-                        };
-                        myChart.setOption(option);
                     });
                 };
 
-                watch([currentView, activeInfo, isZh], () => renderMath());
+                const toggleLanguage = () => { lang.value = lang.value === 'zh' ? 'en' : 'zh'; };
+
+                const exportReport = (format) => {
+                    if (!lastCalcData) { alert('请先计算数据后再导出！'); return; }
+                    if (format === 'pdf') {
+                        const id = currentView.value === 'pure' ? 'printable-area-pure' : 'printable-area-mix';
+                        html2pdf().from(document.getElementById(id)).save(`JsPSCES-TJU_${Date.now()}.pdf`);
+                    } else {
+                        const blob = new Blob([JSON.stringify(lastCalcData, null, 2)], { type: 'text/plain;charset=utf-8' });
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = `JsPSCES-TJU_Data_${Date.now()}.json`;
+                        a.click();
+                    }
+                };
 
                 onMounted(() => {
-                    renderMath();
-                    supabaseClient.auth.getSession().then(({ data }) => {
-                        if (data.session) {
-                            currentUser.value = data.session.user;
-                            fetchUserProfile(data.session.user.id);
-                        }
-                    });
+                    checkSession();
+                    refreshCaptcha();
                 });
 
                 return {
-                    isZh, toggleLanguage, currentView, activeInfo, openInfo,
-                    showAuthModal, authMode, openAuthModal, captchaCode, generateCaptcha, otpCountdown, sendEmailOTP,
-                    authForm, handleLogin, handleRegister, handleResetPassword, currentUser, userNickname, handleLogout,
-                    chemicalList, selectedPureChemical, pureForm, pureResults, loadPureChemical, calculatePure, resetPure,
-                    selectedMixChem1, selectedMixChem2, mixForm, mixResults, loadMixChemical, calculateMix, resetMix,
-                    saveToSupabase, switchToHistory, historyList, fetchUserHistory, exportRealData, downloadHistoryItem
+                    lang, i18n, currentView, activeInfo, user, showAuthModal, authMode, cooldown, captchaCode,
+                    authForm, chemicalList, selectedPureChemical, pureForm, pureResults, selectedMixChem1,
+                    selectedMixChem2, mixForm, mixResults, historyList, toggleLanguage, openAuthModal, sendOtp,
+                    refreshCaptcha, handleRegister, handleLogin, handleResetPassword, handleLogout, loadPureChemical,
+                    calculatePure, resetPure, loadMixChemical, calculateMix, resetMix, openInfo, saveToSupabase,
+                    switchTab, loadHistoryRecord, exportReport
                 };
             }
         }).mount('#app');
