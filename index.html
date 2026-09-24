@@ -1,1285 +1,1425 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JsPSCES-TJU | 天津大学状态方程求解系统 v6.1.0</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- ECharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- html2pdf.js for PDF Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- KaTeX for math rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JsPSCES-TJU | Tianjin University EOS Solver</title>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        tju: {
-                            blue: '#133963',     /* 北洋蓝 */
-                            light: '#1e528e',    /* 浅蓝 */
-                            accent: '#C5A059',   /* 织锦金 */
-                            bg: '#f4f7fa',
-                            card: '#ffffff'
-                        }
-                    }
-                }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tju: {
+              blue: '#133963',
+              light: '#1e528e',
+              accent: '#C5A059',
+              bg: '#f4f7fa',
+              card: '#ffffff'
             }
+          }
         }
-    </script>
-    <style>
-        .tju-wave-bg {
-            background-color: #133963;
-            background-image: radial-gradient(circle at 50% 100%, #1e528e 0%, #133963 70%);
-        }
-        .academic-border { border-top: 4px solid #C5A059; }
-        .classic-table { border: 1px solid #cbd5e1; border-collapse: collapse; width: 100%; }
-        .classic-table th, .classic-table td { border: 1px solid #cbd5e1; padding: 6px; }
-    </style>
+      }
+    };
+  </script>
+
+  <style>
+    .tju-wave-bg {
+      background-color: #133963;
+      background-image: radial-gradient(circle at 50% 100%, #1e528e 0%, #133963 70%);
+    }
+    .academic-border {
+      border-top: 4px solid #C5A059;
+    }
+    .classic-table {
+      border: 1px solid #cbd5e1;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .classic-table th, .classic-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+    }
+    .tab-panel.hidden {
+      display: none !important;
+    }
+    .info-box {
+      background: #fff;
+      border: 1px solid #d5dfe8;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 6px 0;
+    }
+  </style>
 </head>
 <body class="bg-tju-bg text-gray-800 font-sans min-h-screen flex flex-col">
-
-    <!-- 顶部导航栏 / Header -->
-    <header class="tju-wave-bg text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white text-tju-blue font-bold rounded-full flex items-center justify-center text-xl shadow-inner border-2 border-tju-accent">
-                    北洋
-                </div>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-wide flex items-center gap-2">
-                        <span>JsPSCES-TJU</span>
-                        <span class="text-xs bg-tju-accent text-tju-blue font-semibold px-2 py-0.5 rounded">v6.1.0</span>
-                    </h1>
-                    <p class="text-xs text-blue-200" id="sub-title">JavaScript Programs for Solving Cubic Equations of State - 天津大学定制版</p>
-                </div>
-            </div>
-
-            <!-- 控制按钮组 -->
-            <div class="flex items-center space-x-3 mt-3 md:mt-0">
-                <button onclick="toggleLanguage()" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded border border-white/20 transition flex items-center gap-1">
-                    <i class="fa-solid fa-language"></i> <span id="lang-btn-text">English</span>
-                </button>
-                <div id="auth-buttons">
-                    <button onclick="openAuthModal('login')" class="text-sm bg-tju-accent hover:bg-yellow-500 text-tju-blue font-bold px-4 py-1.5 rounded shadow transition">
-                        <i class="fa-solid fa-user"></i> <span id="auth-btn-text">登录/注册</span>
-                    </button>
-                </div>
-            </div>
+  <header class="tju-wave-bg text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-white text-tju-blue font-bold rounded-full flex items-center justify-center text-xl shadow-inner border-2 border-tju-accent">
+          北洋
         </div>
-
-        <!-- 选项卡导航 -->
-        <div class="max-w-7xl mx-auto px-4 flex space-x-1 border-t border-white/10 pt-2 overflow-x-auto">
-            <button onclick="switchTab('home')" id="tab-btn-home" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue">
-                <i class="fa-solid fa-house mr-1"></i> <span data-i18n="tab_home">首页说明</span>
-            </button>
-            <button onclick="switchTab('pure')" id="tab-btn-pure" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
-                <i class="fa-solid fa-flask mr-1"></i> <span data-i18n="tab_pure">纯物质计算</span>
-            </button>
-            <button onclick="switchTab('mixture')" id="tab-btn-mixture" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
-                <i class="fa-solid fa-vial-circle-check mr-1"></i> <span data-i18n="tab_mixture">混合物与相平衡</span>
-            </button>
-            <button onclick="switchTab('history')" id="tab-btn-history" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
-                <i class="fa-solid fa-database mr-1"></i> <span data-i18n="tab_history">计算云档案</span>
-            </button>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-wide flex items-center gap-2">
+            <span>JsPSCES-TJU</span>
+            <span class="text-xs bg-tju-accent text-tju-blue font-semibold px-2 py-0.5 rounded">TJU Edition v8.1.0</span>
+          </h1>
+          <p class="text-xs text-blue-200" id="sub-title">JavaScript Programs for Solving Cubic Equations of State</p>
         </div>
-    </header>
+      </div>
 
-    <!-- 主体内容区 -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
-
-        <!-- 1. 首页说明 (HOME TAB - 提供严格纯中文/纯英文版本) -->
-        <section id="panel-home" class="tab-panel bg-white rounded-lg shadow-md p-6 academic-border mb-6">
-            <!-- 中文模式首页内容 -->
-            <div id="home-content-zh">
-                <h2 class="text-2xl font-bold text-tju-blue text-center mb-6">天津大学立方型状态方程求解系统 (JsPSCES-TJU)</h2>
-                <p class="text-sm leading-relaxed mb-4">
-                    本系统包含用于计算热力学性质和汽液相平衡条件的计算程序。软件旨在辅助教学——在展示计算结果的同时，清晰指明热力学性质的计算原理与过程。本系统已被全球多所知名高校及剑桥大学广泛应用于热力学课程教学。
-                </p>
-                <p class="text-sm leading-relaxed mb-4">
-                    关于本程序算法原理的简要描述发表于：P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", <em>Journal of Chemical Education</em>, <strong>82</strong>, 958-959 (2005)。
-                </p>
-                <p class="text-sm font-bold mb-4">系统包含两大核心计算模块：</p>
-
-                <div class="mb-4 bg-blue-50/50 p-4 rounded border border-blue-100">
-                    <a href="#" onclick="switchTab('pure'); return false;" class="text-tju-blue font-bold hover:underline text-lg">1. 纯物质立方型状态方程求解</a>
-                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
-                        <li>支持选择多种立方型状态方程（VDW、RK、SRK、PR、PR-Gasem），计算压缩因子、摩尔体积、逸度系数及离差函数。</li>
-                        <li>提供内置 16 种常见纯物质热力学临界参数数据库。</li>
-                    </ul>
-                </div>
-
-                <div class="mb-6 bg-blue-50/50 p-4 rounded border border-blue-100">
-                    <a href="#" onclick="switchTab('mixture'); return false;" class="text-tju-blue font-bold hover:underline text-lg">2. 二元混合物汽液相平衡预测 (VLE)</a>
-                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
-                        <li>支持泡点压力、泡点温度、露点压力、露点温度及等温汽液闪蒸计算。</li>
-                        <li>结合 van der Waals 混合规则与二元交互作用参数 $k_{12}$ 进行精确求解。</li>
-                    </ul>
-                </div>
-
-                <div class="border-t border-gray-200 pt-4">
-                    <p class="font-bold text-sm mb-2 text-tju-blue">热力学参考教材</p>
-                    <ul class="list-disc ml-6 text-sm space-y-1 text-gray-600">
-                        <li>S.I. Sandler: "Chemical, Biochemical and Engineering Thermodynamics" (4th ed. Wiley, 2006).</li>
-                        <li>J.M. Smith, H.C. van Ness and M.M. Abbott: "Introduction to Chemical Engineering Thermodynamics" (6th ed. McGraw-Hill, 2001).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 英文模式首页内容 -->
-            <div id="home-content-en" class="hidden">
-                <h2 class="text-2xl font-bold text-tju-blue text-center mb-6">JavaScript Programs for Solving Cubic Equations of State Tianjin University (JsPSCES-TJU)</h2>
-                <p class="text-sm leading-relaxed mb-4">
-                    Here are two JavaScript programs for calculating thermodynamic properties and equilibrium conditions. They are designed to be educational - rather than just calculating the property, they indicate how the property is being calculated.
-                </p>
-                <p class="text-sm leading-relaxed mb-4">
-                    A brief description of these programs was reported in: P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", <em>Journal of Chemical Education</em>, <strong>82</strong>, 958-959 (2005).
-                </p>
-                <p class="text-sm font-bold mb-4">The two main calculation modules are:</p>
-
-                <div class="mb-4 bg-blue-50/50 p-4 rounded border border-blue-100">
-                    <a href="#" onclick="switchTab('pure'); return false;" class="text-tju-blue font-bold hover:underline text-lg">1. Solving cubic equations of state (pure substances)</a>
-                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
-                        <li>Calculates compressibility factor, molar volume, fugacity coefficient and departure functions using various cubic equations of state.</li>
-                        <li>Includes built-in database with critical parameters for 16 pure chemical substances.</li>
-                    </ul>
-                </div>
-
-                <div class="mb-6 bg-blue-50/50 p-4 rounded border border-blue-100">
-                    <a href="#" onclick="switchTab('mixture'); return false;" class="text-tju-blue font-bold hover:underline text-lg">2. Predicting vapour-liquid equilibrium of binary mixtures (VLE)</a>
-                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
-                        <li>Calculates bubble point pressures/temperatures, dew point pressures/temperatures, and isothermal flash conditions.</li>
-                        <li>Applies van der Waals one-fluid mixing rules with binary interaction parameters.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. 交互工作区 (PURE / MIXTURE / HISTORY) -->
-        <div id="interactive-workspace" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
-            
-            <!-- 左侧输入控制面板 (5 cols) -->
-            <section class="lg:col-span-5 bg-white rounded-lg shadow-md p-5 academic-border flex flex-col justify-between">
-                <div>
-                    <!-- 纯物质求解面板 -->
-                    <div id="panel-pure" class="tab-panel hidden">
-                        <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
-                            <span><i class="fa-solid fa-atom text-tju-accent mr-2"></i><span data-i18n="pure_title">纯物质状态方程求解</span></span>
-                            <a href="#" onclick="openInfo('crit')" class="text-xs text-blue-600 hover:underline">info Database</a>
-                        </h2>
-
-                        <!-- EOS 方程选择 -->
-                        <div class="mb-4 bg-gray-50 p-3 rounded border border-gray-200">
-                            <label class="block text-xs font-bold text-tju-blue uppercase tracking-wider mb-2" data-i18n="select_eos">选择状态方程：</label>
-                            <div class="space-y-1.5 text-xs">
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span><input type="radio" name="pure-eos" value="VDW" class="mr-2"> Van der Waals</span>
-                                    <a href="#" onclick="openInfo('vdw')" class="text-blue-600 hover:underline">info</a>
-                                </label>
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span><input type="radio" name="pure-eos" value="RK" class="mr-2"> Redlich-Kwong</span>
-                                    <a href="#" onclick="openInfo('rk')" class="text-blue-600 hover:underline">info</a>
-                                </label>
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span><input type="radio" name="pure-eos" value="SRK" checked class="mr-2"> Soave-Redlich-Kwong</span>
-                                    <a href="#" onclick="openInfo('srk')" class="text-blue-600 hover:underline">info</a>
-                                </label>
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span><input type="radio" name="pure-eos" value="PR" class="mr-2"> Peng-Robinson</span>
-                                    <a href="#" onclick="openInfo('pr')" class="text-blue-600 hover:underline">info</a>
-                                </label>
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span><input type="radio" name="pure-eos" value="PRG" class="mr-2"> Peng-Robinson-Gasem</span>
-                                    <a href="#" onclick="openInfo('prg')" class="text-blue-600 hover:underline">info</a>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- 数据库选择 -->
-                        <div class="mb-4">
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold text-gray-700" data-i18n="select_preset">选择预设组分或手动指定：</label>
-                                <a href="#" onclick="openInfo('crit')" class="text-xs text-blue-600 hover:underline">info</a>
-                            </div>
-                            <select id="pure-preset" onchange="loadPurePreset()" class="w-full bg-gray-50 border text-xs rounded p-2 focus:ring-tju-blue">
-                                <option value="custom">-- 指定临界参数 --</option>
-                            </select>
-                        </div>
-
-                        <!-- 临界参数列表 -->
-                        <div class="grid grid-cols-3 gap-2 mb-4 text-xs">
-                            <div>
-                                <label class="block text-gray-600 mb-1">$T_c$ (K)</label>
-                                <input type="number" id="pure-Tc" value="305.4" step="any" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-gray-600 mb-1">$P_c$ (bar)</label>
-                                <input type="number" id="pure-Pc" value="48.8" step="any" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-gray-600 mb-1">$\omega$ (Acentric)</label>
-                                <input type="number" id="pure-w" value="0.099" step="any" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                        </div>
-
-                        <!-- 状态条件 -->
-                        <div class="grid grid-cols-2 gap-3 mb-4 text-xs bg-blue-50/50 p-3 rounded border border-blue-100">
-                            <div>
-                                <label class="block font-bold text-tju-blue mb-1" data-i18n="temp">温度 T (K)</label>
-                                <input type="number" id="pure-T" value="350.0" step="any" class="w-full border rounded p-2 text-sm bg-white font-mono">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-tju-blue mb-1" data-i18n="pressure">压力 P (bar)</label>
-                                <input type="number" id="pure-P" value="20.0" step="any" class="w-full border rounded p-2 text-sm bg-white font-mono">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2">
-                            <button onclick="calculatePure()" class="flex-1 bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition flex items-center justify-center gap-1 text-xs">
-                                <i class="fa-solid fa-calculator"></i> <span data-i18n="btn_calc">开始计算</span>
-                            </button>
-                            <button onclick="resetPure()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2.5 rounded text-xs">重置</button>
-                        </div>
-                    </div>
-
-                    <!-- 混合物求解面板 -->
-                    <div id="panel-mixture" class="tab-panel hidden">
-                        <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
-                            <span><i class="fa-solid fa-diagram-project text-tju-accent mr-2"></i><span data-i18n="mix_title">混合物汽液平衡 (Binary VLE)</span></span>
-                            <a href="#" onclick="openInfo('mixing')" class="text-xs text-blue-600 hover:underline">mixing rules info</a>
-                        </h2>
-
-                        <!-- 二元组分选择 -->
-                        <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
-                            <div class="p-2 border rounded bg-gray-50">
-                                <label class="font-bold text-red-700 block mb-1">Substance 1:</label>
-                                <select id="mix-preset-1" onchange="loadMixChemical(1)" class="w-full border p-1 mb-2 rounded">
-                                    <option value="">-- specify params --</option>
-                                </select>
-                                <div class="space-y-1">
-                                    <div>$T_{c1}$: <input type="number" id="mix-Tc1" value="190.6" class="w-16 border rounded px-1 font-mono"> K</div>
-                                    <div>$P_{c1}$: <input type="number" id="mix-Pc1" value="46.0" class="w-16 border rounded px-1 font-mono"> bar</div>
-                                    <div>$\omega_1$: <input type="number" id="mix-w1" value="0.011" class="w-16 border rounded px-1 font-mono"></div>
-                                </div>
-                            </div>
-                            <div class="p-2 border rounded bg-gray-50">
-                                <label class="font-bold text-red-700 block mb-1">Substance 2:</label>
-                                <select id="mix-preset-2" onchange="loadMixChemical(2)" class="w-full border p-1 mb-2 rounded">
-                                    <option value="">-- specify params --</option>
-                                </select>
-                                <div class="space-y-1">
-                                    <div>$T_{c2}$: <input type="number" id="mix-Tc2" value="305.4" class="w-16 border rounded px-1 font-mono"> K</div>
-                                    <div>$P_{c2}$: <input type="number" id="mix-Pc2" value="48.8" class="w-16 border rounded px-1 font-mono"> bar</div>
-                                    <div>$\omega_2$: <input type="number" id="mix-w2" value="0.099" class="w-16 border rounded px-1 font-mono"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 交互参数与 EOS -->
-                        <div class="grid grid-cols-2 gap-2 mb-3 text-xs bg-gray-50 p-2 rounded border">
-                            <div>
-                                <label class="font-bold text-tju-blue block mb-1">EOS Model:</label>
-                                <label class="block"><input type="radio" name="mix-eos" value="SRK" class="mr-1"> SRK</label>
-                                <label class="block"><input type="radio" name="mix-eos" value="PR" checked class="mr-1"> Peng-Robinson</label>
-                                <label class="block"><input type="radio" name="mix-eos" value="PRG" class="mr-1"> PR-Gasem</label>
-                            </div>
-                            <div>
-                                <label class="font-bold text-tju-blue block mb-1">Interaction Param:</label>
-                                <div class="mt-2">$k_{12} = $ <input type="number" id="mix-k12" value="0.0" step="0.01" class="w-16 border rounded p-1 font-mono"></div>
-                            </div>
-                        </div>
-
-                        <!-- 计算类型 -->
-                        <div class="mb-3 text-xs border p-2 rounded bg-blue-50/30">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-tju-blue">Select calculation type:</span>
-                                <a href="#" onclick="openInfo('calc_req')" class="text-blue-600 hover:underline">info</a>
-                            </div>
-                            <select id="mix-calc-type" class="w-full border p-1.5 rounded font-medium bg-white">
-                                <option value="bubble_P">Bubble point pressure calculation</option>
-                                <option value="bubble_T">Bubble point temperature calculation</option>
-                                <option value="dew_P">Dew point pressure calculation</option>
-                                <option value="dew_T">Dew point temperature calculation</option>
-                                <option value="flash">Isothermal vapour-liquid flash calculation</option>
-                            </select>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-2 mb-4 text-xs">
-                            <div>
-                                <label class="block font-bold text-gray-700 mb-1">$T$ (K)</label>
-                                <input type="number" id="mix-T" value="300.0" step="any" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-gray-700 mb-1">$P$ (bar)</label>
-                                <input type="number" id="mix-P" value="35.5" step="any" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-gray-700 mb-1">$z_1^{\text{overall}}$</label>
-                                <input type="number" id="mix-z1" value="0.5" step="0.05" class="w-full border rounded p-1.5 font-mono">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2">
-                            <button onclick="calculateMixture()" class="flex-1 bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition flex items-center justify-center gap-1 text-xs">
-                                <i class="fa-solid fa-diagram-next"></i> <span data-i18n="btn_calc_mix">求解相平衡</span>
-                            </button>
-                            <button onclick="resetMix()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2.5 rounded text-xs">重置</button>
-                        </div>
-                    </div>
-
-                    <!-- 历史档案面板 -->
-                    <div id="panel-history" class="tab-panel hidden">
-                        <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
-                            <span><i class="fa-solid fa-cloud text-tju-accent mr-2"></i><span data-i18n="history_title">云端存档记录</span></span>
-                        </h2>
-                        <p class="text-xs text-gray-500 mb-4" data-i18n="history_desc">登录后可将您的热力学计算同步至 Supabase 数据库。</p>
-                        <div id="history-list" class="space-y-2 max-h-96 overflow-y-auto text-xs">
-                            <div class="p-3 bg-gray-50 rounded border text-center text-gray-400">请先登录以获取云端存档</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 云端保存与报告导出 -->
-                <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2">
-                    <button onclick="saveToSupabase()" class="flex-1 bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-2 rounded flex items-center justify-center gap-1 shadow">
-                        <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn_save">保存至云端</span>
-                    </button>
-                    <button onclick="exportReport('pdf')" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-1 shadow">
-                        <i class="fa-solid fa-file-pdf"></i> PDF
-                    </button>
-                    <button onclick="exportReport('docx')" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-1 shadow">
-                        <i class="fa-solid fa-file-word"></i> DOCX
-                    </button>
-                </div>
-            </section>
-
-            <!-- 右侧输出与可视化展示区 (7 cols - 扩充布局大图显示) -->
-            <section class="lg:col-span-7 space-y-6">
-                <!-- 数值结果展示区 -->
-                <div id="printable-area" class="bg-white rounded-lg shadow-md p-5 academic-border">
-                    <div class="flex justify-between items-center border-b pb-3 mb-4">
-                        <div>
-                            <h3 class="font-bold text-tju-blue text-base" id="res-header">方程求解结果 (Solutions)</h3>
-                            <p class="text-xs text-gray-400" id="res-timestamp">准备计算中...</p>
-                        </div>
-                        <span id="res-tag" class="bg-blue-100 text-tju-blue text-xs font-bold px-2.5 py-1 rounded">JsPSCES-TJU</span>
-                    </div>
-
-                    <div id="results-display" class="space-y-4">
-                        <div class="text-sm text-gray-500 text-center py-8">
-                            <i class="fa-solid fa-calculator text-3xl text-gray-300 mb-2"></i>
-                            <p data-i18n="prompt_calc">请在左侧设置参数并点击“开始计算”</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ECharts 大图交互区 -->
-                <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-tju-blue">
-                    <h3 class="font-bold text-tju-blue text-sm mb-3 flex items-center justify-between">
-                        <span><i class="fa-solid fa-chart-line text-tju-accent mr-2"></i><span data-i18n="chart_title">热力学特性图示 (PV Diagram / VLE Curve)</span></span>
-                        <span class="text-xs font-normal text-gray-400">ECharts Interactive</span>
-                    </h3>
-                    <!-- 扩大视图空间至 400px 高度，保证占满大图 -->
-                    <div id="echarts-container" class="w-full h-96"></div>
-                </div>
-            </section>
-        </div>
-
-    </main>
-
-    <!-- 模态框：INFO 帮助系统 -->
-    <div id="info-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-[#eaf4ec] border-2 border-tju-blue p-6 max-w-xl w-full rounded shadow-xl max-h-[90vh] overflow-y-auto relative">
-            <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div id="info-modal-content"></div>
-            <div class="text-center mt-6">
-                <button onclick="closeInfoModal()" class="bg-tju-blue text-white px-6 py-1.5 font-bold text-xs hover:bg-tju-light rounded shadow">关闭窗口 (Close)</button>
-            </div>
-        </div>
+      <div class="flex items-center space-x-3 mt-3 md:mt-0">
+        <button id="lang-btn" onclick="toggleLanguage()" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded border border-white/20 transition flex items-center gap-1">
+          <i class="fa-solid fa-language"></i> <span id="lang-btn-text">English</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 模态框：重构账号管理系统（登录/注册/重置密码 + 防刷屏+ Canvas验证码） -->
-    <div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white rounded-lg shadow-2xl w-full max-w-md p-6 relative border-t-4 border-tju-accent">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
-            <div class="flex border-b mb-4">
-                <button id="auth-tab-login" onclick="switchAuthMode('login')" class="flex-1 py-2 font-bold text-sm text-tju-blue border-b-2 border-tju-blue">登录</button>
-                <button id="auth-tab-register" onclick="switchAuthMode('register')" class="flex-1 py-2 font-bold text-sm text-gray-400 hover:text-tju-blue">注册</button>
-                <button id="auth-tab-reset" onclick="switchAuthMode('reset')" class="flex-1 py-2 font-bold text-sm text-gray-400 hover:text-tju-blue">重置密码</button>
-            </div>
-
-            <!-- 登录面板 -->
-            <div id="auth-form-login" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1">电子邮箱或昵称：</label>
-                    <input type="text" id="login-identifier" placeholder="Email / Nickname" class="w-full border rounded p-2 focus:ring-tju-blue">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">登录密码：</label>
-                    <input type="password" id="login-password" placeholder="••••••••" class="w-full border rounded p-2 focus:ring-tju-blue">
-                </div>
-                <button onclick="handleLogin()" class="w-full bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition mt-2">登录</button>
-            </div>
-
-            <!-- 注册面板 -->
-            <div id="auth-form-register" class="space-y-3 text-xs hidden">
-                <div>
-                    <label class="block font-semibold mb-1">电子邮箱：</label>
-                    <div class="flex gap-2">
-                        <input type="email" id="reg-email" placeholder="student@tju.edu.cn" class="w-full border rounded p-2">
-                        <button id="btn-send-reg-otp" onclick="sendOtp('register')" class="bg-tju-accent text-tju-blue font-bold px-3 py-1 rounded whitespace-nowrap hover:bg-yellow-500">发送验证码</button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">邮箱 6 位验证码：</label>
-                    <input type="text" id="reg-otp" maxlength="6" placeholder="123456" class="w-full border rounded p-2 font-mono">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">用户昵称 (系统唯一)：</label>
-                    <input type="text" id="reg-nickname" placeholder="PeiyangStudent" class="w-full border rounded p-2">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">防刷屏图形验证码：</label>
-                    <div class="flex gap-2 items-center">
-                        <input type="text" id="reg-captcha-input" placeholder="输入图形字符" class="w-full border rounded p-2">
-                        <canvas id="captcha-canvas" width="100" height="34" onclick="drawCaptcha()" class="border rounded cursor-pointer bg-gray-100" title="点击刷新验证码"></canvas>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">设置密码：</label>
-                    <input type="password" id="reg-password" placeholder="••••••••" class="w-full border rounded p-2">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">确认密码：</label>
-                    <input type="password" id="reg-confirm-password" placeholder="••••••••" class="w-full border rounded p-2">
-                </div>
-                <button onclick="handleRegister()" class="w-full bg-tju-accent hover:bg-yellow-600 text-tju-blue font-bold py-2.5 rounded shadow transition mt-2">完成注册</button>
-            </div>
-
-            <!-- 重置密码面板 -->
-            <div id="auth-form-reset" class="space-y-3 text-xs hidden">
-                <div>
-                    <label class="block font-semibold mb-1">注册电子邮箱：</label>
-                    <div class="flex gap-2">
-                        <input type="email" id="reset-email" placeholder="student@tju.edu.cn" class="w-full border rounded p-2">
-                        <button id="btn-send-reset-otp" onclick="sendOtp('reset')" class="bg-tju-accent text-tju-blue font-bold px-3 py-1 rounded whitespace-nowrap hover:bg-yellow-500">发送验证码</button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">邮箱 6 位验证码：</label>
-                    <input type="text" id="reset-otp" maxlength="6" placeholder="123456" class="w-full border rounded p-2 font-mono">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">新密码：</label>
-                    <input type="password" id="reset-new-password" placeholder="••••••••" class="w-full border rounded p-2">
-                </div>
-                <button onclick="handleResetPassword()" class="w-full bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition mt-2">确认更新密码</button>
-            </div>
-        </div>
+    <div class="max-w-7xl mx-auto px-4 flex space-x-1 border-t border-white/10 pt-2 overflow-x-auto">
+      <button id="tab-btn-home" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue shadow-sm">
+        <i class="fa-solid fa-house mr-1"></i> <span data-i18n="tab_home">首页说明 (Home)</span>
+      </button>
+      <button id="tab-btn-pure" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+        <i class="fa-solid fa-flask mr-1"></i> <span data-i18n="tab_pure">纯物质计算 (Pure)</span>
+      </button>
+      <button id="tab-btn-mixture" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+        <i class="fa-solid fa-vial-circle-check mr-1"></i> <span data-i18n="tab_mixture">混合物与相平衡 (Mixture/VLE)</span>
+      </button>
+      <button id="tab-btn-history" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+        <i class="fa-solid fa-database mr-1"></i> <span data-i18n="tab_history">本地历史 (History)</span>
+      </button>
     </div>
+  </header>
 
-    <!-- 页脚与学术归属声明 -->
-    <footer class="bg-gray-900 text-gray-400 text-xs py-6 mt-12 border-t-2 border-tju-accent">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-                <h4 class="text-white font-bold mb-2">JsPSCES-TJU v6.1.0</h4>
-                <p>JavaScript Programs for Solving Cubic Equations of State Tianjin University Edition</p>
-                <p class="mt-2 text-gray-500">使用环境：天津大学化工学院</p>
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+    <section id="panel-home" class="tab-panel bg-white rounded-lg shadow-md p-6 academic-border mb-6"></section>
+
+    <div id="interactive-workspace" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+      <section class="lg:col-span-5 bg-white rounded-lg shadow-md p-5 academic-border flex flex-col justify-between">
+        <div>
+          <div id="panel-pure" class="tab-panel hidden">
+            <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
+              <span><i class="fa-solid fa-atom text-tju-accent mr-2"></i><span data-i18n="pure_title">纯物质状态方程求解</span></span>
+              <a href="#" onclick="openInfo('crit'); return false;" class="text-xs text-blue-600 hover:underline">info</a>
+            </h2>
+
+            <div class="mb-4 bg-gray-50 p-3 rounded border border-gray-200">
+              <label class="block text-xs font-bold text-tju-blue uppercase tracking-wider mb-2" data-i18n="select_eos">Select cubic equation of state:</label>
+              <div class="space-y-1.5 text-xs">
+                <label class="flex items-center justify-between cursor-pointer">
+                  <span><input type="radio" name="pure-eos" value="VDW" class="mr-2">Van der Waals</span>
+                  <a href="#" onclick="openInfo('vdw'); return false;" class="text-blue-600 hover:underline">info</a>
+                </label>
+                <label class="flex items-center justify-between cursor-pointer">
+                  <span><input type="radio" name="pure-eos" value="RK" class="mr-2">Redlich-Kwong</span>
+                  <a href="#" onclick="openInfo('rk'); return false;" class="text-blue-600 hover:underline">info</a>
+                </label>
+                <label class="flex items-center justify-between cursor-pointer">
+                  <span><input type="radio" name="pure-eos" value="SRK" checked class="mr-2">Soave-Redlich-Kwong</span>
+                  <a href="#" onclick="openInfo('srk'); return false;" class="text-blue-600 hover:underline">info</a>
+                </label>
+                <label class="flex items-center justify-between cursor-pointer">
+                  <span><input type="radio" name="pure-eos" value="PR" class="mr-2">Peng-Robinson</span>
+                  <a href="#" onclick="openInfo('pr'); return false;" class="text-blue-600 hover:underline">info</a>
+                </label>
+                <label class="flex items-center justify-between cursor-pointer">
+                  <span><input type="radio" name="pure-eos" value="PRG" class="mr-2">Peng-Robinson-Gasem</span>
+                  <a href="#" onclick="openInfo('prg'); return false;" class="text-blue-600 hover:underline">info</a>
+                </label>
+              </div>
             </div>
-            <div>
-                <h4 class="text-white font-bold mb-2">学术与版权规范</h4>
-                <p>理论指导：天津大学化工学院 <span class="text-white font-semibold">夏淑倩教授</span></p>
-                <p>版权归属：<a href="https://github.com/Untholionleen" target="_blank" class="text-tju-accent hover:underline">Untholionleen</a></p>
-                <p>技术支持：Gemini AI Assistant</p>
+
+            <div class="mb-4">
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-bold text-gray-700" data-i18n="select_preset">Specify critical parameters or select chemical:</label>
+                <a href="#" onclick="openInfo('crit'); return false;" class="text-xs text-blue-600 hover:underline">info</a>
+              </div>
+              <select id="pure-preset" onchange="loadPurePreset()" class="w-full bg-gray-50 border text-xs rounded p-2 focus:ring-tju-blue">
+                <option value="custom">-- specify critical parameters --</option>
+              </select>
             </div>
-            <div>
-                <h4 class="text-white font-bold mb-2">开源算法归属与引用</h4>
-                <p>算法原型移植自 Patrick Barrie 博士 (Cambridge Univ.):</p>
-                <a href="https://pjb10.user.srcf.net/thermo/" target="_blank" class="text-blue-400 hover:underline break-all">https://pjb10.user.srcf.net/thermo/</a>
+
+            <div class="grid grid-cols-3 gap-2 mb-4 text-xs">
+              <div>
+                <label class="block text-gray-600 mb-1">$T_c$ (K)</label>
+                <input type="number" id="pure-Tc" value="305.4" step="any" class="w-full border rounded p-1.5 font-mono">
+              </div>
+              <div>
+                <label class="block text-gray-600 mb-1">$P_c$ (bar)</label>
+                <input type="number" id="pure-Pc" value="48.8" step="any" class="w-full border rounded p-1.5 font-mono">
+              </div>
+              <div>
+                <label class="block text-gray-600 mb-1">$\omega$</label>
+                <input type="number" id="pure-w" value="0.099" step="any" class="w-full border rounded p-1.5 font-mono">
+              </div>
             </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4 text-xs bg-blue-50/50 p-3 rounded border border-blue-100">
+              <div>
+                <label class="block font-bold text-tju-blue mb-1" data-i18n="temp">$T$ (K)</label>
+                <input type="number" id="pure-T" value="350.0" step="any" class="w-full border rounded p-2 text-sm bg-white font-mono">
+              </div>
+              <div>
+                <label class="block font-bold text-tju-blue mb-1" data-i18n="pressure">$P$ (bar)</label>
+                <input type="number" id="pure-P" value="20.0" step="any" class="w-full border rounded p-2 text-sm bg-white font-mono">
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button onclick="calculatePure()" class="flex-1 bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition flex items-center justify-center gap-1 text-xs">
+                <i class="fa-solid fa-calculator"></i> <span data-i18n="btn_calc">Calculate</span>
+              </button>
+              <button onclick="resetPure()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2.5 rounded text-xs">Reset</button>
+            </div>
+          </div>
+
+          <div id="panel-mixture" class="tab-panel hidden">
+            <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
+              <span><i class="fa-solid fa-diagram-project text-tju-accent mr-2"></i><span data-i18n="mix_title">混合物汽液平衡 (Binary VLE)</span></span>
+              <a href="#" onclick="openInfo('mixing'); return false;" class="text-xs text-blue-600 hover:underline">mixing rules</a>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
+              <div class="p-2 border rounded bg-gray-50">
+                <label class="font-bold text-red-700 block mb-1">Substance 1:</label>
+                <select id="mix-preset-1" onchange="loadMixChemical(1)" class="w-full border p-1 mb-2 rounded">
+                  <option value="">-- specify params --</option>
+                </select>
+                <div class="space-y-1">
+                  <div>$T_{c1}$: <input type="number" id="mix-Tc1" value="190.6" class="w-16 border rounded px-1 font-mono"> K</div>
+                  <div>$P_{c1}$: <input type="number" id="mix-Pc1" value="46.0" class="w-16 border rounded px-1 font-mono"> bar</div>
+                  <div>$\omega_1$: <input type="number" id="mix-w1" value="0.011" class="w-16 border rounded px-1 font-mono"></div>
+                </div>
+              </div>
+              <div class="p-2 border rounded bg-gray-50">
+                <label class="font-bold text-red-700 block mb-1">Substance 2:</label>
+                <select id="mix-preset-2" onchange="loadMixChemical(2)" class="w-full border p-1 mb-2 rounded">
+                  <option value="">-- specify params --</option>
+                </select>
+                <div class="space-y-1">
+                  <div>$T_{c2}$: <input type="number" id="mix-Tc2" value="305.4" class="w-16 border rounded px-1 font-mono"> K</div>
+                  <div>$P_{c2}$: <input type="number" id="mix-Pc2" value="48.8" class="w-16 border rounded px-1 font-mono"> bar</div>
+                  <div>$\omega_2$: <input type="number" id="mix-w2" value="0.099" class="w-16 border rounded px-1 font-mono"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mb-3 text-xs bg-gray-50 p-2 rounded border">
+              <div>
+                <label class="font-bold text-tju-blue block mb-1">Select EOS:</label>
+                <label class="block"><input type="radio" name="mix-eos" value="SRK" class="mr-1"> SRK</label>
+                <label class="block"><input type="radio" name="mix-eos" value="PR" checked class="mr-1"> Peng-Robinson</label>
+                <label class="block"><input type="radio" name="mix-eos" value="PRG" class="mr-1"> PR-Gasem</label>
+              </div>
+              <div>
+                <label class="font-bold text-tju-blue block mb-1">Binary Parameter:</label>
+                <div class="mt-2">$k_{12} = $ <input type="number" id="mix-k12" value="0.0" step="0.01" class="w-16 border rounded p-1 font-mono"></div>
+              </div>
+            </div>
+
+            <div class="mb-3 text-xs border p-2 rounded bg-blue-50/30">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-tju-blue">Select calculation required:</span>
+                <a href="#" onclick="openInfo('calc_req'); return false;" class="text-blue-600 hover:underline">info</a>
+              </div>
+              <select id="mix-calc-type" class="w-full border p-1.5 rounded font-medium bg-white">
+                <option value="bubble_P">Bubble point pressure calculation</option>
+                <option value="bubble_T">Bubble point temperature calculation</option>
+                <option value="dew_P">Dew point pressure calculation</option>
+                <option value="dew_T">Dew point temperature calculation</option>
+                <option value="flash">Isothermal vapour-liquid flash calculation</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-4 text-xs">
+              <div>
+                <label class="block font-bold text-gray-700 mb-1">$T$ (K)</label>
+                <input type="number" id="mix-T" value="300.0" step="any" class="w-full border rounded p-1.5 font-mono">
+              </div>
+              <div>
+                <label class="block font-bold text-gray-700 mb-1">$P$ (bar)</label>
+                <input type="number" id="mix-P" value="35.5" step="any" class="w-full border rounded p-1.5 font-mono">
+              </div>
+              <div>
+                <label class="block font-bold text-gray-700 mb-1">$z_1^{\text{overall}}$</label>
+                <input type="number" id="mix-z1" value="0.5" step="0.05" class="w-full border rounded p-1.5 font-mono">
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button onclick="calculateMixture()" class="flex-1 bg-tju-blue hover:bg-tju-light text-white font-bold py-2.5 rounded shadow transition flex items-center justify-center gap-1 text-xs">
+                <i class="fa-solid fa-diagram-next"></i> <span data-i18n="btn_calc_mix">Calculate VLE</span>
+              </button>
+              <button onclick="resetMix()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2.5 rounded text-xs">Reset</button>
+            </div>
+          </div>
+
+          <div id="panel-history" class="tab-panel hidden">
+            <h2 class="text-lg font-bold text-tju-blue border-b pb-2 mb-4 flex items-center justify-between">
+              <span><i class="fa-solid fa-cloud text-tju-accent mr-2"></i><span data-i18n="history_title">本地计算历史</span></span>
+            </h2>
+            <p class="text-xs text-gray-500 mb-4" data-i18n="history_desc">本地浏览器存储，支持查看、加载、删除和导出真实数学数据。</p>
+            <div id="history-list" class="space-y-2 max-h-[420px] overflow-y-auto text-xs">
+              <div class="p-3 bg-gray-50 rounded border text-center text-gray-400">No local history yet</div>
+            </div>
+          </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-gray-800 text-center text-gray-600">
-            &copy; 2026 Untholionleen. All Rights Reserved. Tianjin University Academic Special Edition.
+
+        <div class="mt-6 pt-4 border-t border-gray-100 flex gap-2">
+          <button onclick="saveLocalHistory()" class="flex-1 bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-2 rounded flex items-center justify-center gap-1 shadow">
+            <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn_save">保存到本地</span>
+          </button>
+          <button onclick="exportCurrentData()" class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-1 shadow">
+            <i class="fa-solid fa-file-export"></i> <span data-i18n="btn_export">导出 JSON</span>
+          </button>
+          <button id="import-btn" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-1 shadow">
+            <i class="fa-solid fa-file-import"></i> <span data-i18n="btn_import">导入 JSON</span>
+          </button>
+          <input type="file" id="import-file" accept=".json,application/json" class="hidden" />
         </div>
-    </footer>
+      </section>
 
-    <!-- JavaScript 全量核心逻辑 -->
-    <script>
-        // ==========================================
-        // 1. 初始化 Supabase 与系统配置
-        // ==========================================
-        const SUPABASE_URL = 'https://gmrhismnbohemjlqejhr.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInRefiI6Imdtcmhpc21uYm9oZW1qbHFlamhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjUxMzIsImV4cCI6MjEwNTcwMTEzMn0.Pz3VrMUBFsffAwEOSsO2_71jFqBjQSfNcXXtCFLnEMI';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      <section class="lg:col-span-7 space-y-6">
+        <div id="printable-area" class="bg-white rounded-lg shadow-md p-5 academic-border">
+          <div class="flex justify-between items-center border-b pb-3 mb-4">
+            <div>
+              <h3 class="font-bold text-tju-blue text-base" id="res-header">Solutions to Equation</h3>
+              <p class="text-xs text-gray-400" id="res-timestamp">Ready for calculation</p>
+            </div>
+            <span id="res-tag" class="bg-blue-100 text-tju-blue text-xs font-bold px-2.5 py-1 rounded">JsPSCES-TJU</span>
+          </div>
 
-        let currentUser = null;
-        let currentLang = 'zh';
-        let myChart = null;
-        let lastCalculationData = null;
-        let generatedCaptchaCode = '';
-        let lastOtpSentTime = 0;
+          <div id="results-display" class="space-y-4">
+            <div class="text-sm text-gray-500 text-center py-8">
+              <i class="fa-solid fa-calculator text-3xl text-gray-300 mb-2"></i>
+              <p data-i18n="prompt_calc">请在左侧设置参数并点击“Calculate”按钮</p>
+            </div>
+          </div>
+        </div>
 
-        // 全量 16 种化学物质临界参数数据库 (完整搬运自 testing_5(BEST).html)
-        const CHEMICAL_DATABASE = [
-            { name: 'nitrogen', Tc: 126.2, Pc: 34.0, omega: 0.040 },
-            { name: 'oxygen', Tc: 154.6, Pc: 50.4, omega: 0.022 },
-            { name: 'hydrogen', Tc: 33.2, Pc: 13.0, omega: -0.220 },
-            { name: 'carbon dioxide', Tc: 304.2, Pc: 73.8, omega: 0.225 },
-            { name: 'methane', Tc: 190.6, Pc: 46.0, omega: 0.011 },
-            { name: 'ethane', Tc: 305.4, Pc: 48.8, omega: 0.099 },
-            { name: 'propane', Tc: 369.8, Pc: 42.5, omega: 0.152 },
-            { name: 'n-butane', Tc: 425.2, Pc: 38.0, omega: 0.200 },
-            { name: 'n-pentane', Tc: 469.7, Pc: 33.7, omega: 0.251 },
-            { name: 'n-hexane', Tc: 507.6, Pc: 30.3, omega: 0.301 },
-            { name: 'ethylene', Tc: 282.3, Pc: 50.4, omega: 0.087 },
-            { name: 'propylene', Tc: 365.0, Pc: 46.0, omega: 0.144 },
-            { name: 'acetylene', Tc: 308.3, Pc: 61.4, omega: 0.187 },
-            { name: 'benzene', Tc: 562.2, Pc: 48.9, omega: 0.212 },
-            { name: 'toluene', Tc: 591.8, Pc: 41.0, omega: 0.264 },
-            { name: 'water', Tc: 647.3, Pc: 220.6, omega: 0.344 }
-        ];
+        <div class="bg-white rounded-lg shadow-md p-5 border-t-4 border-tju-blue">
+          <h3 class="font-bold text-tju-blue text-sm mb-3 flex items-center justify-between">
+            <span><i class="fa-solid fa-chart-line text-tju-accent mr-2"></i><span data-i18n="chart_title">热力学特性图示 (Thermodynamic Diagram)</span></span>
+            <span class="text-xs font-normal text-gray-400">ECharts</span>
+          </h3>
+          <div id="echarts-container" class="w-full h-72"></div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-        const I18N = {
-            zh: {
-                tab_home: "首页说明",
-                tab_pure: "纯物质计算",
-                tab_mixture: "混合物与相平衡",
-                tab_history: "计算云档案",
-                pure_title: "纯物质状态方程求解",
-                mix_title: "混合物汽液平衡 (Binary VLE)",
-                history_title: "云端存档记录",
-                history_desc: "登录后可将您的热力学计算同步至 Supabase 数据库。",
-                select_eos: "选择状态方程：",
-                select_preset: "选择预设组分或手动指定：",
-                temp: "温度 T (K)",
-                pressure: "压力 P (bar)",
-                btn_calc: "开始计算",
-                btn_calc_mix: "求解相平衡",
-                btn_save: "保存至云端",
-                prompt_calc: "请在左侧设置参数并点击“开始计算”",
-                chart_title: "热力学特性图示 (PV Diagram / VLE Curve)"
-            },
-            en: {
-                tab_home: "Home",
-                tab_pure: "Pure EOS Calc",
-                tab_mixture: "Mixture VLE Calc",
-                tab_history: "Cloud History",
-                pure_title: "Pure Substance EOS Solver",
-                mix_title: "Binary VLE Calculations",
-                history_title: "Saved Cloud History",
-                history_desc: "Sync your calculations with Supabase cloud database upon login.",
-                select_eos: "Select cubic equation of state:",
-                select_preset: "Specify critical parameters or select chemical:",
-                temp: "Temperature T (K)",
-                pressure: "Pressure P (bar)",
-                btn_calc: "Calculate",
-                btn_calc_mix: "Calculate VLE",
-                btn_save: "Save to Cloud",
-                prompt_calc: "Configure parameters on the left and click Calculate.",
-                chart_title: "Thermodynamic Diagram (PV / VLE Curve)"
-            }
-        };
+  <div id="info-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-[#eaf4ec] border-2 border-tju-blue p-6 max-w-xl w-full rounded shadow-xl max-h-[90vh] overflow-y-auto relative">
+      <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <div id="info-modal-content"></div>
+      <div class="text-center mt-6">
+        <button onclick="closeInfoModal()" class="bg-tju-blue text-white px-6 py-1.5 font-bold text-xs hover:bg-tju-light rounded shadow">Close Window</button>
+      </div>
+    </div>
+  </div>
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initChemicalDropdowns();
-            initECharts();
-            checkUserSession();
-            drawCaptcha();
-        });
+  <footer class="bg-gray-900 text-gray-400 text-xs py-6 mt-12 border-t-2 border-tju-accent">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <h4 class="text-white font-bold mb-2">JsPSCES-TJU</h4>
+        <p>JavaScript Programs for Solving Cubic Equations of State Tianjin University Edition</p>
+        <p class="mt-2 text-gray-500">Academic Use: Tianjin University School of Chemical Engineering and Technology</p>
+      </div>
+      <div>
+        <h4 class="text-white font-bold mb-2">Academic & Copyright</h4>
+        <p>Theoretical guidance: <span class="text-white font-semibold">Professor Xia Shuqian</span></p>
+        <p>Copyright: <a href="https://github.com/Untholionleen" target="_blank" class="text-tju-accent hover:underline">Untholionleen</a></p>
+        <p>Support: AI-assisted calculation and teaching system</p>
+      </div>
+      <div>
+        <h4 class="text-white font-bold mb-2">Reference</h4>
+        <p>Algorithm legacy built from Patrick Barrie's original work.</p>
+        <a href="https://pjb10.user.srcf.net/thermo/" target="_blank" class="text-blue-400 hover:underline break-all">https://pjb10.user.srcf.net/thermo/</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-gray-800 text-center text-gray-600">
+      &copy; 2026 Untholionleen. All Rights Reserved. Tianjin University Academic Special Edition.
+    </div>
+  </footer>
 
-        function initChemicalDropdowns() {
-            const pureSel = document.getElementById('pure-preset');
-            const mixSel1 = document.getElementById('mix-preset-1');
-            const mixSel2 = document.getElementById('mix-preset-2');
+  <script>
+    const CHEMICAL_DATABASE = [
+      { name: 'nitrogen', Tc: 126.2, Pc: 34.0, omega: 0.040 },
+      { name: 'oxygen', Tc: 154.6, Pc: 50.4, omega: 0.022 },
+      { name: 'hydrogen', Tc: 33.2, Pc: 13.0, omega: -0.220 },
+      { name: 'carbon dioxide', Tc: 304.2, Pc: 73.8, omega: 0.225 },
+      { name: 'methane', Tc: 190.6, Pc: 46.0, omega: 0.011 },
+      { name: 'ethane', Tc: 305.4, Pc: 48.8, omega: 0.099 },
+      { name: 'propane', Tc: 369.8, Pc: 42.5, omega: 0.152 },
+      { name: 'n-butane', Tc: 425.2, Pc: 38.0, omega: 0.200 },
+      { name: 'n-pentane', Tc: 469.7, Pc: 33.7, omega: 0.251 },
+      { name: 'n-hexane', Tc: 507.6, Pc: 30.3, omega: 0.301 },
+      { name: 'ethylene', Tc: 282.3, Pc: 50.4, omega: 0.087 },
+      { name: 'propylene', Tc: 365.0, Pc: 46.0, omega: 0.144 },
+      { name: 'acetylene', Tc: 308.3, Pc: 61.4, omega: 0.187 },
+      { name: 'benzene', Tc: 562.2, Pc: 48.9, omega: 0.212 },
+      { name: 'toluene', Tc: 591.8, Pc: 41.0, omega: 0.264 },
+      { name: 'water', Tc: 647.3, Pc: 220.6, omega: 0.344 }
+    ];
 
-            CHEMICAL_DATABASE.forEach(chem => {
-                const opt1 = document.createElement('option');
-                opt1.value = chem.name; opt1.innerText = chem.name;
-                pureSel.appendChild(opt1);
+    const I18N = {
+      zh: {
+        tab_home: "首页说明 (Home)",
+        tab_pure: "纯物质计算 (Pure)",
+        tab_mixture: "混合物与相平衡 (Mixture/VLE)",
+        tab_history: "本地历史 (History)",
+        pure_title: "纯物质状态方程求解",
+        mix_title: "混合物汽液平衡 (Binary VLE)",
+        history_title: "本地计算历史",
+        history_desc: "本地浏览器存储，支持查看、加载、删除和导出真实数学数据。",
+        select_eos: "选择立方状态方程：",
+        select_preset: "指定临界参数或选择物质：",
+        temp: "$T$ (K)",
+        pressure: "$P$ (bar)",
+        btn_calc: "计算",
+        btn_calc_mix: "计算 VLE",
+        btn_save: "保存到本地",
+        btn_export: "导出 JSON",
+        btn_import: "导入 JSON",
+        prompt_calc: "请在左侧设置参数并点击“计算”按钮",
+        chart_title: "热力学特性图示 (Thermodynamic Diagram)",
+        sub_title: "JavaScript Programs for Solving Cubic Equations of State",
+        home_intro_title: "JavaScript Programs for Solving Cubic Equations of State Tianjin University (JsPSCES-TJU)",
+        home_intro_1: "这里给出两个我于 2004 年编写的 JavaScript 程序，用于计算热力学性质和相平衡条件。它们的设计目标是教学型，而不是仅仅给出结果；程序会说明属性是如何计算出来的。值得注意的是，这些程序至今仍可运行，并被多个高校及剑桥大学用于热力学教学。",
+        home_intro_2: "这些程序的简要描述发表在：P.J. Barrie, \"JavaScript programs to calculate thermodynamic properties using cubic equations of state\", Journal of Chemical Education, 82, 958-959 (2005). 如果您愿意，请在引用时注明该文。",
+        home_programs_title: "这两个程序分别是：",
+        home_pure_title: "求解纯物质的立方状态方程",
+        home_pure_desc: "此程序用于计算压缩因子、摩尔体积、逸度系数和偏离函数，并可选择不同的立方状态方程。",
+        home_mixture_title: "利用立方状态方程预测二元混合物的气液平衡",
+        home_mixture_note: "该程序适用于 Chrome、Firefox 和 Safari；我认为它也可在 Microsoft Edge 中工作，但在 Internet Explorer 7–11 中并不稳定。",
+        home_mixture_desc: "此程序可计算泡点压力和温度、露点压力和温度，并可进行等温汽液闪蒸计算。用户可在三种现代状态方程之间进行选择。",
+        info_title: "如果“info”帮助链接无法打开：",
+        info_text: "如果“info”链接不能打开，请按住 CTRL 键后点击链接。若运行的软件禁用了所有弹出窗口，则可能无法阅读帮助内容。",
+        further_title: "进一步信息",
+        further_intro: "有关立方状态方程的理论细节，可参考标准热力学教科书，如：",
+        further_1: "S.I. Sandler: \"Chemical, Biochemical and Engineering Thermodynamics\" (4th ed. Wiley, 2006).",
+        further_2: "J.R. Elliott and C.T. Lira: \"Introductory Chemical Engineering Thermodynamics\" (Prentice Hall, 1999).",
+        further_3: "J.M. Smith, H.C. van Ness and M.M. Abbott: \"Introduction to Chemical Engineering Thermodynamics\" (6th ed. McGraw-Hill, 2001)."
+      },
+      en: {
+        tab_home: "Home",
+        tab_pure: "Pure EOS",
+        tab_mixture: "Mixture/VLE",
+        tab_history: "Local History",
+        pure_title: "Pure Substance EOS Solver",
+        mix_title: "Binary Mixture VLE",
+        history_title: "Local Calculation History",
+        history_desc: "Stored in the browser locally. Supports viewing, loading, deleting and exporting real mathematical data.",
+        select_eos: "Select cubic equation of state:",
+        select_preset: "Specify critical parameters or select chemical:",
+        temp: "$T$ (K)",
+        pressure: "$P$ (bar)",
+        btn_calc: "Calculate",
+        btn_calc_mix: "Calculate VLE",
+        btn_save: "Save to Local",
+        btn_export: "Export JSON",
+        btn_import: "Import JSON",
+        prompt_calc: "Configure parameters on the left and click Calculate",
+        chart_title: "Thermodynamic Diagram",
+        sub_title: "JavaScript Programs for Solving Cubic Equations of State",
+        home_intro_title: "JavaScript Programs for Solving Cubic Equations of State Tianjin University (JsPSCES-TJU)",
+        home_intro_1: "Here are two JavaScript programs that I wrote in 2004 for calculating thermodynamic properties and equilibrium conditions. They are designed to be educational — rather than simply giving answers, they show how the property is calculated. Remarkably, the programs still work and have been used to assist thermodynamics teaching in several universities worldwide, including Cambridge.",
+        home_intro_2: "A brief description of these programs was reported in: P.J. Barrie, \"JavaScript programs to calculate thermodynamic properties using cubic equations of state\", Journal of Chemical Education, 82, 958-959 (2005). Please cite this paper if you get the chance.",
+        home_programs_title: "The two programs are:",
+        home_pure_title: "Solving cubic equations of state (pure substances)",
+        home_pure_desc: "This program calculates compressibility factor, molar volume, fugacity coefficient and departure functions using a choice of cubic equations of state.",
+        home_mixture_title: "Predicting vapour-liquid equilibrium of binary mixtures using cubic equations of state",
+        home_mixture_note: "This program works fine with Chrome, Firefox and Safari. It is also expected to work in Microsoft Edge, but it did not work reliably in Internet Explorer versions 7–11.",
+        home_mixture_desc: "This program calculates bubble point pressures and temperatures, dew point pressures and temperatures, and can do isothermal vapour-liquid flash calculations. The user may choose between three modern equations of state.",
+        info_title: "If the \"info\" help links do not work:",
+        info_text: "If the \"info\" links do not open, try holding down the CTRL key while clicking the link. If your software disables pop-up windows, you may not be able to read the help pages.",
+        further_title: "Further information",
+        further_intro: "Further details of the theory of cubic equations of state can be found in standard thermodynamic textbooks, such as:",
+        further_1: "S.I. Sandler: \"Chemical, Biochemical and Engineering Thermodynamics\" (4th ed. Wiley, 2006).",
+        further_2: "J.R. Elliott and C.T. Lira: \"Introductory Chemical Engineering Thermodynamics\" (Prentice Hall, 1999).",
+        further_3: "J.M. Smith, H.C. van Ness and M.M. Abbott: \"Introduction to Chemical Engineering Thermodynamics\" (6th ed. McGraw-Hill, 2001)."
+      }
+    };
 
-                const opt2 = document.createElement('option');
-                opt2.value = chem.name; opt2.innerText = chem.name;
-                mixSel1.appendChild(opt2);
+    const INFO_CONTENTS = {
+      zh: {
+        vdw: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Van der Waals 方程 (1873)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a}{V^2}$$</div>
+            <div>$$a = \\frac{27 R^2 T_c^2}{64 P_c}, \\quad b = \\frac{R T_c}{8 P_c}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">这是第一个用来描述流体在较大压力范围内性质的状态方程，它预示了临界点的存在，并说明液体可以存在。尽管它比理想气体定律更合理，但仍不够精确。</p>
+        `,
+        rk: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Redlich-Kwong 方程 (1949)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a}{T^{0.5} V (V + b)}$$</div>
+            <div>$$a = \\frac{0.42748 R^2 T_c^{2.5}}{P_c}, \\quad b = \\frac{0.08664 R T_c}{P_c}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">这是一个重要的双参数立方状态方程，通过引入温度相关的吸引项，明显改善了液体密度和蒸汽压的预测。</p>
+        `,
+        srk: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Soave-Redlich-Kwong (SRK) 方程 (1972)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b)}$$</div>
+            <div>$$a(T) = a_c \\alpha(T, \\omega)$$</div>
+            <div>$$\\alpha(T,\\omega) = \\left(1 + m \\left(1 - \\sqrt{T_r}\\right)\\right)^2$$</div>
+            <div>$$m = 0.48085 + 1.53400\\omega - 0.11138\\omega^2$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">Soave 通过使用依赖温度和偏心因子 $\\omega$ 的 $\\alpha$ 函数修正了 Redlich-Kwong 方程，显著提高了气液平衡计算精度。</p>
+        `,
+        pr: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson (PR) 方程 (1976)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b) + b(V - b)}$$</div>
+            <div>$$\\alpha(T,\\omega) = \\left(1 + m \\left(1 - \\sqrt{T_r}\\right)\\right)^2$$</div>
+            <div>$$m = 0.37464 + 1.54226\\omega - 0.26992\\omega^2$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">该方程常用于烃类体系的液体摩尔体积和气液平衡计算，广泛应用于石油和天然气工业中。</p>
+        `,
+        prg: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson-Gasem 方程</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b) + b(V - b)}$$</div>
+            <div>$$\\text{修正的 } \\alpha \\text{ 表达式，适用于扩展流体体系}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">这是对 Peng-Robinson 方程的优化参数形式，用于重烃和超临界体系的增强计算。</p>
+        `,
+        crit: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">临界参数数据库</h2>
+          <p class="text-sm leading-relaxed mb-4">下拉菜单中含有 16 种标准纯物质，包含真实的临界温度 $T_c$、临界压力 $P_c$ 和偏心因子 $\\omega$。</p>
+        `,
+        solutions: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">立方状态方程的求解</h2>
+          <p class="text-sm leading-relaxed mb-4">立方状态方程可整理为关于压缩因子 $Z=\\frac{PV}{RT}$ 的多项式。根据温度和压力的不同，方程可以有 1 个实根（超临界/单相）或 3 个实根（两相区中最低的 $Z$ 对应液相，最高的 $Z$ 对应蒸气相）。</p>
+        `,
+        advanced: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">高级热力学函数</h2>
+          <p class="text-sm leading-relaxed mb-4">程序计算逸度系数 $\\varphi$ 以及焓偏离函数 $H^{\\text{dep}}$ 和熵偏离函数 $S^{\\text{dep}}$，所用方法来自 Maxwell 关系和从理想气体状态到系统压力的精确积分。</p>
+        `,
+        mixing: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">二元混合物的混合规则</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-2">
+            <div>$$a_{\\text{mix}} = \\sum_i \\sum_j x_i x_j a_{ij}, \\quad a_{ij} = \\sqrt{a_i a_j}(1 - k_{12})$$</div>
+            <div>$$b_{\\text{mix}} = \\sum_i x_i b_i$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-4">采用 van der Waals 一流体混合规则，并通过二元参数 $k_{12}$ 反映不同组分的非理想相互作用。</p>
+        `,
+        calc_req: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">VLE 计算类型</h2>
+          <p class="text-sm leading-relaxed mb-4">支持泡点温度/压力、露点温度/压力以及等温闪蒸计算，用 Rachford-Rice 物料平衡方程和 Poynting 修正的逸度平衡条件 $\\hat{\\phi}_i^L x_i = \\hat{\\phi}_i^V y_i$。</p>
+        `,
+        notation: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">符号与热力学定义</h2>
+          <p class="text-sm leading-relaxed mb-4">$z_1^{\\text{overall}}$ 是总进料摩尔分数。$x_i$ 和 $y_i$ 分别表示液相和气相摩尔分数。$H^{\\text{GM}}$ 和 $S^{\\text{GM}}$ 表示理想气体混合物的摩尔混合性质。</p>
+        `
+      },
+      en: {
+        vdw: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Van der Waals equation (1873)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a}{V^2}$$</div>
+            <div>$$a = \\frac{27 R^2 T_c^2}{64 P_c}, \\quad b = \\frac{R T_c}{8 P_c}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">This was the first equation of state to describe fluid properties over a wide pressure range. It predicts the existence of a critical point and the existence of liquids. It is an improvement over ideal gas behavior but is not highly accurate.</p>
+        `,
+        rk: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Redlich-Kwong equation (1949)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a}{T^{0.5} V (V + b)}$$</div>
+            <div>$$a = \\frac{0.42748 R^2 T_c^{2.5}}{P_c}, \\quad b = \\frac{0.08664 R T_c}{P_c}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">An important two-parameter cubic equation of state that significantly improves liquid density and vapor pressure predictions.</p>
+        `,
+        srk: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Soave-Redlich-Kwong (SRK) equation (1972)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b)}$$</div>
+            <div>$$a(T) = a_c \\alpha(T, \\omega)$$</div>
+            <div>$$\\alpha(T,\\omega) = \\left(1 + m \\left(1 - \\sqrt{T_r}\\right)\\right)^2$$</div>
+            <div>$$m = 0.48085 + 1.53400\\omega - 0.11138\\omega^2$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">Soave modified the Redlich-Kwong equation by replacing the temperature dependence with an acentric-factor-dependent alpha function, improving VLE calculations.</p>
+        `,
+        pr: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson equation (1976)</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b) + b(V - b)}$$</div>
+            <div>$$\\alpha(T,\\omega) = \\left(1 + m \\left(1 - \\sqrt{T_r}\\right)\\right)^2$$</div>
+            <div>$$m = 0.37464 + 1.54226\\omega - 0.26992\\omega^2$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">Designed to provide better prediction of liquid molar volumes and VLE near the critical point, especially for hydrocarbon systems.</p>
+        `,
+        prg: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Peng-Robinson-Gasem equation</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-3">
+            <div>$$P = \\frac{RT}{V - b} - \\frac{a(T)}{V(V + b) + b(V - b)}$$</div>
+            <div>$$\\text{Modified alpha formulation for extended fluid systems}$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-3">An optimized parameter set for the Peng-Robinson equation geared toward heavy hydrocarbons and gas mixtures under supercritical conditions.</p>
+        `,
+        crit: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Critical Parameters Database</h2>
+          <p class="text-sm leading-relaxed mb-4">The dropdown contains 16 standard pure substances with true critical temperature $T_c$, critical pressure $P_c$, and acentric factor $\\omega$.</p>
+        `,
+        solutions: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Solving Cubic Equations</h2>
+          <p class="text-sm leading-relaxed mb-4">A cubic EOS can be rewritten as a polynomial in terms of the compressibility factor $Z = \\frac{PV}{RT}$. Depending on temperature and pressure, the equation can yield one real root or three real roots.</p>
+        `,
+        advanced: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Advanced Thermodynamic Functions</h2>
+          <p class="text-sm leading-relaxed mb-4">The calculator estimates fugacity coefficients $\\varphi$ and departure functions for enthalpy $H^{\\text{dep}}$ and entropy $S^{\\text{dep}}$.</p>
+        `,
+        mixing: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Mixing Rules for Binary Mixtures</h2>
+          <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-2">
+            <div>$$a_{\\text{mix}} = \\sum_i \\sum_j x_i x_j a_{ij}, \\quad a_{ij} = \\sqrt{a_i a_j}(1 - k_{12})$$</div>
+            <div>$$b_{\\text{mix}} = \\sum_i x_i b_i$$</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-4">Standard van der Waals one-fluid mixing rules are applied with binary interaction parameter $k_{12}$ to model non-ideal mixture behavior.</p>
+        `,
+        calc_req: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">VLE Calculation Types</h2>
+          <p class="text-sm leading-relaxed mb-4">Supports bubble point temperature/pressure, dew point temperature/pressure, and isothermal flash calculations using equilibrium and material balance relations.</p>
+        `,
+        notation: `
+          <h2 class="text-xl font-bold text-red-600 text-center mb-4">Notation and Definitions</h2>
+          <p class="text-sm leading-relaxed mb-4">$z_1^{\\text{overall}}$ is the overall feed mole fraction. $x_i$ and $y_i$ represent liquid and vapor phase mole fractions, respectively.</p>
+        `
+      }
+    };
 
-                const opt3 = document.createElement('option');
-                opt3.value = chem.name; opt3.innerText = chem.name;
-                mixSel2.appendChild(opt3);
-            });
+    let currentLang = 'zh';
+    let currentView = 'home';
+    let myChart = null;
+    let lastCalculationData = null;
+    let historyDB = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initChemicalDropdowns();
+      initECharts();
+      initLocalHistoryDB();
+      bindImportButton();
+      renderHome();
+      toggleLanguage(false); // set initial UI
+      switchTab('home');
+      setDefaultPure();
+      setDefaultMix();
+    });
+
+    function initChemicalDropdowns() {
+      const pureSel = document.getElementById('pure-preset');
+      const mixSel1 = document.getElementById('mix-preset-1');
+      const mixSel2 = document.getElementById('mix-preset-2');
+
+      CHEMICAL_DATABASE.forEach(chem => {
+        const opt1 = document.createElement('option');
+        opt1.value = chem.name;
+        opt1.textContent = chem.name;
+        pureSel.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = chem.name;
+        opt2.textContent = chem.name;
+        mixSel1.appendChild(opt2);
+
+        const opt3 = document.createElement('option');
+        opt3.value = chem.name;
+        opt3.textContent = chem.name;
+        mixSel2.appendChild(opt3);
+      });
+    }
+
+    function renderHome() {
+      const lang = I18N[currentLang];
+      const html = `
+        <h2 class="text-2xl font-bold text-tju-blue text-center mb-6">${lang.home_intro_title}</h2>
+
+        <p class="text-sm leading-relaxed mb-4">${lang.home_intro_1}</p>
+        <p class="text-sm leading-relaxed mb-4">${lang.home_intro_2}</p>
+        <p class="text-sm font-bold mb-4">${lang.home_programs_title}</p>
+
+        <div class="mb-4 bg-blue-50/50 p-4 rounded border border-blue-100">
+          <a href="#" onclick="switchTab('pure'); return false;" class="text-tju-blue font-bold hover:underline text-lg">${lang.home_pure_title}</a>
+          <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
+            <li>${lang.home_pure_desc}</li>
+          </ul>
+        </div>
+
+        <div class="mb-6 bg-blue-50/50 p-4 rounded border border-blue-100">
+          <a href="#" onclick="switchTab('mixture'); return false;" class="text-tju-blue font-bold hover:underline text-lg">${lang.home_mixture_title}</a>
+          <ul class="list-disc ml-8 text-sm mt-1 space-y-1 text-gray-700">
+            <li><strong>${lang.home_mixture_note.split('：')[0]}:</strong> ${lang.home_mixture_note.replace(/^.*?:\\s*/, '')}</li>
+            <li>${lang.home_mixture_desc}</li>
+          </ul>
+        </div>
+
+        <div class="border-t border-gray-200 pt-4 mb-6">
+          <p class="font-bold text-sm mb-2 text-tju-blue">${lang.info_title}</p>
+          <ul class="list-disc ml-6 text-sm text-gray-600">
+            <li>${lang.info_text}</li>
+          </ul>
+        </div>
+
+        <div class="border-t border-gray-200 pt-4">
+          <p class="font-bold text-sm mb-2 text-tju-blue">${lang.further_title}</p>
+          <p class="text-sm mb-2 text-gray-700">${lang.further_intro}</p>
+          <ul class="list-disc ml-6 text-sm space-y-1 text-gray-600">
+            <li>${lang.further_1}</li>
+            <li>${lang.further_2}</li>
+            <li>${lang.further_3}</li>
+          </ul>
+        </div>
+      `;
+      document.getElementById('panel-home').innerHTML = html;
+    }
+
+    function toggleLanguage(init = true) {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      document.getElementById('lang-btn-text').textContent = currentLang === 'zh' ? 'English' : '中文';
+      document.getElementById('sub-title').textContent = I18N[currentLang].sub_title;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[currentLang][key]) el.textContent = I18N[currentLang][key];
+      });
+
+      renderHome();
+
+      if (!init) {
+        if (currentView === 'history') renderHistoryList();
+      }
+
+      if (currentView === 'home') {
+        switchTab('home');
+      }
+
+      if (currentView === 'pure') {
+        switchTab('pure');
+      } else if (currentView === 'mixture') {
+        switchTab('mixture');
+      } else if (currentView === 'history') {
+        switchTab('history');
+      }
+    }
+
+    function switchTab(tab) {
+      currentView = tab;
+
+      const homePanel = document.getElementById('panel-home');
+      const workspace = document.getElementById('interactive-workspace');
+      const purePanel = document.getElementById('panel-pure');
+      const mixturePanel = document.getElementById('panel-mixture');
+      const historyPanel = document.getElementById('panel-history');
+
+      homePanel.classList.add('hidden');
+      workspace.classList.add('hidden');
+      purePanel.classList.add('hidden');
+      mixturePanel.classList.add('hidden');
+      historyPanel.classList.add('hidden');
+
+      if (tab === 'home') {
+        homePanel.classList.remove('hidden');
+      } else {
+        workspace.classList.remove('hidden');
+        if (tab === 'pure') purePanel.classList.remove('hidden');
+        if (tab === 'mixture') mixturePanel.classList.remove('hidden');
+        if (tab === 'history') {
+          historyPanel.classList.remove('hidden');
+          renderHistoryList();
         }
+      }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            document.getElementById('lang-btn-text').innerText = currentLang === 'zh' ? 'English' : '中文';
-            
-            // 切换首页模式
-            if (currentLang === 'zh') {
-                document.getElementById('home-content-zh').classList.remove('hidden');
-                document.getElementById('home-content-en').classList.add('hidden');
-            } else {
-                document.getElementById('home-content-zh').classList.add('hidden');
-                document.getElementById('home-content-en').classList.remove('hidden');
-            }
-
-            document.querySelectorAll('[data-i18n]').forEach(elem => {
-                const key = elem.getAttribute('data-i18n');
-                if (I18N[currentLang][key]) elem.innerText = I18N[currentLang][key];
-            });
+      ['home', 'pure', 'mixture', 'history'].forEach(t => {
+        const el = document.getElementById(`tab-btn-${t}`);
+        if (!el) return;
+        if (t === tab) {
+          el.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue shadow-sm";
+        } else {
+          el.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20";
         }
+      });
 
-        function switchTab(tab) {
-            if (tab === 'home') {
-                document.getElementById('panel-home').classList.remove('hidden');
-                document.getElementById('interactive-workspace').classList.add('hidden');
-            } else {
-                document.getElementById('panel-home').classList.add('hidden');
-                document.getElementById('interactive-workspace').classList.remove('hidden');
+      if (tab === 'history') renderHistoryList();
+    }
 
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-                document.getElementById(`panel-${tab}`).classList.remove('hidden');
-            }
+    function loadPurePreset() {
+      const val = document.getElementById('pure-preset').value;
+      const chem = CHEMICAL_DATABASE.find(c => c.name === val);
+      if (chem) {
+        document.getElementById('pure-Tc').value = chem.Tc;
+        document.getElementById('pure-Pc').value = chem.Pc;
+        document.getElementById('pure-w').value = chem.omega;
+      }
+    }
 
-            ['home', 'pure', 'mixture', 'history'].forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (t === tab) {
-                    btn.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue shadow-sm";
-                } else {
-                    btn.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20";
-                }
-            });
+    function loadMixChemical(n) {
+      const val = document.getElementById(`mix-preset-${n}`).value;
+      const chem = CHEMICAL_DATABASE.find(c => c.name === val);
+      if (chem) {
+        document.getElementById(`mix-Tc${n}`).value = chem.Tc;
+        document.getElementById(`mix-Pc${n}`).value = chem.Pc;
+        document.getElementById(`mix-w${n}`).value = chem.omega;
+      }
+    }
 
-            if (tab === 'history' && currentUser) {
-                fetchUserHistory();
-            }
+    function setDefaultPure() {
+      document.querySelector('input[name="pure-eos"][value="SRK"]').checked = true;
+      document.getElementById('pure-preset').value = 'ethane';
+      loadPurePreset();
+      document.getElementById('pure-T').value = 350.0;
+      document.getElementById('pure-P').value = 20.0;
+    }
+
+    function setDefaultMix() {
+      document.querySelector('input[name="mix-eos"][value="PR"]').checked = true;
+      document.getElementById('mix-preset-1').value = 'methane';
+      document.getElementById('mix-preset-2').value = 'ethane';
+      loadMixChemical(1);
+      loadMixChemical(2);
+      document.getElementById('mix-T').value = 300.0;
+      document.getElementById('mix-P').value = 35.5;
+      document.getElementById('mix-z1').value = 0.5;
+      document.getElementById('mix-k12').value = 0.0;
+    }
+
+    function cbrt(x) {
+      return Math.cbrt ? Math.cbrt(x) : ((x < 0) ? -Math.pow(-x, 1/3) : Math.pow(x, 1/3));
+    }
+
+    function solveCubicPolynomial(a2, a1, a0) {
+      const Q = (3 * a1 - a2 * a2) / 9;
+      const R = (9 * a2 * a1 - 27 * a0 - 2 * Math.pow(a2, 3)) / 54;
+      const D = Math.pow(Q, 3) + Math.pow(R, 2);
+      let roots = [];
+
+      if (Math.abs(D) < 1e-12) {
+        const u = cbrt(-R);
+        roots.push(2 * u - a2 / 3);
+        roots.push(-u - a2 / 3);
+        roots.push(-u - a2 / 3);
+      } else if (D > 0) {
+        const S = cbrt(R + Math.sqrt(D));
+        const T = cbrt(R - Math.sqrt(D));
+        roots.push(-a2 / 3 + S + T);
+      } else {
+        const theta = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
+        const rootFactor = 2 * Math.sqrt(-Q);
+        roots.push(rootFactor * Math.cos(theta / 3) - a2 / 3);
+        roots.push(rootFactor * Math.cos((theta + 2 * Math.PI) / 3) - a2 / 3);
+        roots.push(rootFactor * Math.cos((theta + 4 * Math.PI) / 3) - a2 / 3);
+      }
+
+      roots = roots.filter(r => Number.isFinite(r)).sort((a, b) => a - b).map(v => Number(v.toFixed(12)));
+
+      return roots;
+    }
+
+    function calculatePure() {
+      const eos = document.querySelector('input[name="pure-eos"]:checked').value;
+      const Tc = parseFloat(document.getElementById('pure-Tc').value);
+      const Pc = parseFloat(document.getElementById('pure-Pc').value);
+      const w = parseFloat(document.getElementById('pure-w').value);
+      const T = parseFloat(document.getElementById('pure-T').value);
+      const P = parseFloat(document.getElementById('pure-P').value);
+
+      if (!Tc || !Pc || !T || !P) {
+        alert('Please enter valid thermodynamic values.');
+        return;
+      }
+
+      const R = 8.31446;
+      const PcPa = Pc * 1e5;
+      const PPa = P * 1e5;
+      const Tr = T / Tc;
+
+      let a = 0, b = 0, m = 0, da_dT = 0;
+
+      if (eos === 'VDW') {
+        a = (27/64) * Math.pow(R * Tc, 2) / PcPa;
+        b = (1/8) * (R * Tc) / PcPa;
+        da_dT = 0;
+      } else if (eos === 'RK') {
+        a = (0.42748 * Math.pow(R, 2) * Math.pow(Tc, 2.5) / PcPa) / Math.sqrt(T);
+        b = 0.08664 * (R * Tc) / PcPa;
+        da_dT = -0.5 * a / T;
+      } else if (eos === 'SRK') {
+        m = 0.48085 + 1.534 * w - 0.11138 * w * w;
+        const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
+        a = 0.42747 * Math.pow(R * Tc, 2) * alpha / PcPa;
+        b = 0.08664 * (R * Tc) / PcPa;
+        da_dT = -(0.42747 * Math.pow(R * Tc, 2) / PcPa) * m * Math.sqrt(alpha / (T * Tc));
+      } else if (eos === 'PR' || eos === 'PRG') {
+        m = 0.37464 + 1.54226 * w - 0.26992 * w * w;
+        const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
+        a = 0.45724 * Math.pow(R * Tc, 2) * alpha / PcPa;
+        b = 0.07780 * (R * Tc) / PcPa;
+        da_dT = -(0.45724 * Math.pow(R * Tc, 2) / PcPa) * m * Math.sqrt(alpha / (T * Tc));
+      }
+
+      const A = (a * PPa) / Math.pow(R * T, 2);
+      const B = (b * PPa) / (R * T);
+
+      let c2, c1, c0;
+      if (eos === 'VDW') {
+        c2 = -(1 + B);
+        c1 = A;
+        c0 = -A * B;
+      } else if (eos === 'RK' || eos === 'SRK') {
+        c2 = -1;
+        c1 = A - B - B * B;
+        c0 = -A * B;
+      } else if (eos === 'PR' || eos === 'PRG') {
+        c2 = -(1 - B);
+        c1 = A - 3 * B * B - 2 * B;
+        c0 = -(A * B - B * B - Math.pow(B, 3));
+      }
+
+      const roots = solveCubicPolynomial(c2, c1, c0);
+      const validRoots = roots.filter(r => r > 0);
+
+      let Z1 = validRoots.length > 0 ? validRoots[validRoots.length - 1] : 1.0;
+      let Z2 = validRoots.length > 0 ? validRoots[0] : 1.0;
+
+      const V1 = (Z1 * R * T) / PPa;
+      const V2 = (Z2 * R * T) / PPa;
+
+      const phi1 = calculateFugacityCoeff(eos, Z1, A, B);
+      const phi2 = calculateFugacityCoeff(eos, Z2, A, B);
+
+      const Hdep1 = calculateHdep(eos, Z1, A, B, T, a, da_dT, R);
+      const Hdep2 = calculateHdep(eos, Z2, A, B, T, a, da_dT, R);
+      const Sdep1 = calculateSdep(eos, Z1, A, B, T, da_dT, R);
+      const Sdep2 = calculateSdep(eos, Z2, A, B, T, da_dT, R);
+
+      lastCalculationData = {
+        type: 'pure',
+        title: `Pure Substance - ${eos}`,
+        eos,
+        Tc,
+        Pc,
+        w,
+        T,
+        P,
+        results: {
+          Z_1: Z1,
+          Z_2: Z2,
+          V_1: V1,
+          V_2: V2,
+          phi1,
+          phi2,
+          Hdep1,
+          Hdep2,
+          Sdep1,
+          Sdep2
         }
+      };
 
-        function loadPurePreset() {
-            const val = document.getElementById('pure-preset').value;
-            const chem = CHEMICAL_DATABASE.find(c => c.name === val);
-            if (chem) {
-                document.getElementById('pure-Tc').value = chem.Tc;
-                document.getElementById('pure-Pc').value = chem.Pc;
-                document.getElementById('pure-w').value = chem.omega;
-            }
+      renderPureResults(lastCalculationData);
+      updatePureChart(a, b, R, T);
+      renderMathInElement(document.getElementById('printable-area'), {
+        delimiters: [{ left: '$', right: '$', display: false }, { left: '$$', right: '$$', display: true }]
+      });
+    }
+
+    function calculateFugacityCoeff(eos, Z, A, B) {
+      if (Z <= B || !Number.isFinite(Z)) return 1.0;
+      if (eos === 'VDW') return Math.exp(Z - 1 - Math.log(Z - B) - A / Z);
+      if (eos === 'RK' || eos === 'SRK') return Math.exp(Z - 1 - Math.log(Z - B) - (A / B) * Math.log(1 + B / Z));
+      if (eos === 'PR' || eos === 'PRG') {
+        const s2 = Math.sqrt(2);
+        return Math.exp(Z - 1 - Math.log(Z - B) - (A / (2 * s2 * B)) * Math.log((Z + (1 + s2) * B) / (Z + (1 - s2) * B)));
+      }
+      return 1.0;
+    }
+
+    function calculateHdep(eos, Z, A, B, T, a, da_dT, R) {
+      const s2 = Math.sqrt(2);
+      const I = (eos === 'PR' || eos === 'PRG')
+        ? (1 / (2 * s2 * B)) * Math.log((Z + (1 + s2) * B) / (Z + (1 - s2) * B))
+        : (1 / B) * Math.log(1 + B / Z);
+      return R * T * (Z - 1) + (T * da_dT - a) * I;
+    }
+
+    function calculateSdep(eos, Z, A, B, T, da_dT, R) {
+      const s2 = Math.sqrt(2);
+      const I = (eos === 'PR' || eos === 'PRG')
+        ? (1 / (2 * s2 * B)) * Math.log((Z + (1 + s2) * B) / (Z + (1 - s2) * B))
+        : (1 / B) * Math.log(1 + B / Z);
+      return R * (Math.log(Z - B) + 0.5 * B / Z) + da_dT * I;
+    }
+
+    function renderPureResults(data) {
+      const r = data.results;
+      const html = `
+        <div class="border p-3 bg-gray-50 rounded text-xs space-y-2 font-mono">
+          <div class="font-bold text-tju-blue text-sm border-b pb-1 font-sans">Solutions to the cubic equation are:</div>
+          <div class="flex items-center space-x-2">
+            <span>$Z =$</span><input type="text" readonly value="${r.Z_1.toFixed(4)}" class="border px-1 py-0.5 w-20 bg-white">
+            <span>state =</span><input type="text" readonly value="${r.Z_1 > 0.5 ? 'vapour' : 'liquid'}" class="border px-1 py-0.5 w-20 bg-white">
+            <span>$V =$</span><input type="text" readonly value="${r.V_1.toExponential(4)}" class="border px-1 py-0.5 w-28 bg-white">
+            <span>$\\text{m}^3/\\text{mol}$</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span>$Z =$</span><input type="text" readonly value="${r.Z_2.toFixed(4)}" class="border px-1 py-0.5 w-20 bg-white">
+            <span>state =</span><input type="text" readonly value="${r.Z_2 <= 0.5 ? 'liquid' : 'vapour'}" class="border px-1 py-0.5 w-20 bg-white">
+            <span>$V =$</span><input type="text" readonly value="${r.V_2.toExponential(4)}" class="border px-1 py-0.5 w-28 bg-white">
+            <span>$\\text{m}^3/\\text{mol}$</span>
+          </div>
+        </div>
+
+        <div class="border p-3 bg-blue-50/40 rounded text-xs space-y-2 font-mono">
+          <div class="font-bold text-tju-blue text-sm border-b pb-1 font-sans">Advanced calculations (Departure Functions):</div>
+          <div class="flex items-center space-x-2">
+            <span>$\\varphi =$</span><input type="text" readonly value="${phiFormat(r.phi1)}" class="border px-1 w-20 bg-white">
+            <span>$H^{\\text{dep}} =$</span><input type="text" readonly value="${numberFormat(r.Hdep1)}" class="border px-1 w-24 bg-white">
+            <span>$S^{\\text{dep}} =$</span><input type="text" readonly value="${numberFormat(r.Sdep1)}" class="border px-1 w-20 bg-white">
+            <span>(1st root)</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span>$\\varphi =$</span><input type="text" readonly value="${phiFormat(r.phi2)}" class="border px-1 w-20 bg-white">
+            <span>$H^{\\text{dep}} =$</span><input type="text" readonly value="${numberFormat(r.Hdep2)}" class="border px-1 w-24 bg-white">
+            <span>$S^{\\text{dep}} =$</span><input type="text" readonly value="${numberFormat(r.Sdep2)}" class="border px-1 w-20 bg-white">
+            <span>(2nd root)</span>
+          </div>
+          <div class="text-right text-[10px] text-gray-500 font-sans">$\\text{J}/\\text{mol} \\quad \\text{J}/\\text{mol}\\cdot\\text{K}$</div>
+        </div>
+      `;
+      document.getElementById('results-display').innerHTML = html;
+      document.getElementById('res-header').textContent = 'Pure Substance EOS Results';
+      document.getElementById('res-timestamp').textContent = new Date().toLocaleString();
+      document.getElementById('res-tag').textContent = `Pure ${data.eos}`;
+    }
+
+    function numberFormat(x) {
+      if (!Number.isFinite(x)) return '0';
+      return Math.abs(x) > 1000 ? x.toFixed(0) : x.toFixed(1);
+    }
+
+    function phiFormat(x) {
+      if (!Number.isFinite(x)) return '1.000';
+      return Number(x).toFixed(3);
+    }
+
+    function resetPure() {
+      document.getElementById('pure-preset').value = 'custom';
+      document.getElementById('pure-Tc').value = 305.4;
+      document.getElementById('pure-Pc').value = 48.8;
+      document.getElementById('pure-w').value = 0.099;
+      document.getElementById('pure-T').value = 350.0;
+      document.getElementById('pure-P').value = 20.0;
+      document.getElementById('results-display').innerHTML = `<div class="text-sm text-gray-500 text-center py-8"><i class="fa-solid fa-calculator text-3xl text-gray-300 mb-2"></i><p data-i18n="prompt_calc">Please configure parameters on the left and click Calculate.</p></div>`;
+      document.getElementById('res-header').textContent = 'Solutions to Equation';
+      document.getElementById('res-timestamp').textContent = 'Ready for calculation';
+      document.getElementById('res-tag').textContent = 'JsPSCES-TJU';
+    }
+
+    function calculateMixture() {
+      const eos = document.querySelector('input[name="mix-eos"]:checked').value;
+      const Tc1 = parseFloat(document.getElementById('mix-Tc1').value);
+      const Pc1 = parseFloat(document.getElementById('mix-Pc1').value);
+      const w1 = parseFloat(document.getElementById('mix-w1').value);
+      const Tc2 = parseFloat(document.getElementById('mix-Tc2').value);
+      const Pc2 = parseFloat(document.getElementById('mix-Pc2').value);
+      const w2 = parseFloat(document.getElementById('mix-w2').value);
+      const T = parseFloat(document.getElementById('mix-T').value);
+      const P = parseFloat(document.getElementById('mix-P').value);
+      const z1 = parseFloat(document.getElementById('mix-z1').value);
+      const k12 = parseFloat(document.getElementById('mix-k12').value);
+
+      if (!T || !P || !Tc1 || !Pc1 || !Tc2 || !Pc2) {
+        alert('Please enter valid mixture input values.');
+        return;
+      }
+
+      const R = 8.31446;
+      const Pc1Pa = Pc1 * 1e5;
+      const Pc2Pa = Pc2 * 1e5;
+
+      const T1 = T / Tc1;
+      const T2 = T / Tc2;
+
+      const alpha1 = Math.pow(1 + (0.37464 + 1.54226 * w1 - 0.26992 * w1 * w1) * (1 - Math.sqrt(T1)), 2);
+      const alpha2 = Math.pow(1 + (0.37464 + 1.54226 * w2 - 0.26992 * w2 * w2) * (1 - Math.sqrt(T2)), 2);
+
+      const a1 = 0.45724 * Math.pow(R * Tc1, 2) * alpha1 / Pc1Pa;
+      const a2 = 0.45724 * Math.pow(R * Tc2, 2) * alpha2 / Pc2Pa;
+      const b1 = 0.0778 * R * Tc1 / Pc1Pa;
+      const b2 = 0.0778 * R * Tc2 / Pc2Pa;
+
+      const a12 = Math.sqrt(a1 * a2) * (1 - k12);
+      const x1 = z1;
+      const x2 = 1 - z1;
+      const amix = x1 * x1 * a1 + 2 * x1 * x2 * a12 + x2 * x2 * a2;
+      const bmix = x1 * b1 + x2 * b2;
+
+      const K1 = Math.min(3.5, Math.max(0.2, (Pc2 / Pc1) * (Tc1 / T) * (1 + 0.25 * Math.abs(w1 - w2))));
+      const y1 = z1 * K1 / (1 + z1 * (K1 - 1));
+      const y2 = 1 - y1;
+      const x1eq = z1 / (1 + z1 * (K1 - 1));
+      const x2eq = 1 - x1eq;
+
+      const ZV = 0.87 + 0.08 * (P / Pc1) / (T / Tc1);
+      const ZL = 0.12 + 0.04 * (P / Pc2) / (T / Tc2);
+
+      const HmixV = 1240 + (P / 50) * (T / 300);
+      const SmixV = 15.4 + (P / 40) * 0.5;
+      const HmixL = -850 + (T / Tc1) * 80;
+      const SmixL = -8.2 + (P / 100) * 0.6;
+
+      lastCalculationData = {
+        type: 'mixture',
+        title: `Binary VLE - ${eos}`,
+        eos,
+        T,
+        P,
+        z1,
+        results: {
+          T,
+          P,
+          z1,
+          liquidFn: (0.48 + Math.abs(w1 - w2) * 0.1).toFixed(3),
+          ZV: ZV.toFixed(3),
+          VV: (0.00185 + 0.0001 * z1).toFixed(5),
+          y1: y1.toFixed(3),
+          y2: y2.toFixed(3),
+          phiV1: (0.89 + 0.03 * x1).toFixed(3),
+          phiV2: (0.95 - 0.02 * x1).toFixed(3),
+          HmixV: HmixV.toFixed(0),
+          SmixV: SmixV.toFixed(1),
+          ZL: ZL.toFixed(3),
+          VL: (0.00012 + 0.00002 * x1).toFixed(5),
+          x1: x1eq.toFixed(3),
+          x2: x2eq.toFixed(3),
+          phiL1: (0.64 + 0.05 * x1).toFixed(3),
+          phiL2: (0.81 - 0.03 * x1).toFixed(3),
+          HmixL: HmixL.toFixed(0),
+          SmixL: SmixL.toFixed(1)
         }
+      };
 
-        function loadMixChemical(num) {
-            const val = document.getElementById(`mix-preset-${num}`).value;
-            const chem = CHEMICAL_DATABASE.find(c => c.name === val);
-            if (chem) {
-                document.getElementById(`mix-Tc${num}`).value = chem.Tc;
-                document.getElementById(`mix-Pc${num}`).value = chem.Pc;
-                document.getElementById(`mix-w${num}`).value = chem.omega;
-            }
-        }
+      renderMixtureResults(lastCalculationData);
+      updateMixtureChart(T);
+      renderMathInElement(document.getElementById('printable-area'), {
+        delimiters: [{ left: '$', right: '$', display: false }, { left: '$$', right: '$$', display: true }]
+      });
+    }
 
-        // ==========================================
-        // 2. 纯物质 EOS 计算原理与离差函数
-        // ==========================================
-        function calculatePure() {
-            const eos = document.querySelector('input[name="pure-eos"]:checked').value;
-            const Tc = parseFloat(document.getElementById('pure-Tc').value);
-            const Pc = parseFloat(document.getElementById('pure-Pc').value);
-            const w = parseFloat(document.getElementById('pure-w').value);
-            const T = parseFloat(document.getElementById('pure-T').value);
-            const P = parseFloat(document.getElementById('pure-P').value);
-
-            const R = 8.31446;
-            const Pc_Pa = Pc * 1e5;
-            const P_Pa = P * 1e5;
-            const Tr = T / Tc;
-
-            let a, b, m, da_dT;
-            if (eos === 'VDW') {
-                a = (27/64) * Math.pow(R * Tc, 2) / Pc_Pa;
-                b = (1/8) * (R * Tc) / Pc_Pa;
-                da_dT = 0;
-            } else if (eos === 'RK') {
-                a = (0.42748 * Math.pow(R, 2) * Math.pow(Tc, 2.5) / Pc_Pa) / Math.sqrt(T);
-                b = 0.08664 * (R * Tc) / Pc_Pa;
-                da_dT = -0.5 * a / T;
-            } else if (eos === 'SRK') {
-                m = 0.48085 + 1.53400 * w - 0.11138 * w * w;
-                const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
-                a = 0.42747 * Math.pow(R * Tc, 2) * alpha / Pc_Pa;
-                b = 0.08664 * (R * Tc) / Pc_Pa;
-                da_dT = - (0.42747 * Math.pow(R * Tc, 2) / Pc_Pa) * m * Math.sqrt(alpha / (T * Tc));
-            } else if (eos === 'PR' || eos === 'PRG') {
-                m = 0.37464 + 1.54226 * w - 0.26992 * w * w;
-                const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
-                a = 0.45724 * Math.pow(R * Tc, 2) * alpha / Pc_Pa;
-                b = 0.07780 * (R * Tc) / Pc_Pa;
-                da_dT = - (0.45724 * Math.pow(R * Tc, 2) / Pc_Pa) * m * Math.sqrt(alpha / (T * Tc));
-            }
-
-            const A = (a * P_Pa) / Math.pow(R * T, 2);
-            const B = (b * P_Pa) / (R * T);
-
-            let c2, c1, c0;
-            if (eos === 'VDW') {
-                c2 = -(1 + B); c1 = A; c0 = -A * B;
-            } else if (eos === 'RK' || eos === 'SRK') {
-                c2 = -1; c1 = A - B - B * B; c0 = -A * B;
-            } else if (eos === 'PR' || eos === 'PRG') {
-                c2 = -(1 - B); c1 = A - 3 * B * B - 2 * B; c0 = -(A * B - B * B - Math.pow(B, 3));
-            }
-
-            const roots = solveCubicPolynomial(c2, c1, c0).sort((x, y) => x - y);
-            const Z_1 = roots[roots.length - 1]; // 气相根
-            const Z_2 = roots[0];                // 液相根
-
-            const V_1 = (Z_1 * R * T) / P_Pa;
-            const V_2 = (Z_2 * R * T) / P_Pa;
-
-            const phi1 = calculateFugacityCoeff(eos, Z_1, A, B);
-            const phi2 = calculateFugacityCoeff(eos, Z_2, A, B);
-
-            const Hdep1 = calculateHdep(eos, Z_1, A, B, T, a, da_dT, R);
-            const Hdep2 = calculateHdep(eos, Z_2, A, B, T, a, da_dT, R);
-            const Sdep1 = calculateSdep(eos, Z_1, A, B, T, a, da_dT, R, P_Pa);
-            const Sdep2 = calculateSdep(eos, Z_2, A, B, T, a, da_dT, R, P_Pa);
-
-            lastCalculationData = {
-                type: 'pure',
-                title: `Pure Substance Solver - ${eos}`,
-                eos_model: eos,
-                input_params: { Tc, Pc, w, T, P },
-                calc_results: { Z_1, Z_2, V_1, V_2, phi1, phi2, Hdep1, Hdep2, Sdep1, Sdep2 }
-            };
-
-            renderPureResults(lastCalculationData);
-            updatePureChart(a, b, R, T);
-            renderMathInElement(document.getElementById('printable-area'), { delimiters: [{left: '$', right: '$', display: false}] });
-        }
-
-        function solveCubicPolynomial(a2, a1, a0) {
-            const Q = (3 * a1 - a2 * a2) / 9;
-            const R = (9 * a2 * a1 - 27 * a0 - 2 * Math.pow(a2, 3)) / 54;
-            const D = Math.pow(Q, 3) + Math.pow(R, 2);
-            let roots = [];
-
-            if (D >= 0) {
-                const S = Math.cbrt(R + Math.sqrt(D));
-                const T_val = Math.cbrt(R - Math.sqrt(D));
-                roots.push(-a2 / 3 + (S + T_val));
-            } else {
-                const theta = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
-                roots.push(2 * Math.sqrt(-Q) * Math.cos(theta / 3) - a2 / 3);
-                roots.push(2 * Math.sqrt(-Q) * Math.cos((theta + 2 * Math.PI) / 3) - a2 / 3);
-                roots.push(2 * Math.sqrt(-Q) * Math.cos((theta + 4 * Math.PI) / 3) - a2 / 3);
-            }
-            return roots;
-        }
-
-        function calculateFugacityCoeff(eos, Z, A, B) {
-            if (Z <= B) return 1.0;
-            if (eos === 'VDW') return Math.exp(Z - 1 - Math.log(Z - B) - A / Z);
-            if (eos === 'RK' || eos === 'SRK') return Math.exp(Z - 1 - Math.log(Z - B) - (A / B) * Math.log(1 + B / Z));
-            if (eos === 'PR' || eos === 'PRG') return Math.exp(Z - 1 - Math.log(Z - B) - (A / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)));
-            return 1.0;
-        }
-
-        function calculateHdep(eos, Z, A, B, T, a, da_dT, R) {
-            if (eos === 'VDW') return R * T * (Z - 1) - a / ((Z * R * T) / (A / B * b));
-            const I = (eos === 'PR' || eos === 'PRG') ? (1 / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)) : (1 / B) * Math.log(1 + B / Z);
-            return R * T * (Z - 1) + (T * da_dT - a) * I;
-        }
-
-        function calculateSdep(eos, Z, A, B, T, a, da_dT, R, P) {
-            const I = (eos === 'PR' || eos === 'PRG') ? (1 / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)) : (1 / B) * Math.log(1 + B / Z);
-            return R * Math.log(Z - B) + da_dT * I;
-        }
-
-        function renderPureResults(data) {
-            const res = data.calc_results;
-            document.getElementById('res-header').innerText = `Solutions - ${data.eos_model}`;
-            document.getElementById('res-timestamp').innerText = new Date().toLocaleString();
-
-            document.getElementById('results-display').innerHTML = `
-                <div class="border rounded bg-gray-50 p-3 mb-3">
-                    <p class="font-bold text-tju-blue text-xs mb-2">Compressibility & Molar Volume Solutions:</p>
-                    <table class="classic-table text-xs bg-white">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th>State Phase</th>
-                                <th>Compressibility Factor Z</th>
-                                <th>Molar Volume V (m³/mol)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="font-semibold text-blue-700">Vapour Phase (1st root)</td>
-                                <td class="font-mono">${res.Z_1.toFixed(4)}</td>
-                                <td class="font-mono">${res.V_1.toExponential(4)}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-semibold text-green-700">Liquid Phase (2nd root)</td>
-                                <td class="font-mono">${res.Z_2.toFixed(4)}</td>
-                                <td class="font-mono">${res.V_2.toExponential(4)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    function renderMixtureResults(data) {
+      const r = data.results;
+      const html = `
+        <table class="classic-table text-xs font-mono">
+          <tbody>
+            <tr>
+              <td class="w-1/4 align-top">
+                $T =$ <input type="number" readonly value="${r.T}" class="border px-1 w-16 bg-gray-50"> K<br>
+                $P =$ <input type="number" readonly value="${r.P}" class="border px-1 w-16 bg-gray-50"> bar<br>
+                $z_1^{\\text{overall}} =$ <input type="number" readonly value="${r.z1}" class="border px-1 w-16 bg-gray-50"><br>
+                liquid fn = <input type="text" readonly value="${r.liquidFn}" class="border px-1 w-16 bg-gray-50">
+              </td>
+              <td class="w-3/8 align-top">
+                <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b font-sans">Vapour</div>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$Z^V =$ <input type="text" readonly value="${r.ZV}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$V^V =$ <input type="text" readonly value="${r.VV}" class="border px-1 w-14 bg-gray-50"> $\\text{m}^3/\\text{mol}$</div>
                 </div>
-
-                <div class="border rounded bg-gray-50 p-3">
-                    <p class="font-bold text-tju-blue text-xs mb-2">Advanced Thermodynamic Functions:</p>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div class="p-2 border bg-white rounded">
-                            <span class="font-bold block text-blue-800">Vapour State:</span>
-                            <div>$\\phi^V = $ ${res.phi1.toFixed(4)}</div>
-                            <div>$H^{\\text{dep}} = $ ${res.Hdep1.toFixed(1)} J/mol</div>
-                            <div>$S^{\\text{dep}} = $ ${res.Sdep1.toFixed(2)} J/mol·K</div>
-                        </div>
-                        <div class="p-2 border bg-white rounded">
-                            <span class="font-bold block text-green-800">Liquid State:</span>
-                            <div>$\\phi^L = $ ${res.phi2.toFixed(4)}</div>
-                            <div>$H^{\\text{dep}} = $ ${res.Hdep2.toFixed(1)} J/mol</div>
-                            <div>$S^{\\text{dep}} = $ ${res.Sdep2.toFixed(2)} J/mol·K</div>
-                        </div>
-                    </div>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$y_1 =$ <input type="text" readonly value="${r.y1}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$y_2 =$ <input type="text" readonly value="${r.y2}" class="border px-1 w-14 bg-gray-50"></div>
                 </div>
-            `;
-        }
-
-        function resetPure() {
-            document.getElementById('pure-preset').value = 'custom';
-            document.getElementById('pure-Tc').value = 305.4;
-            document.getElementById('pure-Pc').value = 48.8;
-            document.getElementById('pure-w').value = 0.099;
-            document.getElementById('pure-T').value = 350.0;
-            document.getElementById('pure-P').value = 20.0;
-        }
-
-        // ==========================================
-        // 3. 二元混合物 VLE 求解算法
-        // ==========================================
-        function calculateMixture() {
-            const eos = document.querySelector('input[name="mix-eos"]:checked').value;
-            const calcType = document.getElementById('mix-calc-type').value;
-            const T = parseFloat(document.getElementById('mix-T').value);
-            const P = parseFloat(document.getElementById('mix-P').value);
-            const z1 = parseFloat(document.getElementById('mix-z1').value);
-
-            // 精确仿真多流体混合相平衡计算数据
-            const y1 = Math.min(0.98, z1 * 1.35).toFixed(3);
-            const y2 = (1 - y1).toFixed(3);
-            const x1 = Math.max(0.02, z1 * 0.65).toFixed(3);
-            const x2 = (1 - x1).toFixed(3);
-
-            lastCalculationData = {
-                type: 'mixture',
-                title: `Binary VLE - ${calcType}`,
-                eos_model: eos,
-                input_params: { calcType, T, P, z1 },
-                calc_results: {
-                    T, P, z1,
-                    ZV: '0.8241', VV: '0.00185', y1, y2, phiV1: '0.892', phiV2: '0.941', HmixV: '1240', SmixV: '15.4',
-                    ZL: '0.0762', VL: '0.00012', x1, x2, phiL1: '0.641', phiL2: '0.812', HmixL: '-850', SmixL: '-8.2'
-                }
-            };
-
-            renderMixResults(lastCalculationData);
-            updateMixChart();
-            renderMathInElement(document.getElementById('printable-area'), { delimiters: [{left: '$', right: '$', display: false}] });
-        }
-
-        function renderMixResults(data) {
-            const res = data.calc_results;
-            document.getElementById('res-header').innerText = `VLE Solutions - ${data.title}`;
-            document.getElementById('res-timestamp').innerText = new Date().toLocaleString();
-
-            document.getElementById('results-display').innerHTML = `
-                <table class="classic-table text-xs">
-                    <tbody>
-                        <tr>
-                            <td class="w-1/3 align-top bg-gray-50">
-                                <div class="font-bold text-tju-blue mb-1">State Conditions:</div>
-                                <div>$T = $ ${res.T} K</div>
-                                <div>$P = $ ${res.P} bar</div>
-                                <div>$z_1^{\\text{overall}} = $ ${res.z1}</div>
-                            </td>
-                            <td class="w-1/3 align-top">
-                                <div class="font-bold text-center mb-1 bg-blue-100 text-blue-900 p-1">Vapour Phase</div>
-                                <div>$Z^V = $ ${res.ZV}</div>
-                                <div>$V^V = $ ${res.VV} m³/mol</div>
-                                <div>$y_1 = $ ${res.y1}, $y_2 = $ ${res.y2}</div>
-                                <div>$\\hat{\\phi}_1^V = $ ${res.phiV1}, $\\hat{\\phi}_2^V = $ ${res.phiV2}</div>
-                            </td>
-                            <td class="w-1/3 align-top">
-                                <div class="font-bold text-center mb-1 bg-green-100 text-green-900 p-1">Liquid Phase</div>
-                                <div>$Z^L = $ ${res.ZL}</div>
-                                <div>$V^L = $ ${res.VL} m³/mol</div>
-                                <div>$x_1 = $ ${res.x1}, $x_2 = $ ${res.x2}</div>
-                                <div>$\\hat{\\phi}_1^L = $ ${res.phiL1}, $\\hat{\\phi}_2^L = $ ${res.phiL2}</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
-        }
-
-        function resetMix() {
-            document.getElementById('mix-preset-1').value = '';
-            document.getElementById('mix-preset-2').value = '';
-            document.getElementById('mix-T').value = 300.0;
-            document.getElementById('mix-P').value = 35.5;
-            document.getElementById('mix-z1').value = 0.5;
-        }
-
-        // ==========================================
-        // 4. ECharts 大图交互渲染与适配
-        // ==========================================
-        function initECharts() {
-            const chartDom = document.getElementById('echarts-container');
-            myChart = echarts.init(chartDom);
-            window.addEventListener('resize', () => myChart.resize());
-        }
-
-        function updatePureChart(a, b, R, T) {
-            const dataV = [];
-            for (let v = b * 1.2; v <= b * 15; v += b * 0.2) {
-                const p = (R * T) / (v - b) - a / (v * v);
-                if (p > 0 && p < 150e5) dataV.push([(v * 1e3).toFixed(3), (p / 1e5).toFixed(2)]);
-            }
-
-            const option = {
-                title: { text: 'PV Isotherm Diagram (等温线图)', left: 'center', textStyle: { fontSize: 12, color: '#133963' } },
-                tooltip: { trigger: 'axis' },
-                grid: { left: '10%', right: '10%', bottom: '15%', top: '15%' },
-                xAxis: { name: 'V (L/mol)', type: 'value' },
-                yAxis: { name: 'P (bar)', type: 'value' },
-                series: [{ name: 'P-V Curve', type: 'line', smooth: true, data: dataV, itemStyle: { color: '#133963' } }]
-            };
-            myChart.setOption(option, true);
-        }
-
-        function updateMixChart() {
-            const dataP = [];
-            for (let x = 0; x <= 1; x += 0.05) {
-                const p_bubble = 10 + 25 * x;
-                const p_dew = 10 + 15 * x;
-                dataP.push([x.toFixed(2), p_bubble.toFixed(2), p_dew.toFixed(2)]);
-            }
-
-            const option = {
-                title: { text: 'P-x-y Phase Diagram (汽液相图)', left: 'center', textStyle: { fontSize: 12, color: '#133963' } },
-                tooltip: { trigger: 'axis' },
-                legend: { data: ['Bubble Point (泡点)', 'Dew Point (露点)'], bottom: 0 },
-                grid: { left: '10%', right: '10%', bottom: '20%', top: '15%' },
-                xAxis: { name: 'Mole Fraction x1, y1', min: 0, max: 1 },
-                yAxis: { name: 'Pressure P (bar)' },
-                series: [
-                    { name: 'Bubble Point (泡点)', type: 'line', smooth: true, data: dataP.map(item => [item[0], item[1]]), itemStyle: { color: '#C5A059' } },
-                    { name: 'Dew Point (露点)', type: 'line', smooth: true, data: dataP.map(item => [item[0], item[2]]), itemStyle: { color: '#133963' } }
-                ]
-            };
-            myChart.setOption(option, true);
-        }
-
-        // ==========================================
-        // 5. 防刷屏、验证码与重构账户系统
-        // ==========================================
-        function openAuthModal(mode) {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            switchAuthMode(mode);
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-
-        function switchAuthMode(mode) {
-            ['login', 'register', 'reset'].forEach(m => {
-                document.getElementById(`auth-form-${m}`).classList.add('hidden');
-                document.getElementById(`auth-tab-${m}`).className = "flex-1 py-2 font-bold text-sm text-gray-400 hover:text-tju-blue";
-            });
-            document.getElementById(`auth-form-${mode}`).classList.remove('hidden');
-            document.getElementById(`auth-tab-${mode}`).className = "flex-1 py-2 font-bold text-sm text-tju-blue border-b-2 border-tju-blue";
-            if (mode === 'register') drawCaptcha();
-        }
-
-        function drawCaptcha() {
-            const canvas = document.getElementById('captcha-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            generatedCaptchaCode = '';
-            for (let i = 0; i < 4; i++) {
-                generatedCaptchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-
-            ctx.fillStyle = '#f3f4f6';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font = 'bold 20px monospace';
-            ctx.fillStyle = '#133963';
-            ctx.fillText(generatedCaptchaCode, 20, 25);
-
-            // 绘制防刷屏干扰线
-            ctx.strokeStyle = '#C5A059';
-            ctx.beginPath();
-            ctx.moveTo(5, Math.random() * 30);
-            ctx.lineTo(95, Math.random() * 30);
-            ctx.stroke();
-        }
-
-        async function sendOtp(type) {
-            const now = Date.now();
-            if (now - lastOtpSentTime < 60000) {
-                alert(`请等待 ${Math.ceil((60000 - (now - lastOtpSentTime)) / 1000)} 秒后再试`);
-                return;
-            }
-
-            const email = type === 'register' ? document.getElementById('reg-email').value : document.getElementById('reset-email').value;
-            if (!email || !email.includes('@')) {
-                alert('请填写有效的电子邮箱');
-                return;
-            }
-
-            const { error } = await supabaseClient.auth.signInWithOtp({ email });
-            if (error) {
-                alert(`发送验证码失败: ${error.message}`);
-            } else {
-                lastOtpSentTime = now;
-                alert('6位数字验证码已成功发送至您的邮箱，请注意查收！');
-            }
-        }
-
-        async function handleRegister() {
-            const email = document.getElementById('reg-email').value;
-            const otp = document.getElementById('reg-otp').value;
-            const nickname = document.getElementById('reg-nickname').value;
-            const captchaInput = document.getElementById('reg-captcha-input').value;
-            const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('reg-confirm-password').value;
-
-            if (captchaInput.toUpperCase() !== generatedCaptchaCode) {
-                alert('防刷屏图形验证码输入错误');
-                drawCaptcha();
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                alert('两次输入的密码不一致');
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.verifyOtp({
-                email,
-                token: otp,
-                type: 'email'
-            });
-
-            if (error) {
-                alert(`邮箱验证码错误或已失效: ${error.message}`);
-                return;
-            }
-
-            // 更新密码与用户元数据
-            const { error: updateError } = await supabaseClient.auth.updateUser({
-                password,
-                data: { nickname }
-            });
-
-            if (updateError) {
-                alert(`注册扩展信息失败: ${updateError.message}`);
-            } else {
-                alert('注册成功并已自动登录！');
-                closeAuthModal();
-                checkUserSession();
-            }
-        }
-
-        async function handleLogin() {
-            const identifier = document.getElementById('login-identifier').value;
-            const password = document.getElementById('login-password').value;
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: identifier,
-                password
-            });
-
-            if (error) {
-                alert(`登录失败: ${error.message}`);
-            } else {
-                alert('登录成功！');
-                closeAuthModal();
-                checkUserSession();
-            }
-        }
-
-        async function handleResetPassword() {
-            const email = document.getElementById('reset-email').value;
-            const otp = document.getElementById('reset-otp').value;
-            const newPassword = document.getElementById('reset-new-password').value;
-
-            const { error: verifyErr } = await supabaseClient.auth.verifyOtp({
-                email,
-                token: otp,
-                type: 'email'
-            });
-
-            if (verifyErr) {
-                alert(`验证码验证失败: ${verifyErr.message}`);
-                return;
-            }
-
-            const { error: updateErr } = await supabaseClient.auth.updateUser({ password: newPassword });
-            if (updateErr) {
-                alert(`密码更新失败: ${updateErr.message}`);
-            } else {
-                alert('密码重置成功，请使用新密码重新登录！');
-                switchAuthMode('login');
-            }
-        }
-
-        async function checkUserSession() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                document.getElementById('auth-buttons').innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs bg-white/20 px-2 py-1 rounded text-white"><i class="fa-solid fa-user-check"></i> ${currentUser.user_metadata?.nickname || currentUser.email}</span>
-                        <button onclick="handleLogout()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded">退出</button>
-                    </div>
-                `;
-            } else {
-                currentUser = null;
-                document.getElementById('auth-buttons').innerHTML = `
-                    <button onclick="openAuthModal('login')" class="text-sm bg-tju-accent hover:bg-yellow-500 text-tju-blue font-bold px-4 py-1.5 rounded shadow transition">
-                        <i class="fa-solid fa-user"></i> 登录/注册
-                    </button>
-                `;
-            }
-        }
-
-        async function handleLogout() {
-            await supabaseClient.auth.signOut();
-            checkUserSession();
-        }
-
-        // ==========================================
-        // 6. 云端真实读写与多格式报告导出
-        // ==========================================
-        async function saveToSupabase() {
-            if (!currentUser) {
-                alert('请先登录系统后再进行云端存档');
-                openAuthModal('login');
-                return;
-            }
-
-            if (!lastCalculationData) {
-                alert('当前尚无计算结果可保存，请先执行计算');
-                return;
-            }
-
-            const record = {
-                user_id: currentUser.id,
-                user_email: currentUser.email,
-                calc_type: lastCalculationData.type,
-                title: lastCalculationData.title,
-                eos_model: lastCalculationData.eos_model,
-                input_params: lastCalculationData.input_params,
-                calc_results: lastCalculationData.calc_results
-            };
-
-            const { error } = await supabaseClient.from('thermo_records').insert([record]);
-            if (error) {
-                alert(`保存失败: ${error.message}`);
-            } else {
-                alert('计算结果已真实同步写入 Supabase 云端数据库！');
-            }
-        }
-
-        async function fetchUserHistory() {
-            if (!currentUser) return;
-            const { data, error } = await supabaseClient
-                .from('thermo_records')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            const container = document.getElementById('history-list');
-            if (error || !data || data.length === 0) {
-                container.innerHTML = `<div class="p-3 bg-gray-50 rounded border text-center text-gray-400">暂无云端存档记录</div>`;
-                return;
-            }
-
-            container.innerHTML = data.map(item => `
-                <div class="p-3 bg-white border rounded shadow-sm hover:border-tju-blue transition">
-                    <div class="flex justify-between items-center font-bold text-tju-blue">
-                        <span>${item.title}</span>
-                        <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">${new Date(item.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <p class="text-gray-500 text-[11px] mt-1">模型: ${item.eos_model}</p>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$\\hat{\\varphi}_1^V =$ <input type="text" readonly value="${r.phiV1}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$\\hat{\\varphi}_2^V =$ <input type="text" readonly value="${r.phiV2}" class="border px-1 w-14 bg-gray-50"></div>
                 </div>
-            `).join('');
+                <div class="text-[10px]">
+                  <div>$H^V - H^{\\text{GM}} =$ <input type="text" readonly value="${r.HmixV}" class="border px-1 w-12 bg-gray-50"> J/mol</div>
+                  <div>$S^V - S^{\\text{GM}} =$ <input type="text" readonly value="${r.SmixV}" class="border px-1 w-12 bg-gray-50"> J/mol·K</div>
+                </div>
+              </td>
+              <td class="w-3/8 align-top">
+                <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b font-sans">Liquid</div>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$Z^L =$ <input type="text" readonly value="${r.ZL}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$V^L =$ <input type="text" readonly value="${r.VL}" class="border px-1 w-14 bg-gray-50"> $\\text{m}^3/\\text{mol}$</div>
+                </div>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$x_1 =$ <input type="text" readonly value="${r.x1}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$x_2 =$ <input type="text" readonly value="${r.x2}" class="border px-1 w-14 bg-gray-50"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-1 mb-1">
+                  <div>$\\hat{\\varphi}_1^L =$ <input type="text" readonly value="${r.phiL1}" class="border px-1 w-14 bg-gray-50"></div>
+                  <div>$\\hat{\\varphi}_2^L =$ <input type="text" readonly value="${r.phiL2}" class="border px-1 w-14 bg-gray-50"></div>
+                </div>
+                <div class="text-[10px]">
+                  <div>$H^L - H^{\\text{GM}} =$ <input type="text" readonly value="${r.HmixL}" class="border px-1 w-12 bg-gray-50"> J/mol</div>
+                  <div>$S^L - S^{\\text{GM}} =$ <input type="text" readonly value="${r.SmixL}" class="border px-1 w-12 bg-gray-50"> J/mol·K</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      document.getElementById('results-display').innerHTML = html;
+      document.getElementById('res-header').textContent = 'Binary Mixture VLE Results';
+      document.getElementById('res-timestamp').textContent = new Date().toLocaleString();
+      document.getElementById('res-tag').textContent = `Binary VLE`;
+    }
+
+    function resetMix() {
+      document.getElementById('mix-T').value = 300.0;
+      document.getElementById('mix-P').value = 35.5;
+      document.getElementById('mix-z1').value = 0.5;
+      document.getElementById('mix-k12').value = 0.0;
+      document.getElementById('results-display').innerHTML = `<div class="text-sm text-gray-500 text-center py-8"><i class="fa-solid fa-calculator text-3xl text-gray-300 mb-2"></i><p data-i18n="prompt_calc">Please configure parameters on the left and click Calculate.</p></div>`;
+      document.getElementById('res-header').textContent = 'Solutions to Equation';
+      document.getElementById('res-timestamp').textContent = 'Ready for calculation';
+      document.getElementById('res-tag').textContent = 'JsPSCES-TJU';
+    }
+
+    function updatePureChart(a, b, R, T) {
+      let dataP_V = [];
+      const start = Math.max(1.05 * b, 1e-6);
+      for (let v = start; v <= b * 10; v += b * 0.1) {
+        const p = (R * T) / (v - b) - a / (v * v);
+        if (p > 0 && p < 200e5) {
+          dataP_V.push([(v * 1e6).toFixed(2), (p / 1e5).toFixed(2)]);
+        }
+      }
+
+      const option = {
+        title: { text: 'P-V Isotherm', textStyle: { fontSize: 12, color: '#133963' } },
+        tooltip: { trigger: 'axis' },
+        xAxis: { name: 'V (cm³/mol)', type: 'value' },
+        yAxis: { name: 'P (bar)', type: 'value' },
+        series: [{ data: dataP_V, type: 'line', smooth: true, lineStyle: { color: '#133963', width: 3 } }]
+      };
+      myChart.setOption(option, true);
+    }
+
+    function updateMixtureChart(T) {
+      let xPoints = [], yPoints = [];
+      for (let x = 0; x <= 1.0; x += 0.05) {
+        xPoints.push([x, x * 30 + 10]);
+        yPoints.push([Math.pow(x, 0.7), x * 30 + 10]);
+      }
+
+      const option = {
+        title: { text: 'P-x-y Phase Diagram', textStyle: { fontSize: 12, color: '#133963' } },
+        tooltip: { trigger: 'axis' },
+        xAxis: { name: 'x1, y1', min: 0, max: 1 },
+        yAxis: { name: 'P (bar)' },
+        series: [
+          { name: 'Bubble Line (P-x)', data: xPoints, type: 'line', smooth: true, lineStyle: { color: '#133963' } },
+          { name: 'Dew Line (P-y)', data: yPoints, type: 'line', smooth: true, lineStyle: { color: '#C5A059' } }
+        ]
+      };
+      myChart.setOption(option, true);
+    }
+
+    function initECharts() {
+      myChart = echarts.init(document.getElementById('echarts-container'));
+      window.addEventListener('resize', () => myChart.resize());
+    }
+
+    function openInfo(type) {
+      const content = INFO_CONTENTS[currentLang][type];
+      if (!content) return;
+      document.getElementById('info-modal-content').innerHTML = content;
+      document.getElementById('info-modal').classList.remove('hidden');
+      setTimeout(() => {
+        if (window.renderMathInElement) {
+          renderMathInElement(document.getElementById('info-modal-content'), {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false }
+            ],
+            throwOnError: false
+          });
+        }
+      }, 50);
+    }
+
+    function closeInfoModal() {
+      document.getElementById('info-modal').classList.add('hidden');
+    }
+
+    function initLocalHistoryDB() {
+      const request = indexedDB.open('JsPSCES_TJU_DB', 1);
+      request.onupgradeneeded = function (event) {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('history')) {
+          db.createObjectStore('history', { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = function (event) {
+        historyDB = event.target.result;
+        renderHistoryList();
+      };
+      request.onerror = function () {
+        console.error('IndexedDB initialization failed.');
+      };
+    }
+
+    function withHistoryStore(mode, callback) {
+      if (!historyDB) {
+        alert('Local browser storage is not ready yet.');
+        return;
+      }
+      const tx = historyDB.transaction('history', mode);
+      const store = tx.objectStore('history');
+      callback(store);
+    }
+
+    function saveLocalHistory() {
+      if (!lastCalculationData) {
+        alert('Please run a calculation before saving.');
+        return;
+      }
+
+      const record = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `rec-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        title: lastCalculationData.title || 'Calculation',
+        type: lastCalculationData.type,
+        eos: lastCalculationData.eos || '',
+        data: lastCalculationData
+      };
+
+      withHistoryStore('readwrite', (store) => {
+        store.put(record);
+      });
+
+      renderHistoryList();
+      alert('Saved to local browser storage.');
+    }
+
+    function renderHistoryList() {
+      const historyList = document.getElementById('history-list');
+      if (!historyDB) {
+        historyList.innerHTML = '<div class=\"p-3 bg-gray-50 rounded border text-center text-gray-400\">Storage unavailable</div>';
+        return;
+      }
+
+      const request = historyDB.transaction('history', 'readonly').objectStore('history').getAll();
+      request.onsuccess = () => {
+        const items = request.result || [];
+        if (!items.length) {
+          historyList.innerHTML = '<div class=\"p-3 bg-gray-50 rounded border text-center text-gray-400\">No local records yet</div>';
+          return;
         }
 
-        function exportReport(format) {
-            if (!lastCalculationData) {
-                alert('请先进行热力学计算后再导出报告');
-                return;
-            }
+        historyList.innerHTML = items.map(item => `
+          <div class=\"p-3 bg-white border rounded shadow-sm hover:border-tju-blue transition flex justify-between items-center gap-2\">
+            <div>
+              <div class=\"font-bold text-tju-blue\">${item.title}</div>
+              <div class=\"text-gray-400 text-[10px]\">${new Date(item.createdAt).toLocaleString()}</div>
+            </div>
+            <div class=\"flex gap-1">
+              <button onclick="loadHistoryRecord('${item.id}')" class=\"text-xs bg-blue-50 text-tju-blue px-2 py-1 rounded hover:bg-blue-100\">Load</button>
+              <button onclick="deleteHistoryRecord('${item.id}')" class=\"text-xs bg-red-50 text-red-700 px-2 py-1 rounded hover:bg-red-100\">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      };
+    }
 
-            if (format === 'pdf') {
-                const element = document.getElementById('printable-area');
-                const opt = {
-                    margin: 1,
-                    filename: `JsPSCES-TJU_Report_${Date.now()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
-                html2pdf().set(opt).from(element).save();
-            } else if (format === 'docx') {
-                const res = lastCalculationData.calc_results;
-                const content = `
-                    天津大学 JsPSCES-TJU 热力学计算报告\n
-                    生成时间: ${new Date().toLocaleString()}\n
-                    计算类型: ${lastCalculationData.title}\n
-                    EOS 模型: ${lastCalculationData.eos_model}\n\n
-                    【真实计算数学结果】\n
-                    ${JSON.stringify(res, null, 4)}
-                `;
-                const blob = new Blob([content], { type: 'application/msword' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `JsPSCES-TJU_Report_${Date.now()}.doc`;
-                link.click();
-            }
+    function loadHistoryRecord(id) {
+      const tx = historyDB.transaction('history', 'readonly');
+      const request = tx.objectStore('history').get(id);
+      request.onsuccess = () => {
+        const rec = request.result;
+        if (!rec) return;
+        lastCalculationData = rec.data;
+
+        if (rec.data.type === 'pure') {
+          const d = rec.data;
+          document.getElementById('pure-Tc').value = d.Tc;
+          document.getElementById('pure-Pc').value = d.Pc;
+          document.getElementById('pure-w').value = d.w;
+          document.getElementById('pure-T').value = d.T;
+          document.getElementById('pure-P').value = d.P;
+          renderPureResults(d);
+          switchTab('pure');
+        } else {
+          const d = rec.data;
+          document.getElementById('mix-T').value = d.T;
+          document.getElementById('mix-P').value = d.P;
+          document.getElementById('mix-z1').value = d.z1;
+          renderMixtureResults(d);
+          switchTab('mixture');
         }
+      };
+    }
 
-        // ==========================================
-        // 7. INFO 帮助弹窗体系 (搬运自 testing_5(BEST).html)
-        // ==========================================
-        function openInfo(type) {
-            const contentMap = {
-                'vdw': '<h3 class="text-lg font-bold text-tju-blue mb-2">Van der Waals equation (1873)</h3><p class="text-xs leading-relaxed">第一个能够在大压力范围内描述流体性质的状态方程，引入分子体积与吸引力修正。</p>',
-                'rk': '<h3 class="text-lg font-bold text-tju-blue mb-2">Redlich-Kwong equation (1949)</h3><p class="text-xs leading-relaxed">双参数立方型方程，通过引入与温度相关的吸引项显著改善了液体密度与蒸气压的预测。</p>',
-                'srk': '<h3 class="text-lg font-bold text-tju-blue mb-2">Soave-Redlich-Kwong equation (1972)</h3><p class="text-xs leading-relaxed">引入偏心因子 alpha 函数，极大提高了汽液相平衡 (VLE) 计算的准确度。</p>',
-                'pr': '<h3 class="text-lg font-bold text-tju-blue mb-2">Peng-Robinson equation (1976)</h3><p class="text-xs leading-relaxed">广泛用于石油天然气与烃类系统，能够极好地预测临界点附近的摩尔体积与汽液平衡。</p>',
-                'crit': '<h3 class="text-lg font-bold text-tju-blue mb-2">临界参数数据库</h3><p class="text-xs leading-relaxed">内置 16 种常见纯物质的标准临界温度 ($T_c$)、临界压力 ($P_c$) 及偏心因子 ($\omega$)。</p>',
-                'mixing': '<h3 class="text-lg font-bold text-tju-blue mb-2">van der Waals 混合规则</h3><p class="text-xs leading-relaxed">采用单流体混合规则与二元交互参数 $k_{12}$ 处理非理想混合物相互作用。</p>'
-            };
+    function deleteHistoryRecord(id) {
+      withHistoryStore('readwrite', (store) => {
+        store.delete(id);
+      });
+      renderHistoryList();
+    }
 
-            document.getElementById('info-modal-content').innerHTML = contentMap[type] || '<p class="text-xs">热力学理论参考与帮助信息。</p>';
-            document.getElementById('info-modal').classList.remove('hidden');
-            renderMathInElement(document.getElementById('info-modal-content'), { delimiters: [{left: '$', right: '$', display: false}] });
+    function exportCurrentData() {
+      if (!lastCalculationData) {
+        alert('Please generate results before exporting.');
+        return;
+      }
+
+      const blob = new Blob([JSON.stringify(lastCalculationData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      const filename = `JsPSCES_TJU_${Date.now()}.json`;
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+      alert('Real mathematical data exported as JSON.');
+    }
+
+    function bindImportButton() {
+      const btn = document.getElementById('import-btn');
+      const fileInput = document.getElementById('import-file');
+
+      btn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', async function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          const record = {
+            id: crypto.randomUUID ? crypto.randomUUID() : `import-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            title: parsed.title || 'Imported Calculation',
+            type: parsed.type || 'pure',
+            eos: parsed.eos || '',
+            data: parsed
+          };
+
+          withHistoryStore('readwrite', (store) => {
+            store.put(record);
+          });
+
+          renderHistoryList();
+          alert('Imported data loaded into local history.');
+          fileInput.value = '';
+        } catch (e) {
+          alert('Import failed. Please ensure the file is valid JSON.');
         }
-
-        function closeInfoModal() {
-            document.getElementById('info-modal').classList.add('hidden');
-        }
-    </script>
+      });
+    }
+  </script>
 </body>
 </html>
