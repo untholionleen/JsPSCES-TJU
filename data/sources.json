@@ -1,0 +1,9 @@
+[
+ {"id":"iapws-if97","name":"IAPWS R7-97(2012), Revised Release on the IAPWS Industrial Formulation 1997","url":"https://iapws.org/technical-guidance/release/IF97-Rev","model":"IF97","scope":"Water and steam regions 1–5, saturation and backward equations","status":"primary-standard"},
+ {"id":"nist-webbook","name":"NIST Chemistry WebBook SRD 69","url":"https://webbook.nist.gov/chemistry/","model":"reference-data","scope":"Critical constants and thermophysical properties for individual substances","status":"reference-cross-check"},
+ {"id":"coolprop","name":"CoolProp Documentation","url":"https://coolprop.org/","model":"multiple-EOS","scope":"Independent comparison for fluid properties and cubic EOS","status":"independent-cross-check"},
+ {"id":"tju-textbook","name":"《化工热力学》第三版","url":"","model":"teaching-reference","scope":"Teaching structure, notation, derivation organization","status":"textbook-reference"},
+ {"id":"barrie-2005","name":"Patrick J. Barrie, J. Chem. Educ. 82 (2005), 958–959","url":"https://doi.org/10.1021/ed082p958","model":"cubic-EOS-education","scope":"Cubic equation of state educational program reference","status":"algorithm-reference"}
+ ,
+ {"id":"pjb10-thermo","name":"Online Thermodynamics Calculators (user-provided reference site)","url":"https://pjb10.user.srcf.net/thermo/index.html","model":"educational-reference","scope":"Pure-fluid and mixture EOS/VLE learning workflow","status":"reference-only"}
+]

@@ -1,0 +1,13 @@
+{
+ "standard":"IAPWS IF97",
+ "note":"Published verification points used for implementation regression. This is not a complete region-wide validation suite.",
+ "points":[
+  {"id":"R1-3MPa-300K","region":1,"P_MPa":3,"T_K":300,"v_m3_kg":0.00100215168,"h_kJ_kg":115.331273,"s_kJ_kgK":0.3922947928},
+  {"id":"R2-0p0035MPa-300K","region":2,"P_MPa":0.0035,"T_K":300,"v_m3_kg":39.4913866,"h_kJ_kg":2549.91145,"s_kJ_kgK":8.52238967},
+  {"id":"R2-0p0035MPa-700K","region":2,"P_MPa":0.0035,"T_K":700,"v_m3_kg":92.3015898,"h_kJ_kg":3335.68375,"s_kJ_kgK":10.1749996},
+  {"id":"R3-rho500-650K","region":3,"rho_kg_m3":500,"T_K":650,"P_MPa":25.5837018,"h_kJ_kg":1863.43019}
+ ],
+ "saturation_points":[
+  {"T_K":373.15,"P_sat_MPa":0.1014179779,"hf_kJ_kg":419.099155,"hg_kJ_kg":2675.572029}
+ ]
+}

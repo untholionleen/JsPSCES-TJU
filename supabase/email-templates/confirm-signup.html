@@ -1,13 +1,1 @@
-<!doctype html>
-<html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>确认邮箱｜TJU-ThermoHub</title></head>
-<body style="margin:0;padding:32px 12px;background:#f2f5f8;font-family:Arial,'Microsoft YaHei',sans-serif;color:#1b2c40;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;margin:0 auto;background:#fff;border:1px solid #e1e7ee;border-radius:14px;overflow:hidden;">
-    <tr><td style="padding:28px 32px;background:#133963;color:#fff;"><div style="font-size:12px;letter-spacing:2px;color:#d5b36d;">TJU-THERMOHUB</div><h1 style="margin:10px 0 0;font-size:24px;">确认您的邮箱</h1></td></tr>
-    <tr><td style="padding:32px;"><p style="line-height:1.8;">您好，{{ .Email }}：</p><p style="line-height:1.8;">您正在注册化工热力学自主学习平台。请点击下方按钮确认邮箱地址并完成注册。</p>
-      <p style="margin:28px 0;"><a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#c5a059;color:#102a46;text-decoration:none;font-weight:bold;padding:13px 24px;border-radius:8px;">确认邮箱并激活账户</a></p>
-      <p style="font-size:13px;line-height:1.7;color:#66778a;">如果按钮无法打开，请复制以下链接到浏览器：<br><a href="{{ .ConfirmationURL }}" style="color:#1e528e;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
-      <p style="font-size:13px;color:#66778a;line-height:1.7;">若您没有发起注册，请忽略此邮件。此邮件由系统自动发送，请勿直接回复。</p>
-    </td></tr><tr><td style="padding:18px 32px;background:#f8fafc;color:#718096;font-size:12px;">TJU-ThermoHub · 课程学习辅助项目 · 非天津大学官方发布</td></tr>
-  </table>
-</body></html>
+<!doctype html><html><body style="margin:0;background:#f4f7fa;font-family:Arial,'Microsoft YaHei',sans-serif;color:#1b2b3d"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 12px"><tr><td align="center"><table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:14px;padding:34px"><tr><td><p style="font-size:11px;letter-spacing:2px;color:#b18d54;font-weight:bold">TIANJIN UNIVERSITY · TJU-THERMOHUB</p><h1 style="font-size:24px;color:#102c50">验证您的邮箱地址</h1><p style="font-size:14px;line-height:1.8;color:#5c6d7f">您好，感谢注册天津大学化工热力学学生自主学习网站。请使用下方 6 位验证码完成邮箱验证。</p><p style="font-size:32px;letter-spacing:8px;font-weight:bold;color:#174c7e;background:#eef4f8;padding:18px;text-align:center;border-radius:8px">{{ .Token }}</p><p style="font-size:12px;color:#7b8998">验证码有效期以系统配置为准。若您没有发起注册，请忽略本邮件。</p><hr style="border:0;border-top:1px solid #e3eaf0;margin:24px 0"><p style="font-size:11px;color:#9aa5b1">TJU-ThermoHub · Version 13.1.0<br>教学辅助平台，不代表天津大学官方身份认证系统。</p></td></tr></table></td></tr></table></body></html>

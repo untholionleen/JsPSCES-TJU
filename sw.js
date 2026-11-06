@@ -1,0 +1,5 @@
+const CACHE='tju-thermohub-13.1.0';
+const ASSETS=['./','./index.html','./assets/css/styles.css','./assets/js/app.js','./assets/js/config.js','./assets/js/data.js','./assets/js/core/eos.js','./assets/js/core/if97.js','./assets/js/core/auth.js','./assets/js/modules/charts.js','./assets/js/modules/derivations.js','./manifest.webmanifest'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{const url=new URL(event.request.url);if(url.origin!==location.origin||event.request.method!=='GET')return;event.respondWith(caches.match(event.request).then(hit=>hit||fetch(event.request).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put(event.request,copy));return res;}).catch(()=>caches.match('./index.html'))));});

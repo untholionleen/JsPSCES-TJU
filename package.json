@@ -1,11 +1,7 @@
 {
   "name": "tju-thermohub",
-  "version": "3.0.0",
+  "version": "13.1.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "test:core": "node scripts/test-core.mjs",
-    "serve": "python -m http.server 8080"
-  },
-  "description": "TJU-ThermoHub thermodynamics learning website"
+  "scripts": {"test": "node --test tests/*.test.mjs", "check": "node --check assets/js/app.js && node --check assets/js/core/eos.js && node --check assets/js/core/if97.js && node --check assets/js/core/auth.js && node --check assets/js/modules/charts.js && node --check assets/js/modules/derivations.js && node --check assets/js/config.js && node --check assets/js/data.js"}
 }
