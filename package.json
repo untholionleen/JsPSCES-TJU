@@ -1,0 +1,11 @@
+{
+  "name": "tju-thermohub",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:core": "node scripts/test-core.mjs",
+    "serve": "python -m http.server 8080"
+  },
+  "description": "TJU-ThermoHub thermodynamics learning website"
+}
