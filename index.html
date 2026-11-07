@@ -74,7 +74,25 @@
   <div id="virResult" class="result">适用于低压、气相、维里展开收敛的初步估算；不是 Lee–Kesler 全压力范围结果。</div>
   <canvas id="virPlot" class="chart" width="1000" height="320"></canvas>
   <p class="note">所用二阶维里系数相关式：B⁰=0.083−0.422/Tr^1.6，B¹=0.139−0.172/Tr^4.2；请按课程教材指定版本复核其单位约定与适用范围。</p>
- </div>\n <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z / Hᴿ / Sᴿ / φ</td><td>简单流体 + 参考流体 BWR、ω/0.3978 插值</td><td>已实现并以 UBC 公开点回归</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
+ </div>\n <div class="grid">
+  <div class="card"><h3>理想气体 Cp 多项式状态变化</h3>
+   <div class="formula">Cpᵢᵍ/R = A + BT + CT² + DT³</div>
+   <div class="row"><div><label>初态 T₁ / K</label><input id="cpT1" type="number" value="300"></div><div><label>终态 T₂ / K</label><input id="cpT2" type="number" value="500"></div><div><label>初态 P₁ / MPa</label><input id="cpP1" type="number" value="1"></div><div><label>终态 P₂ / MPa</label><input id="cpP2" type="number" value="5"></div></div>
+   <div class="row three"><div><label>A</label><input id="cpA" type="number" value="3.5" step="any"></div><div><label>B / K⁻¹</label><input id="cpB" type="number" value="0" step="any"></div><div><label>C / K⁻²</label><input id="cpC" type="number" value="0" step="any"></div><div><label>D / K⁻³</label><input id="cpD" type="number" value="0" step="any"></div></div>
+   <div class="actions"><button class="btn primary" id="cpCalc">计算 ΔH、ΔS</button><button class="btn" id="cpExport">导出 CSV</button></div>
+   <div id="cpResult" class="result">默认 Cp/R=3.5，仅为演示初值。实际使用请填入所选气体的 Cp 多项式系数。</div>
+   <p class="note">ΔH=R∫(Cp/R)dT；ΔS=R∫(Cp/R)/T dT−R ln(P₂/P₁)。适用于理想气体热容多项式；不包含真实气体剩余性质。</p>
+  </div>
+  <div class="card"><h3>二元液相活度系数（Margules / van Laar）</h3>
+   <label>模型</label><select id="gammaModel"><option value="margules">对称一参数 Margules</option><option value="vanlaar">van Laar 双参数</option></select>
+   <div class="row"><div><label>液相摩尔分率 x₁</label><input id="gammaX1" type="number" value="0.5" min="0" max="1" step="any"></div><div><label>A₁₂ / Margules A</label><input id="gammaA12" type="number" value="1" step="any"></div><div><label>A₂₁（van Laar）</label><input id="gammaA21" type="number" value="1" step="any"></div></div>
+   <div class="actions"><button class="btn primary" id="gammaCalc">计算 γ₁、γ₂</button><button class="btn" id="gammaExport">导出 CSV</button></div>
+   <div id="gammaResult" class="result">参数由用户输入；尚无特定体系的实验回归参数库。</div>
+   <div class="formula">gᴱ/RT = x₁ ln γ₁ + x₂ ln γ₂</div>
+   <p class="note">仅为二元液相活度模型计算器。没有给出经实验拟合的 A₁₂、A₂₁ 前，不应把演示系数当成真实混合物数据。</p>
+  </div>
+ </div>
+ <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z / Hᴿ / Sᴿ / φ</td><td>简单流体 + 参考流体 BWR、ω/0.3978 插值</td><td>已实现并以 UBC 公开点回归</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
 </section>
 <section class="page" id="p-m3">
  <div class="heading"><div><div class="kicker">MODULE 03</div><h2>热力学公式推导专题</h2><p>首批 D1 范德华方程临界参数推导；首批 D1–D11 推导逐步展示；公式与说明仍需教师逐项审核。</p></div><span class="tag">D1–D11 草稿，待审核</span></div>
@@ -111,6 +129,12 @@
 <section class="page" id="p-app">
  <div class="heading"><div><div class="kicker">APPENDICES</div><h2>附录与学术参考</h2><p>全站符号、术语和单位查询。</p></div></div>
  <div class="grid"><div class="card"><h3>化工热力学术语</h3><input id="gsearch" placeholder="搜索中文或英文"><div id="gloss" class="list" style="margin-top:10px;max-height:350px;overflow:auto"></div></div><div class="card"><h3>常用单位换算</h3><label>类型</label><select id="utype"><option value="p">压力：MPa / bar / kPa / atm</option><option value="e">能量：J / kJ / cal</option><option value="t">温度：K / °C</option></select><label>数值</label><input id="uval" type="number" value="1"><div class="row"><div><label>从</label><select id="ufrom"></select></div><div><label>到</label><select id="uto"></select></div></div><button class="btn primary" id="uconvert">换算</button><div id="ures" class="result">—</div></div></div>
+ <div class="card"><h3>16 种纯物质临界参数与来源状态</h3>
+  <input id="chemSearch" placeholder="搜索物质名称或英文名称">
+  <div class="actions"><button class="btn" id="chemExport">导出参数 CSV</button></div>
+  <div class="scroll"><table><thead><tr><th>物质</th><th>英文</th><th>Tc / K</th><th>Pc / MPa</th><th>ω</th><th>数据状态</th></tr></thead><tbody id="chemData"></tbody></table></div>
+  <p class="note">参数表沿用项目 16 物质基础数据。标记“待复核”的行不应直接用于高精度工程设计；请按 NIST、DIPPR 或经授权物性数据库逐项校核来源和温度/压力单位。</p>
+ </div>
  <div class="card"><h3>主要符号</h3><div class="scroll"><table><thead><tr><th>符号</th><th>中文名称</th><th>英文名称</th><th>SI 单位</th></tr></thead><tbody id="symbols"></tbody></table></div></div>
  <div class="card"><h3>数据来源与学术版权</h3><ul><li><a href="https://iapws.org/" target="_blank" rel="noopener">IAPWS</a>：水与水蒸气工业标准公式。</li><li><a href="https://webbook.nist.gov/chemistry/" target="_blank" rel="noopener">NIST Chemistry WebBook</a>：物性数据核对。</li><li><a href="https://pjb10.user.srcf.net/thermo/" target="_blank" rel="noopener">Patrick J. Barrie 原始教学程序</a>：结构参考，代码使用须遵守作者许可。</li><li>夏淑倩、马沛生、李永红主编：《化工热力学》第三版，化学工业出版社，2023。</li></ul><p class="note">第三方教材、软件、数据库和论文均应注明来源并遵守版权/许可。教学近似数据不得冒充标准数据。</p></div>
 </section>
@@ -204,7 +228,10 @@ function initUnits(){let opts={p:["MPa","bar","kPa","atm"],e:["J","kJ","cal"],t:
 const glossary=[["压缩因子","Compressibility factor","Z"],["状态方程","Equation of state","EOS"],["逸度","Fugacity","f"],["逸度系数","Fugacity coefficient","φ"],["偏心因子","Acentric factor","ω"],["剩余焓","Enthalpy departure","Hᴿ"],["剩余熵","Entropy departure","Sᴿ"],["临界温度","Critical temperature","Tc"],["临界压力","Critical pressure","Pc"],["泡点","Bubble point",""],["露点","Dew point",""],["闪蒸","Flash calculation",""],["汽液平衡","Vapor-liquid equilibrium","VLE"],["干度","Vapor quality","x"],["过热蒸汽","Superheated steam",""]];
 function renderGloss(q){$("gloss").innerHTML=glossary.filter(x=>x.join(" ").toLowerCase().includes((q||"").toLowerCase())).map(x=>"<div>"+x[0]+" · "+x[1]+" · "+x[2]+"</div>").join("")||"未找到匹配术语。"}
 const symbols=[["P","压力","Pressure","Pa"],["T","热力学温度","Temperature","K"],["V","体积","Volume","m³"],["Vm","摩尔体积","Molar volume","m³/mol"],["v","比体积","Specific volume","m³/kg"],["Z","压缩因子","Compressibility factor","—"],["H","焓","Enthalpy","J"],["S","熵","Entropy","J/K"],["U","内能","Internal energy","J"],["φ","逸度系数","Fugacity coefficient","—"],["ω","偏心因子","Acentric factor","—"],["Tc","临界温度","Critical temperature","K"],["Pc","临界压力","Critical pressure","Pa"],["R","气体常数","Gas constant","J/(mol·K)"]];
-function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi","HR_kJ_mol","SR_J_molK"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi,x.HR/1000,x.SR])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("lkCalc").onclick=lkCalcUI;$("lkExport").onclick=()=>window._lkRows?download("TJU-ThermoHub-Lee-Kesler.csv",window._lkRows):show("lkResult","请先计算。","err");lkCalcUI();$("virCalc").onclick=virialCalc;$("virCSV").onclick=()=>window._virRows?download("TJU-ThermoHub-Pitzer-virial.csv",window._virRows):show("virResult","请先计算。","err");virialCalc();$("dnext").onclick=()=>{dstep=Math.min(derivs[didx].steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=derivs[didx].steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";showDeriv();};}
+function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi","HR_kJ_mol","SR_J_molK"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi,x.HR/1000,x.SR])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("cpCalc").onclick=cpPolynomialCalc;$("cpExport").onclick=()=>window._cpRows?download("TJU-ThermoHub-ideal-gas-Cp.csv",window._cpRows):show("cpResult","请先计算。","err");cpPolynomialCalc();
+ $("gammaCalc").onclick=gammaCalcUI;$("gammaExport").onclick=()=>window._gammaRows?download("TJU-ThermoHub-activity-coefficients.csv",window._gammaRows):show("gammaResult","请先计算。","err");gammaCalcUI();
+ $("chemSearch").oninput=e=>renderChemicalData(e.target.value);$("chemExport").onclick=()=>window._chemRows?download("TJU-ThermoHub-critical-properties.csv",window._chemRows):null;renderChemicalData("");
+ $("lkCalc").onclick=lkCalcUI;$("lkExport").onclick=()=>window._lkRows?download("TJU-ThermoHub-Lee-Kesler.csv",window._lkRows):show("lkResult","请先计算。","err");lkCalcUI();$("virCalc").onclick=virialCalc;$("virCSV").onclick=()=>window._virRows?download("TJU-ThermoHub-Pitzer-virial.csv",window._virRows):show("virResult","请先计算。","err");virialCalc();$("dnext").onclick=()=>{dstep=Math.min(derivs[didx].steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=derivs[didx].steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";showDeriv();};}
 function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="p-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p))}
 function sub(id){document.querySelectorAll("#p-m1 .sub").forEach(x=>x.classList.toggle("active",x.id==="s-"+id));document.querySelectorAll("#p-m1 [data-sub]").forEach(x=>x.classList.toggle("active",x.dataset.sub===id))}
 function steam(id){document.querySelectorAll("#p-m4 .sub").forEach(x=>x.classList.toggle("active",x.id==="steam-"+id));document.querySelectorAll("#p-m4 [data-steam]").forEach(x=>x.classList.toggle("active",x.dataset.steam===id))}
@@ -283,6 +310,34 @@ function drawPvt(){
   canvas.onpointermove=e=>{if(!drag)return;rotY+=(e.clientX-drag[0])*.008;rotX+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];drawPvt()};
   canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;canvas.dataset.bound="1";
  }
+}
+function cpPolynomialCalc(){
+ try{
+  const T1=+$("cpT1").value,T2=+$("cpT2").value,P1=+$("cpP1").value,P2=+$("cpP2").value,A=+$("cpA").value,B=+$("cpB").value,C=+$("cpC").value,D=+$("cpD").value;
+  if(!(T1>0&&T2>0&&P1>0&&P2>0)||[T1,T2,P1,P2,A,B,C,D].some(v=>!Number.isFinite(v)))throw new Error("温度、压力应为正数，系数必须为有限数。");
+  const dH=R*(A*(T2-T1)+B/2*(T2*T2-T1*T1)+C/3*(Math.pow(T2,3)-Math.pow(T1,3))+D/4*(Math.pow(T2,4)-Math.pow(T1,4)));
+  const dS=R*(A*Math.log(T2/T1)+B*(T2-T1)+C/2*(T2*T2-T1*T1)+D/3*(Math.pow(T2,3)-Math.pow(T1,3))-Math.log(P2/P1));
+  const out={T1,T2,P1,P2,A,B,C,D,deltaH_J_mol:dH,deltaS_J_molK:dS};
+  window._cpRows=[["T1_K","T2_K","P1_MPa","P2_MPa","A","B_K-1","C_K-2","D_K-3","deltaH_J_mol","deltaS_J_molK"],[T1,T2,P1,P2,A,B,C,D,dH,dS]];
+  show("cpResult","ΔH = "+(dH/1000).toFixed(7)+" kJ/mol\nΔS = "+dS.toFixed(7)+" J/(mol·K)\n假设：Cp/R=A+BT+CT²+DT³ 且理想气体状态方程成立。","ok");
+ }catch(e){show("cpResult",e.message,"err")}
+}
+function gammaCalcUI(){
+ try{
+  const model=$("gammaModel").value,x1=+$("gammaX1").value,A12=+$("gammaA12").value,A21=+$("gammaA21").value,x2=1-x1;
+  if(!Number.isFinite(x1)||x1<0||x1>1||![A12,A21].every(Number.isFinite))throw new Error("x₁ 需在 0–1，模型参数需为有限数。");
+  let l1,l2;
+  if(model==="margules"){l1=A12*x2*x2;l2=A12*x1*x1;}
+  else{const den=A12*x1+A21*x2;if(den===0)throw new Error("van Laar 分母为零。");l1=A12*Math.pow(A21*x2/den,2);l2=A21*Math.pow(A12*x1/den,2);}
+  const g1=Math.exp(l1),g2=Math.exp(l2),ge=x1*l1+x2*l2;
+  window._gammaRows=[["model","x1","x2","A12","A21","lnGamma1","lnGamma2","gamma1","gamma2","gE_over_RT"],[model,x1,x2,A12,A21,l1,l2,g1,g2,ge]];
+  show("gammaResult","x₂ = "+x2.toFixed(7)+"\nln γ₁ = "+l1.toFixed(8)+"；γ₁ = "+g1.toFixed(8)+"\nln γ₂ = "+l2.toFixed(8)+"；γ₂ = "+g2.toFixed(8)+"\ngᴱ/(RT) = "+ge.toFixed(8),"ok");
+ }catch(e){show("gammaResult",e.message,"err")}
+}
+function renderChemicalData(q){
+ const query=(q||"").toLowerCase(), rows=names.filter(x=>(x[1]+" "+x[2]+" "+x[0]).toLowerCase().includes(query));
+ $("chemData").innerHTML=rows.map(x=>"<tr><td>"+x[1]+"</td><td>"+x[2]+"</td><td>"+x[3]+"</td><td>"+x[4]+"</td><td>"+x[5]+"</td><td>"+x[6]+"</td></tr>").join("");
+ window._chemRows=[["id","name_zh","name_en","Tc_K","Pc_MPa","omega","status"],...rows.map(x=>x.slice())];
 }
 function lkCalcUI(){
  try{
