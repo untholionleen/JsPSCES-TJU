@@ -109,12 +109,12 @@
    prev={P,r};
   }
   if(!bracket)throw new Error('R-134a saturation pressure could not be bracketed near the ancillary estimate.');
-  let lo=bracket[0],hi=bracket[1],rlo=residual(lo),midR=null,midP=NaN;
+  let lo=bracket[0],hi=bracket[1],rlo=residual(lo),flo=rlo.f,midR=null,midP=NaN;
   for(let i=0;i<75;i++){
    midP=(lo+hi)/2;midR=residual(midP);
    if(!midR){lo=midP;continue;}
    if(Math.abs(midR.f)<2e-11)break;
-   if(rlo.r.f*midR.f<=0)hi=midP;else{lo=midP;rlo={r:midR};}
+   if(flo*midR.f<=0)hi=midP;else{lo=midP;flo=midR.f;}
   }
   if(!midR)throw new Error('R-134a saturation root did not converge.');
   return {T,P:midP,p:midP/1e6,liquid:midR.liquid,vapor:midR.vapor,
