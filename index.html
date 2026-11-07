@@ -205,11 +205,11 @@ function drawPvt(){
  if(projection!=="3d"){
   let series=[];
   if(projection==="pv"){
-   const temps=[.7,.85,1,1.15,1.35,1.6];
+   const temps=[.7,.85,1,1.15,1.35,1.6],Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
    temps.forEach((tr,k)=>{
     let d=[];
     for(let i=0;i<180;i++){
-     const vr=1.08+i/179*9.0,V=vr*R*tc/(pc*1e6);
+     const vr=1.08+i/179*9.0,V=vr*Vc;
      try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([vr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([vr,NaN])}
     }
     series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]});
@@ -218,11 +218,11 @@ function drawPvt(){
    return;
   }
   if(projection==="pt"){
-   const volumes=[.45,.6,.8,1,1.3,1.8,2.5,4,7];
+   const volumes=[.45,.6,.8,1,1.3,1.8,2.5,4,7],Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
    volumes.forEach((vr,k)=>{
     const d=[];
     for(let i=0;i<150;i++){
-     const tr=.7+i/149*.9,V=vr*R*tc/(pc*1e6);
+     const tr=.7+i/149*.9,V=vr*Vc;
      try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([tr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([tr,NaN])}
     }
     series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d","#9c5963","#547b85"][k]});
@@ -254,7 +254,7 @@ function drawPvt(){
       xx=x*Math.cos(rotY)-zz*Math.sin(rotY),zz2=x*Math.sin(rotY)+zz*Math.cos(rotY),sc=1/(2.7+zz2*.2);
   return [canvas.width/2+xx*canvas.width*.28*sc,canvas.height*.52-yy*canvas.height*.32*sc];
  };
- const grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{
+ const Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);\n const grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{
   const vr=1.15+i/29*7.5,tr=.7+j/16*1.0,V=vr*R*tc/(pc*1e6);
   let P;
   try{P=pressure(m,tr*tc,V,tc,pc,w)/1e6/pc}catch(e){P=NaN}
