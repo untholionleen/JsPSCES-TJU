@@ -46,11 +46,32 @@
  <div class="grid"><div class="card"><h3>推导目录</h3><div class="list" id="dlist"></div></div><div class="card"><h3 id="dtitle">D1 范德华方程临界参数</h3><div id="deq" class="formula"></div><p id="dnote"></p><div class="actions"><button class="btn" id="dprev">上一步</button><button class="btn primary" id="dnext">下一步</button><button class="btn" id="dauto">自动播放</button></div><span id="dstep" class="note"></span></div></div>
 </section>
 <section class="page" id="p-m4">
- <div class="heading"><div><div class="kicker">MODULE 04</div><h2>水与水蒸气性质</h2><p>目前实现 IAPWS-IF97 Region 4 饱和压力关系与教学插值器；其他区域完整物性暂未开放。</p></div><span class="tag">部分功能已实现</span></div>
- <div class="tabs"><button class="active" data-steam="sat">饱和压力/温度</button><button data-steam="interp">插值教学</button><button data-steam="regions">五区状态</button></div>
- <div class="sub active" id="steam-sat"><div class="grid"><div class="card"><h3>IF97 Region 4 饱和曲线</h3><label>查询方式</label><select id="smode"><option value="T">按温度 T 查询饱和压力</option><option value="P">按压力 P 查询饱和温度</option></select><label id="slabel">T / K</label><input id="sinput" value="373.15" type="number" step="any"><div class="actions"><button class="btn primary" id="scalc">计算</button></div><div id="sresult" class="result">温度范围 273.15–647.096 K。</div></div><div class="card"><h3>适用范围</h3><p>Region 4 饱和线：273.15 K ≤ T ≤ 647.096 K；压力范围为三相点至临界点。此处不代表已经完成 Region 1/2/3/5 性质计算。</p><a href="https://iapws.org/technical-guidance/release/IF97-Rev" target="_blank" rel="noopener">IAPWS-IF97 官方发布文件</a></div></div><div class="card"><h3>饱和压力曲线</h3><canvas id="satplot" class="chart" width="1000" height="340"></canvas></div></div>
- <div class="sub" id="steam-interp"><div class="card"><h3>双线性插值计算器</h3><p class="note">只对用户输入的网格数据插值，不代表 IF97 物性查询；超出网格范围时拒绝外推。</p><div class="row three"><div><label>x0</label><input id="ix0" value="1" type="number"></div><div><label>x1</label><input id="ix1" value="2" type="number"></div><div><label>x</label><input id="ix" value="1.4" type="number"></div><div><label>y0</label><input id="iy0" value="300" type="number"></div><div><label>y1</label><input id="iy1" value="400" type="number"></div><div><label>y</label><input id="iy" value="350" type="number"></div><div><label>f00</label><input id="f00" value="10" type="number"></div><div><label>f10</label><input id="f10" value="20" type="number"></div><div><label>f01</label><input id="f01" value="15" type="number"></div><div><label>f11</label><input id="f11" value="27" type="number"></div></div><button class="btn primary" id="icalc">计算插值</button><div class="formula">f=(1−t)(1−u)f₀₀+t(1−u)f₁₀+(1−t)uf₀₁+tu f₁₁</div><div id="iresult" class="result"></div></div></div>
- <div class="sub" id="steam-regions"><div class="card"><h3>IF97 五区域实施状态</h3><div class="scroll"><table><tr><th>区域</th><th>主要状态</th><th>当前状态</th></tr><tr><td>1</td><td>压缩液体</td><td>待移植</td></tr><tr><td>2</td><td>过热蒸汽</td><td>待移植</td></tr><tr><td>3</td><td>高密度/临界附近</td><td>待移植</td></tr><tr><td>4</td><td>饱和曲线</td><td>已实现</td></tr><tr><td>5</td><td>高温蒸汽</td><td>待移植</td></tr></table></div><p>未完成区域不提供虚假的 h、s、u、cp、cv 数值。</p></div></div>
+ <div class="heading"><div><div class="kicker">MODULE 04</div><h2>水与水蒸气性质</h2><p>基于 IAPWS-IF97 五区工业公式；支持正算、后向方程、饱和性质表和插值教学。</p></div><span class="tag">IF97 五区计算核心已接入</span></div>
+ <div class="tabs"><button class="active" data-steam="sat">4.1 饱和水/蒸汽表</button><button data-steam="state">4.2 状态查询与反算</button><button data-steam="interp">4.3 插值教学</button><button data-steam="regions">4.4 区域说明</button></div>
+ <div class="sub active" id="steam-sat">
+  <div class="grid">
+   <div class="card"><h3>饱和压力/温度查询</h3><label>查询方式</label><select id="smode"><option value="T">按温度 T 查询饱和压力</option><option value="P">按压力 P 查询饱和温度</option></select><label id="slabel">T / K</label><input id="sinput" value="373.15" type="number" step="any"><div class="actions"><button class="btn primary" id="scalc">计算</button></div><div id="sresult" class="result">温度范围 273.15–647.096 K。</div></div>
+   <div class="card"><h3>饱和性质电子表</h3><label>表格排序</label><select id="satTableMode"><option value="T">按温度排列</option><option value="P">按压力排列（对数均匀网格）</option></select><label>温度步长 / K；压力模式下为对数间隔控制值</label><input id="satTableStep" type="number" value="10" min="0.01" step="any"><div class="actions"><button class="btn primary" id="satTableGenerate">生成饱和表</button><button class="btn" id="satTableExport">导出 CSV</button></div><div id="satTableNote" class="result">准备生成饱和液体与饱和蒸汽性质。</div></div>
+  </div>
+  <div class="card"><h3>饱和水与水蒸气性质表</h3><div id="satTableOut" class="scroll"></div></div>
+  <div class="card"><h3>饱和压力曲线</h3><canvas id="satplot" class="chart" width="1000" height="340"></canvas><p class="note">曲线来自 IAPWS-IF97 Region 4。饱和性质端点由 Region 1/2 或 Region 3 对应公式求得；临界点两相端点合并。</p></div>
+ </div>
+ <div class="sub" id="steam-state">
+  <div class="grid">
+   <div class="card"><h3>状态输入与后向计算</h3><label>已知状态变量组合</label><select id="steamMode"><option value="PT">P、T：压力与温度</option><option value="PH">P、h：压力与比焓</option><option value="PS">P、s：压力与比熵</option><option value="HS">h、s：比焓与比熵</option><option value="PX">P、x：压力与干度（饱和两相）</option></select><div class="row"><div><label id="steamALabel">压力 P / MPa</label><input id="steamA" type="number" value="0.1" step="any"></div><div><label id="steamBLabel">温度 T / K</label><input id="steamB" type="number" value="373.15" step="any"></div></div><p id="steamModeHint" class="note">单相区采用两个独立变量；饱和边界需再给干度。</p><div class="actions"><button class="btn primary" id="steamCalc">计算状态</button><button class="btn" id="steamExport">导出性质 CSV</button></div><div class="note">状态判断遵循 IF97 区域边界。湿蒸汽按饱和端点和干度关系计算；两相区的 cp、cv 和声速不作线性混合。</div></div>
+   <div class="card"><h3>状态计算结果</h3><div id="steamStateNote" class="result">输入已知状态组合后计算。</div><div id="steamStateOut" class="scroll"></div></div>
+  </div>
+ </div>
+ <div class="sub" id="steam-interp">
+  <div class="grid">
+   <div class="card"><h3>双线性插值</h3><p class="note">针对二维教材表格：先沿一个方向线性插值，再沿另一方向插值。超出网格范围拒绝外推。</p><div class="row three"><div><label>x0</label><input id="ix0" value="1" type="number"></div><div><label>x1</label><input id="ix1" value="2" type="number"></div><div><label>x</label><input id="ix" value="1.4" type="number"></div><div><label>y0</label><input id="iy0" value="300" type="number"></div><div><label>y1</label><input id="iy1" value="400" type="number"></div><div><label>y</label><input id="iy" value="350" type="number"></div><div><label>f00</label><input id="f00" value="10" type="number"></div><div><label>f10</label><input id="f10" value="20" type="number"></div><div><label>f01</label><input id="f01" value="15" type="number"></div><div><label>f11</label><input id="f11" value="27" type="number"></div></div><button class="btn primary" id="icalc">计算双线性插值</button><div class="formula">f=(1−t)(1−u)f₀₀+t(1−u)f₁₀+(1−t)uf₀₁+tu f₁₁</div><div id="iresult" class="result"></div></div>
+   <div class="card"><h3>三点拉格朗日插值</h3><div class="row"><div><label>x</label><input id="lagX" type="number" value="1.5"></div><div><label>x₀</label><input id="lagX0" type="number" value="1"></div><div><label>y₀</label><input id="lagY0" type="number" value="1"></div><div><label>x₁</label><input id="lagX1" type="number" value="2"></div><div><label>y₁</label><input id="lagY1" type="number" value="4"></div><div><label>x₂</label><input id="lagX2" type="number" value="3"></div><div><label>y₂</label><input id="lagY2" type="number" value="9"></div></div><button class="btn primary" id="lagCalc">计算三点插值</button><div id="lagResult" class="result">等待计算。</div></div>
+  </div>
+  <div class="card"><h3>插值误差说明</h3><p>插值结果取决于表格网格、函数曲率、插值阶次和状态点位置。接近饱和线、临界点及区域边界时，性质对状态变量的敏感性可能增大。实际对照需使用同一 IF97 版本、相同单位和参考态。</p><p class="note">当前插值器处理用户给定的数值网格；教材原表逐格数据并未在本次公开站点中复制，不能把示例网格称为教材数据。</p></div>
+ </div>
+ <div class="sub" id="steam-regions">
+  <div class="card"><h3>IAPWS-IF97 五区域</h3><div class="scroll"><table><thead><tr><th>区域</th><th>状态/公式</th><th>支持情况</th><th>典型范围</th></tr></thead><tbody><tr><td>1</td><td>压缩液体；Gibbs 基本方程</td><td>已接入</td><td>273.15–623.15 K，压力至 100 MPa</td></tr><tr><td>2</td><td>过热蒸汽；Gibbs 基本方程</td><td>已接入</td><td>至 1073.15 K</td></tr><tr><td>3</td><td>高密度/临界附近；Helmholtz 基本方程</td><td>已接入</td><td>临界区域及高压密相区</td></tr><tr><td>4</td><td>饱和压力/温度关系与饱和端点</td><td>已接入</td><td>273.15–647.096 K</td></tr><tr><td>5</td><td>高温蒸汽；高温 Gibbs 方程</td><td>已接入</td><td>1073.15–2273.15 K，压力至 50 MPa</td></tr></tbody></table></div><p>本页正算采用 (P,T)，后向计算支持 (P,h)、(P,s)、(h,s)。P-x 用于饱和两相；饱和边界 P-T 输入不能单独确定湿蒸汽干度。</p></div>
+ </div>
 </section>
 <section class="page" id="p-app">
  <div class="heading"><div><div class="kicker">APPENDICES</div><h2>附录与学术参考</h2><p>全站符号、术语和单位查询。</p></div></div>
@@ -124,4 +145,6 @@ function drawPvt(){let canvas=$("pvt"),c=canvas.getContext("2d"),w=canvas.width,
 document.addEventListener("DOMContentLoaded",init);
 })();
 </script>
+<script src="assets/vendor/iapws97-browser.js"></script>
+<script src="assets/js/steam/full.js"></script>
 </body></html>
