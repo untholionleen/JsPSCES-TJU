@@ -34,7 +34,25 @@
   <div class="card"><h3>计算结果</h3><div class="result" id="msg">输入参数后执行计算。</div><div class="scroll" id="out"></div><div class="formula">P = RT/(V − b) − aα/(V² + ubV + wb²)</div><p class="note">全部有效实根均列出；多根不自动等同于稳定相。模型结果不等于高精度 REFPROP 结果。</p></div>
  </div><div class="card"><h3>P-V 等温线（EOS 计算生成）</h3><canvas id="eosPlot" class="chart" width="1000" height="330"></canvas><button class="btn" id="curveCSV">导出曲线数据 CSV</button></div><div class="card"><h3>使用边界</h3><p>PRG 定义暂未核实，关闭计算。旧版 VLE 代码审计发现随机/演示输出，故本版关闭 VLE 数值计算，避免误导。</p></div></div>
  <div class="sub" id="s-pvt"><div class="card"><h3>纯物质 P-V-T 关系</h3><p>下图为可拖动旋转的立方 EOS 原始状态曲面，并非经过 Maxwell 等面积条件求解的稳定两相包络线。</p><div class="row three"><div><label>模型</label><select id="pm"><option value="vdw">vdW</option><option value="pr">PR</option></select></div><div><label>Tc / K</label><input id="ptc" value="647.096" type="number"></div><div><label>Pc / MPa</label><input id="ppc" value="22.064" type="number"></div></div><div class="actions"><button class="btn" data-proj="3d">3D</button><button class="btn" data-proj="pv">P-V</button><button class="btn" data-proj="pt">P-T</button><button class="btn" data-proj="vt">V-T</button><button class="btn primary" id="draw3">重新绘制</button></div><canvas id="pvt" class="chart" width="1000" height="500"></canvas></div></div>
- <div class="sub" id="s-vle"><div class="card"><span class="tag">待完成与验证</span><h3>二元混合物与汽液相平衡</h3><p>本版本暂不提供泡点、露点或闪蒸数值。正式开放前须实现混合规则、组分逸度相等、物料衡算、收敛判据，并与可靠参考数据交叉核验。</p></div></div>
+ <div class="sub" id="s-vle">
+  <div class="grid">
+   <div class="card"><h3>混合物相平衡计算器（PR φ–φ）</h3>
+    <label>计算类型</label><select id="mixMode"><option value="flash">等温等压闪蒸（T、P、z）</option><option value="bubble">泡点压力（T、x）</option><option value="dew">露点压力（T、y）</option></select>
+    <div class="row"><div><label>温度 T / K</label><input id="mixT" type="number" value="230" step="any"></div><div><label>压力 P / MPa（仅闪蒸）</label><input id="mixP" type="number" value="3" step="any"></div></div>
+    <label>二元交互参数 kij（对所有非对角组分对统一应用）</label><input id="mixKij" type="number" value="0" step="0.001">
+    <p class="note">采用 Peng–Robinson 状态方程、经典 van der Waals one-fluid 二次混合规则和 φ–φ 逸度相等。此版本允许所有非对角 kij 使用同一数值；尚未建立按组分对分别输入的完整 kij 数据库。</p>
+    <div class="actions"><button class="btn primary" id="mixCalc">开始计算</button><button class="btn" id="mixExport">导出 CSV</button></div>
+    <div id="mixNote" class="result">勾选至少两种组分并设置摩尔组成后计算。组成将按总和归一化。</div>
+   </div>
+   <div class="card"><h3>组分与摩尔组成</h3><div id="mixRows"></div><p class="note">未勾选组分不参与计算；已勾选但摩尔分率为 0 的行将按零含量处理。物性参数沿用平台 16 组分参数表，部分来源状态仍标记待复核。</p></div>
+  </div>
+  <div class="card"><h3>相平衡/闪蒸结果</h3><div id="mixResult" class="result">等待计算。</div></div>
+  <div class="card"><h3>模型和适用边界</h3>
+   <div class="formula">aᵢⱼ = (1 − kᵢⱼ)√(aᵢaⱼ)；aₘ = ΣᵢΣⱼxᵢxⱼaᵢⱼ；bₘ = Σᵢxᵢbᵢ</div>
+   <div class="formula">fᵢᴸ = fᵢⱽ；Kᵢ = yᵢ/xᵢ = φᵢᴸ/φᵢⱽ；Σ zᵢ(Kᵢ−1)/(1+β(Kᵢ−1)) = 0</div>
+   <p>计算采用 PR φ–φ 迭代与 Rachford–Rice 闪蒸方程。适用于初步教学计算；未提供经实验拟合的特定体系 kij 时默认 kij=0，结果可能显著偏离实测汽液平衡。近临界/强非理想体系应采用经过参数化及实验数据校验的模型。</p>
+  </div>
+ </div>
 </section>
 <section class="page" id="p-m2">
  <div class="heading"><div><div class="kicker">MODULE 02</div><h2>工程图表与普遍化关联</h2><p>当前提供真实组分 PR EOS 生成的约化压缩因子曲线，不冒充 Lee–Kesler 普遍化图。</p></div><span class="tag">模型生成</span></div>
@@ -145,6 +163,6 @@ function drawPvt(){let canvas=$("pvt"),c=canvas.getContext("2d"),w=canvas.width,
 document.addEventListener("DOMContentLoaded",init);
 })();
 </script>
-<script src="assets/vendor/iapws97-browser.js"></script>
+<script src="assets/vendor/iapws97-browser.js"></script>\n<script src="assets/js/eos/mixture.js"></script>
 <script src="assets/js/steam/full.js"></script>
 </body></html>
