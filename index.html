@@ -1,307 +1,127 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="TJU-ThermoHub 化工热力学自主学习、热力学计算与真实物性数据平台">
-  <title>TJU-ThermoHub｜化工热力学自主学习平台</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  <script type="module" src="assets/app.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#133963">
+<meta name="description" content="天津大学化工热力学学生自主学习网站">
+<title>天津大学化工热力学学生自主学习网站 | TJU-ThermoHub 13.1.0</title>
+<style>
+:root{--b:#133963;--g:#c5a059;--bg:#f3f6fa;--ink:#172536;--muted:#62758a;--line:#d9e2ec;--card:#fff;--green:#176b4d;--red:#963b3b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Segoe UI","Microsoft YaHei",Arial,sans-serif}.top{background:linear-gradient(115deg,#102d4d,var(--b) 65%,#1e5487);color:white;border-bottom:4px solid var(--g)}.brand{max-width:1200px;margin:auto;padding:18px 22px;display:flex;gap:14px;align-items:center}.seal{width:48px;height:48px;border:2px solid var(--g);border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--g);flex:none}.brand h1{font-size:clamp(17px,2.5vw,25px);margin:0}.brand small{color:#d7e3ef}.brand button{margin-left:auto}.nav{max-width:1200px;margin:auto;display:flex;gap:4px;overflow:auto;padding:0 12px}.nav button{background:none;color:#e7eef6;border:0;padding:12px 15px;white-space:nowrap;cursor:pointer}.nav button.active{background:white;color:var(--b);font-weight:800;border-radius:7px 7px 0 0}.container{max-width:1200px;margin:24px auto;padding:0 18px 36px}.page{display:none}.page.active{display:block}.hero{background:linear-gradient(120deg,#102d4d,var(--b));border-top:5px solid var(--g);border-radius:14px;padding:40px clamp(20px,5vw,55px);color:white}.hero h2{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:10px 0}.hero p{max-width:800px;color:#dce8f3}.kicker{font-size:11px;letter-spacing:.15em;color:#e2c17d;font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--g);border-radius:11px;padding:19px;box-shadow:0 6px 20px #173d5c0b}.card h3,.card h2{margin:0 0 9px;color:var(--b)}.wide{grid-column:1/-1}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.heading h2{font-size:28px;color:var(--b);margin:3px 0}.heading p{color:var(--muted);margin:0}.tag{border-radius:30px;background:#fff2d8;color:#805e19;font-size:11px;padding:4px 9px;white-space:nowrap}.tabs{display:flex;gap:6px;overflow:auto;margin-bottom:14px}.tabs button,.btn{border:1px solid var(--line);border-radius:7px;padding:9px 13px;background:#fff;color:var(--b);cursor:pointer;font-weight:700;white-space:nowrap}.tabs button.active,.btn.primary{background:var(--b);color:#fff;border-color:var(--b)}.btn.gold{background:var(--g);color:#173451;border-color:var(--g)}label{display:block;font-size:12px;font-weight:750;color:#50647a;margin:9px 0 4px}input,select{width:100%;padding:9px 10px;border:1px solid #cbd7e3;border-radius:7px;background:#fff;font:inherit;color:var(--ink)}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.note{font-size:12px;color:var(--muted)}.result{padding:12px;background:#f4f8fb;border:1px solid #dce6ef;border-radius:8px;margin-top:10px;white-space:pre-wrap}.result.ok{background:#eff8f2;border-color:#c2ddcc;color:#175c3d}.result.err{background:#fff3f3;border-color:#e5c5c5;color:var(--red)}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px 9px;text-align:left;border-bottom:1px solid #e5ebf0}th{background:#eef3f8;color:var(--b)}.scroll{overflow:auto}.formula{background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:15px;text-align:center;font-family:"Cambria Math",serif;font-size:18px;overflow:auto}.chart{width:100%;height:330px;border:1px solid var(--line);border-radius:8px;background:#fff;display:block}.sub{display:none}.sub.active{display:block}.list{display:grid;gap:7px}.list button{text-align:left;background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px;cursor:pointer;color:var(--b)}.list button.active{background:#fff7e9;border-color:var(--g)}.footer{background:#102d4d;color:#d7e2ed;border-top:4px solid var(--g);padding:24px max(18px,calc((100vw - 1160px)/2));font-size:12px}.footer a{color:#e7c47f}.footergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.muted{color:var(--muted)}@media(max-width:700px){.grid,.row,.three,.footergrid{grid-template-columns:1fr}.wide{grid-column:auto}.heading{flex-direction:column}.brand{padding:12px}.container{padding:0 12px 25px;margin-top:14px}.hero{padding:28px 22px}}
+</style>
 </head>
 <body>
-<header class="site-header">
-  <div class="topbar wrap">
-    <a class="brand" href="#home" aria-label="TJU ThermoHub 首页">
-      <div class="seal">TH</div>
-      <div><div class="brand-title" data-i18n="brand">化工热力学自主学习平台</div><div class="brand-sub">TJU Chemical Engineering Thermodynamics · TJU-ThermoHub</div></div>
-    </a>
-    <div class="header-actions">
-      <span id="connectionBadge" class="pill status-neutral">本地计算可用</span>
-      <button class="btn btn-gold" id="languageToggle" type="button">English</button>
-      <button class="btn btn-light" id="accountButton" type="button">登录 / 注册</button>
-    </div>
-  </div>
-  <nav class="main-nav wrap" id="mainNav" aria-label="主导航">
-    <button class="nav-btn active" data-page="home" data-i18n="nav_home">首页</button>
-    <button class="nav-btn" data-page="eos" data-i18n="nav_eos">一、状态方程与热力学计算</button>
-    <button class="nav-btn" data-page="engineering" data-i18n="nav_engineering">二、工程查表与普遍化关联</button>
-    <button class="nav-btn" data-page="derivation" data-i18n="nav_derivation">三、公式推导专题</button>
-    <button class="nav-btn" data-page="steam" data-i18n="nav_steam">四、水和水蒸气性质</button>
-    <button class="nav-btn" data-page="appendix" data-i18n="nav_appendix">五、数据附录与账户</button>
-  </nav>
+<header class="top">
+ <div class="brand"><div class="seal">北洋</div><div><h1 id="siteTitle">天津大学化工热力学学生自主学习网站 <span style="font-size:11px;color:#e4c47e">13.1.0 · Nv3.1.0</span></h1><small>TJU Chemical Engineering Thermodynamics Self-Learning Platform</small></div><button class="btn" id="lang">English</button></div>
+ <nav class="nav"><button class="active" data-page="home">首页</button><button data-page="m1">一、状态方程与模型</button><button data-page="m2">二、工程图表与关联</button><button data-page="m3">三、公式推导</button><button data-page="m4">四、水与水蒸气</button><button data-page="app">五、附录</button></nav>
 </header>
-
-<main class="wrap page-wrap">
-  <!-- HOME -->
-  <section class="page active" id="page-home">
-    <div class="hero-card">
-      <div class="hero-kicker"><span class="kicker-dot"></span><span>TJU-THERMOHUB / LEARNING & COMPUTATION</span></div>
-      <h1 data-i18n="home_title">以真实数据为基础的化工热力学自主学习平台</h1>
-      <p class="hero-lead" data-i18n="home_lead">围绕状态方程、热力学性质、相平衡、工程关联与水蒸气性质，将课程知识、可追溯数据和可验证计算整合到一个学习空间。</p>
-      <div class="hero-meta"><span>版本 3.0 · Supabase Auth / PostgreSQL</span><span>课程学习辅助 · 非天津大学官方发布</span></div>
-    </div>
-    <div class="grid grid-4 feature-grid">
-      <article class="feature-card"><div class="feature-num">01</div><h3 data-i18n="feature_1_title">EOS 与 P-V-T</h3><p data-i18n="feature_1_desc">vdW、RK、SRK、PR 纯物质计算，混合物逸度分析与 P-V-T 可视化。</p><button class="text-link" data-go="eos">进入模块 <span>→</span></button></article>
-      <article class="feature-card"><div class="feature-num">02</div><h3 data-i18n="feature_2_title">工程关联与查表</h3><p data-i18n="feature_2_desc">第二维里系数、对比态变量、热力学常数、物性来源与范围。</p><button class="text-link" data-go="engineering">进入模块 <span>→</span></button></article>
-      <article class="feature-card"><div class="feature-num">03</div><h3 data-i18n="feature_3_title">公式推导</h3><p data-i18n="feature_3_desc">D1—D11 分步推导，强调假设、适用条件和模型差异。</p><button class="text-link" data-go="derivation">进入模块 <span>→</span></button></article>
-      <article class="feature-card"><div class="feature-num">04</div><h3 data-i18n="feature_4_title">水和水蒸气</h3><p data-i18n="feature_4_desc">教材饱和表节点与插值教学；完整 IF97 由独立性质服务提供。</p><button class="text-link" data-go="steam">进入模块 <span>→</span></button></article>
-    </div>
-    <div class="grid grid-2 home-lower">
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">LEARNING PATH</div><h2 data-i18n="home_path_title">建议学习路径</h2></div><span class="heading-mark">学习</span></div>
-        <ol class="learning-list">
-          <li><b>认识模型</b><span>状态方程、临界常数、压缩因子和相态根。</span></li>
-          <li><b>理解性质</b><span>逸度、剩余性质、焓熵变化和对应态关联。</span></li>
-          <li><b>进入相平衡</b><span>活度系数、逸度系数、泡点/露点及实验数据。</span></li>
-          <li><b>工程应用</b><span>蒸汽系统、制冷循环、过程能量衡算。</span></li>
-        </ol>
-      </article>
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">DATA INTEGRITY</div><h2 data-i18n="home_integrity_title">计算与数据边界</h2></div><span class="heading-mark gold-mark">规范</span></div>
-        <div class="notice notice-success"><b>已实现</b><span>纯物质立方 EOS、修正拉乌尔泡点/露点、第二维里关联、教材饱和表样本插值。</span></div>
-        <div class="notice notice-warning"><b>待接入/待验收</b><span>全区域 IAPWS-IF97、高压 EOS-VLE、完整二元参数集、完整国际实验数据库。</span></div>
-        <p class="muted small">所有数据必须保留来源、单位、版本、适用范围和质量状态。缺少二元参数时，不把零参数或随机值伪装成实验结果。</p>
-      </article>
-    </div>
-    <div class="source-ribbon"><div><b>国际数据体系</b><span>NIST Chemistry WebBook · NIST ThermoML · IAPWS · CoolProp · Phasepy · DDBST</span></div><a href="https://webbook.nist.gov/" target="_blank" rel="noopener">数据源索引 ↗</a></div>
-  </section>
-
-  <!-- EOS -->
-  <section class="page" id="page-eos">
-    <div class="page-heading"><div><div class="eyebrow">MODULE 01</div><h1>状态方程与热力学计算</h1><p>纯物质 P-V-T、混合物逸度与低压 VLE 教学计算。</p></div><span class="module-tag">THERMODYNAMIC MODELS</span></div>
-    <div class="tabs" data-tabs="eos-tabs">
-      <button class="tab active" data-tab="pure-panel">1.1 纯物质 EOS</button>
-      <button class="tab" data-tab="mix-panel">1.2 混合物与 VLE</button>
-      <button class="tab" data-tab="pvt-panel">1.3 P-V-T 图形</button>
-    </div>
-    <div class="tab-panel active" id="pure-panel">
-      <div class="grid grid-2">
-        <article class="panel-card">
-          <div class="panel-heading"><div><div class="eyebrow">PURE FLUID</div><h2>纯物质状态点计算</h2></div><span class="heading-mark">EOS</span></div>
-          <div class="form-grid">
-            <div class="field span-2"><label for="pureSubstance">物质 / Substance</label><select id="pureSubstance"></select></div>
-            <div class="field"><label for="pureModel">状态方程</label><select id="pureModel"><option value="PR">Peng–Robinson (PR)</option><option value="SRK">Soave–Redlich–Kwong (SRK)</option><option value="RK">Redlich–Kwong (RK)</option><option value="VDW">Van der Waals (vdW)</option><option value="PRG" disabled>PRG（待公式与参数独立验收）</option></select></div>
-            <div class="field"><label for="pureT">温度 T / K</label><input id="pureT" type="number" value="350" step="any"></div>
-            <div class="field"><label for="pureP">压力 P / bar</label><input id="pureP" type="number" value="20" step="any"></div>
-            <div class="field"><label for="pureTc">临界温度 Tc / K</label><input id="pureTc" type="number" step="any"></div>
-            <div class="field"><label for="purePc">临界压力 Pc / MPa</label><input id="purePc" type="number" step="any"></div>
-            <div class="field"><label for="pureOmega">偏心因子 ω</label><input id="pureOmega" type="number" step="any"></div>
-          </div>
-          <div class="field-note" id="pureDataNote">物性参数来源及校核状态将显示于此。</div>
-          <div class="button-row"><button class="btn btn-primary" id="calculatePure">计算状态点</button><button class="btn btn-outline" id="resetPure">恢复示例</button></div>
-        </article>
-        <article class="panel-card result-card">
-          <div class="panel-heading"><div><div class="eyebrow">CALCULATION RESULT</div><h2>计算结果</h2></div><span id="pureStateBadge" class="pill status-neutral">等待计算</span></div>
-          <div id="pureOutput" class="empty-state">输入状态参数后执行计算。结果包含所有可接受实根、最大根气相结果、逸度系数及可用的剩余性质。</div>
-          <div class="formula-block" id="pureFormula">PR: P = RT/(V − b) − aα/[V² + 2bV − b²]</div>
-          <div class="button-row"><button class="btn btn-outline" id="savePure">保存计算记录</button><button class="btn btn-outline" id="exportPure">导出 JSON</button></div>
-        </article>
-      </div>
-    </div>
-    <div class="tab-panel" id="mix-panel">
-      <div class="grid grid-2">
-        <article class="panel-card">
-          <div class="panel-heading"><div><div class="eyebrow">BINARY MIXTURE</div><h2>PR 混合物组元逸度</h2></div><span class="heading-mark">φ-φ</span></div>
-          <div class="form-grid">
-            <div class="field"><label for="mixComp1">组分 1</label><select id="mixComp1"></select></div>
-            <div class="field"><label for="mixComp2">组分 2</label><select id="mixComp2"></select></div>
-            <div class="field"><label for="mixT">温度 T / K</label><input id="mixT" type="number" value="313.15" step="any"></div>
-            <div class="field"><label for="mixP">压力 P / bar</label><input id="mixP" type="number" value="15" step="any"></div>
-            <div class="field"><label for="mixX1">当前相组成 x₁ / y₁</label><input id="mixX1" type="number" value="0.5" min="0" max="1" step="any"></div>
-            <div class="field"><label for="mixKij">PR 二元交互参数 k₁₂</label><input id="mixKij" type="number" value="0" step="any"></div>
-            <div class="field span-2"><label for="mixPhase">相根选择</label><select id="mixPhase"><option value="vapor">气相（最大可接受根）</option><option value="liquid">液相（最小可接受根）</option></select></div>
-          </div>
-          <div class="notice notice-warning">k₁₂=0 仅表示您明确选择的理想化演示假设，不代表真实二元参数。真实 VLE 必须绑定具体物系、模型、温度范围和数据来源。</div>
-          <button class="btn btn-primary" id="calculateMix">计算组元逸度系数</button>
-        </article>
-        <article class="panel-card result-card"><div class="panel-heading"><div><div class="eyebrow">FUGACITY BY COMPONENT</div><h2>混合物计算结果</h2></div></div><div id="mixOutput" class="empty-state">尚无计算结果。</div></article>
-      </div>
-      <article class="panel-card gap-top">
-        <div class="panel-heading"><div><div class="eyebrow">LOW-PRESSURE VLE</div><h2>修正拉乌尔定律泡点 / 露点</h2></div><span class="heading-mark">γ-Psat</span></div>
-        <p class="muted">该计算器要求您输入饱和蒸气压与活度系数，采用低压、气相近似理想假设。它不会自动推断 NRTL/Wilson 参数，也不替代高压 φ-φ EOS 法。</p>
-        <div class="form-grid form-grid-3">
-          <div class="field"><label for="vleMode">计算类型</label><select id="vleMode"><option value="bubble">泡点（已知液相 x₁）</option><option value="dew">露点（已知气相 y₁）</option></select></div>
-          <div class="field"><label for="vleZ1">已知组成 z₁</label><input id="vleZ1" type="number" value="0.5" min="0" max="1" step="any"></div>
-          <div class="field"><label for="vlePsat1">组分 1 Psat / bar</label><input id="vlePsat1" type="number" value="1.2" step="any"></div>
-          <div class="field"><label for="vlePsat2">组分 2 Psat / bar</label><input id="vlePsat2" type="number" value="0.8" step="any"></div>
-          <div class="field"><label for="vleGamma1">γ₁（给定值）</label><input id="vleGamma1" type="number" value="1.0" step="any"></div>
-          <div class="field"><label for="vleGamma2">γ₂（给定值）</label><input id="vleGamma2" type="number" value="1.0" step="any"></div>
-        </div>
-        <div class="button-row"><button class="btn btn-primary" id="calculateVLE">计算泡点 / 露点</button></div>
-        <div id="vleOutput" class="result-inline empty-state">等待计算。</div>
-      </article>
-    </div>
-    <div class="tab-panel" id="pvt-panel">
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">INTERACTIVE P-V-T</div><h2>立方 EOS 三维状态曲面</h2></div><span class="heading-mark">3D</span></div>
-        <div class="form-grid form-grid-3">
-          <div class="field"><label for="pvtSubstance">物质</label><select id="pvtSubstance"></select></div>
-          <div class="field"><label for="pvtModel">EOS</label><select id="pvtModel"><option value="PR">PR</option><option value="SRK">SRK</option><option value="RK">RK</option><option value="VDW">vdW</option></select></div>
-          <div class="field"><label for="pvtProjection">二维投影</label><select id="pvtProjection"><option value="pvt">P-V-T 曲面</option><option value="pv">P-V 投影</option><option value="pt">P-T 投影（固定体积范围）</option><option value="vt">V-T 投影（固定压力）</option></select></div>
-        </div>
-        <div class="button-row"><button class="btn btn-primary" id="drawPvt">重绘曲面</button><span class="muted small">拖动旋转视角；滚轮缩放。仅显示正压区域；该曲面是指定 EOS 的模型曲面，不是实验测量数据。</span></div>
-        <canvas id="pvtCanvas" width="1100" height="560" aria-label="Interactive PVT model surface"></canvas>
-        <div class="field-note">三维投影由当前立方 EOS 直接计算。当前绘图不自动生成汽液饱和包络线；饱和线需通过等逸度或独立相平衡求解。</div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ENGINEERING -->
-  <section class="page" id="page-engineering">
-    <div class="page-heading"><div><div class="eyebrow">MODULE 02</div><h1>工程查表与普遍化关联</h1><p>普遍化关联计算器、单位工具和国际数据目录。</p></div><span class="module-tag">ENGINEERING REFERENCES</span></div>
-    <div class="grid grid-2">
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">PITZER CORRELATION</div><h2>普遍化第二维里系数</h2></div><span class="heading-mark">B(T)</span></div>
-        <div class="form-grid">
-          <div class="field span-2"><label for="virialSubstance">物质</label><select id="virialSubstance"></select></div>
-          <div class="field"><label for="virialT">温度 T / K</label><input id="virialT" type="number" value="300" step="any"></div>
-          <div class="field"><label for="virialP">压力 P / bar</label><input id="virialP" type="number" value="5" step="any"></div>
-        </div>
-        <button class="btn btn-primary" id="calculateVirial">计算关联结果</button>
-        <div id="virialOutput" class="result-inline empty-state">公式：B* = B⁰ + ωB¹；Z ≈ 1 + B*Pr/Tr。</div>
-      </article>
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">UNIT CONVERTER</div><h2>常用单位换算</h2></div><span class="heading-mark">SI</span></div>
-        <div class="form-grid">
-          <div class="field"><label for="unitCategory">类别</label><select id="unitCategory"><option value="pressure">压力</option><option value="energy">能量</option><option value="volume">体积</option><option value="temperature">温度</option></select></div>
-          <div class="field"><label for="unitValue">数值</label><input id="unitValue" type="number" value="1" step="any"></div>
-          <div class="field"><label for="unitFrom">从</label><select id="unitFrom"></select></div>
-          <div class="field"><label for="unitTo">转换为</label><select id="unitTo"></select></div>
-        </div>
-        <button class="btn btn-primary" id="convertUnit">换算</button>
-        <div id="unitOutput" class="result-inline">1 bar = 100 kPa</div>
-      </article>
-    </div>
-    <article class="panel-card gap-top">
-      <div class="panel-heading"><div><div class="eyebrow">ENGINEERING DATASETS</div><h2>工程图表与数据源目录</h2></div></div>
-      <div class="table-wrap"><table><thead><tr><th>数据 / 图表</th><th>教材依据</th><th>数字化方式</th><th>状态</th></tr></thead><tbody>
-        <tr><td>普遍化压缩因子、剩余焓熵、逸度系数</td><td>第 2、3 章</td><td>方程关联优先；教材图表仅作对照</td><td><span class="pill status-warning">分项实现</span></td></tr>
-        <tr><td>空气 T-S 图</td><td>电子版附录 9</td><td>优先接入可验证物性计算引擎并生成曲线</td><td><span class="pill status-warning">待接入</span></td></tr>
-        <tr><td>氨 t-S、ln p-H 图</td><td>电子版附录 10、11</td><td>经授权的数据数字化 / 计算生成</td><td><span class="pill status-warning">待接入</span></td></tr>
-        <tr><td>R12、R22 ln p-H 图</td><td>电子版附录 12、13</td><td>优先采用合法物性引擎计算结果生成</td><td><span class="pill status-warning">待接入</span></td></tr>
-        <tr><td>R134a、R13 log p-h 扩展图</td><td>扩展项目</td><td>由许可数据源或 CoolProp 引擎生成</td><td><span class="pill status-neutral">扩展项</span></td></tr>
-      </tbody></table></div>
-    </article>
-    <article class="panel-card gap-top">
-      <div class="panel-heading"><div><div class="eyebrow">SOURCE REGISTRY</div><h2>国际真实数据来源</h2></div></div>
-      <div class="source-grid">
-        <a class="source-card" href="https://webbook.nist.gov/" target="_blank" rel="noopener"><b>NIST Chemistry WebBook</b><span>纯物质热化学、蒸气压、热容与物性核验</span><i>官方网页检索 ↗</i></a>
-        <a class="source-card" href="https://www.nist.gov/mml/acmd/trc/thermoml/thermoml-archive" target="_blank" rel="noopener"><b>NIST ThermoML Archive</b><span>实验热物性与混合物 / VLE 文献数据</span><i>数据归档 ↗</i></a>
-        <a class="source-card" href="https://coolprop.org/" target="_blank" rel="noopener"><b>CoolProp</b><span>开放物性计算库；混合物参数须检查覆盖情况</span><i>项目文档 ↗</i></a>
-        <a class="source-card" href="https://www.iapws.org/" target="_blank" rel="noopener"><b>IAPWS</b><span>水和水蒸气性质公式及发布版本</span><i>官方标准 ↗</i></a>
-        <a class="source-card" href="https://phasepy.readthedocs.io/" target="_blank" rel="noopener"><b>Phasepy</b><span>EOS、活度系数模型、VLE/LLE/VLLE 与参数拟合</span><i>技术文档 ↗</i></a>
-        <a class="source-card" href="https://www.ddbst.com/ddb.html" target="_blank" rel="noopener"><b>DDBST / DDB</b><span>商业/授权型相平衡实验数据与模型参数</span><i>数据目录 ↗</i></a>
-      </div>
-      <div class="notice notice-warning">国际网站链接不等于已同步数据。当前网页未宣称接入 NIST / DDBST 实时 API；每条导入数据须保留来源、DOI、数据版本、许可状态、温压范围和校核记录。</div>
-    </article>
-  </section>
-
-  <!-- DERIVATION -->
-  <section class="page" id="page-derivation">
-    <div class="page-heading"><div><div class="eyebrow">MODULE 03</div><h1>公式推导专题</h1><p>D1—D11 分步浏览，展示公式、推导说明与适用边界。</p></div><span class="module-tag">STEP-BY-STEP DERIVATION</span></div>
-    <div class="derivation-layout">
-      <aside class="panel-card derivation-index"><h2>专题目录</h2><div id="derivationList" class="derivation-list"></div></aside>
-      <article class="panel-card derivation-stage">
-        <div class="eyebrow" id="derivationCode">D1</div><h2 id="derivationTitle">范德华方程常数 a、b 的推导</h2>
-        <div class="step-progress"><div class="step-progress-fill" id="stepProgressFill"></div></div>
-        <div class="step-label"><span>推导步骤</span><b id="stepCounter">1 / 4</b></div>
-        <div class="formula-block large-formula" id="derivationFormula">(∂P/∂V)T,c = 0；(∂²P/∂V²)T,c = 0</div>
-        <p id="derivationExplanation" class="step-explanation">临界点处等温线具有水平拐点。</p>
-        <div class="button-row spread"><button class="btn btn-outline" id="prevStep">上一步</button><button class="btn btn-primary" id="nextStep">下一步</button></div>
-        <div class="notice notice-info gap-top">推导专题为课程学习辅助。正式教学版需要将每条公式与教材页码、公式编号和教师指定符号体系逐项核对。</div>
-      </article>
-    </div>
-  </section>
-
-  <!-- STEAM -->
-  <section class="page" id="page-steam">
-    <div class="page-heading"><div><div class="eyebrow">MODULE 04</div><h1>水和水蒸气性质</h1><p>教材附录表格插值轨与 IF97 计算服务接口分离。</p></div><span class="module-tag">WATER & STEAM</span></div>
-    <div class="notice notice-warning">当前浏览器页面内置的是教材附录 8 的精选饱和表节点，仅供插值教学和结果对照；它不是完整 IF97。完整 Region 1–5 与反算功能需要启动本项目附带的 CoolProp / IF97 API 服务。</div>
-    <div class="grid grid-2">
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">TEXTBOOK TABLE TRACK</div><h2>饱和水 / 饱和水蒸气插值</h2></div><span class="heading-mark">附录 8</span></div>
-        <div class="field"><label for="steamT">饱和温度 t / °C</label><input id="steamT" type="number" value="100" min="0.01" max="373.99" step="any"></div>
-        <div class="field"><label for="steamQuality">湿蒸汽干度 x（0–1）</label><input id="steamQuality" type="number" value="0.5" min="0" max="1" step="any"></div>
-        <button class="btn btn-primary" id="calculateSteamTable">查询 / 插值</button>
-        <div id="steamTableOutput" class="result-inline empty-state">输入温度后查询教材饱和表节点或相邻节点插值结果。</div>
-      </article>
-      <article class="panel-card">
-        <div class="panel-heading"><div><div class="eyebrow">IF97 PROPERTY SERVICE</div><h2>IF97 标准性质计算</h2></div><span id="if97Status" class="pill status-warning">API 未连接</span></div>
-        <div class="form-grid">
-          <div class="field"><label for="if97T">温度 T / K</label><input id="if97T" type="number" value="500" step="any"></div>
-          <div class="field"><label for="if97P">压力 P / MPa</label><input id="if97P" type="number" value="1" step="any"></div>
-          <div class="field span-2"><label for="apiBase">性质服务地址</label><input id="apiBase" type="url" value="http://127.0.0.1:8000" placeholder="https://your-thermo-api.example.com"></div>
-        </div>
-        <button class="btn btn-primary" id="calculateIF97">计算 T-P 单相性质</button>
-        <div class="field gap-top"><label for="if97SatT">饱和温度 T / K</label><input id="if97SatT" type="number" value="373.15" step="any"></div>
-        <button class="btn btn-outline" id="calculateIF97Saturation">查询饱和液 / 饱和汽</button>
-        <div id="if97Output" class="result-inline empty-state">本服务通过 CoolProp 的 IF97::Water 后端计算；不会将一般 Water EOS 输出伪装成 IF97。</div>
-        <p class="muted small">API 文件位于项目包 api/ 目录。GitHub Pages 只能托管静态网页；上线 IF97 时需另行部署 API 服务并配置 CORS。</p>
-      </article>
-    </div>
-    <article class="panel-card gap-top">
-      <div class="panel-heading"><div><div class="eyebrow">REGION-AWARE INPUT</div><h2>区域与自由度说明</h2></div></div>
-      <div class="table-wrap"><table><thead><tr><th>IF97 区域</th><th>主要状态</th><th>典型输入</th><th>计划输出</th></tr></thead><tbody>
-        <tr><td>Region 1</td><td>压缩水 / 亚冷液体</td><td>T、P</td><td>v、u、h、s、Cp、Cv</td></tr>
-        <tr><td>Region 2</td><td>过热蒸汽</td><td>T、P</td><td>v、u、h、s、Cp、Cv</td></tr>
-        <tr><td>Region 3</td><td>高密度区 / 临界附近</td><td>ρ、T 或 P、T 反算</td><td>密度与性质反算</td></tr>
-        <tr><td>Region 4</td><td>饱和曲线 / 湿蒸汽</td><td>T 或 P；湿蒸汽另需干度 x</td><td>Psat、Tsat、饱和液汽性质</td></tr>
-        <tr><td>Region 5</td><td>高温蒸汽</td><td>T、P</td><td>高温区性质，严格限制有效范围</td></tr>
-      </tbody></table></div>
-      <p class="muted small">Region 4 的两相状态由一个独立强度变量确定；计算湿蒸汽性质时还需提供干度。超临界状态不简单等同于 Region 5。</p>
-    </article>
-  </section>
-
-  <!-- APPENDIX -->
-  <section class="page" id="page-appendix">
-    <div class="page-heading"><div><div class="eyebrow">MODULE 05</div><h1>数据附录与账户中心</h1><p>纯物质基础参数、术语、来源说明、计算记录与账号管理。</p></div><span class="module-tag">DATA & ACCOUNT</span></div>
-    <div class="grid grid-2">
-      <article class="panel-card"><div class="panel-heading"><div><div class="eyebrow">SUBSTANCE MASTER</div><h2>16 种重点物质</h2></div><span class="heading-mark">CAS RN</span></div><div class="table-wrap"><table id="substanceTable"><thead><tr><th>物质</th><th>CAS</th><th>Tc / K</th><th>Pc / MPa</th><th>ω</th></tr></thead><tbody></tbody></table></div><p class="muted small">首批参数为初始参考数据；状态方程演示可用，正式学术发布前须按来源逐项核验物质形态、单位、有效位数和版本。</p></article>
-      <article class="panel-card"><div class="panel-heading"><div><div class="eyebrow">ACCOUNT CENTRE</div><h2>账户与云端记录</h2></div><span id="roleBadge" class="pill status-neutral">未登录</span></div><div id="accountSummary" class="empty-state">登录后可保存计算历史到 Supabase。未登录时计算和教材表格查询仍可在本地使用。</div><div class="button-row"><button class="btn btn-primary" id="openAuthFromAppendix">登录 / 注册</button><button class="btn btn-outline hidden" id="signOutButton">退出登录</button></div><div id="historyOutput" class="history-list"></div></article>
-    </div>
-    <article class="panel-card gap-top"><div class="panel-heading"><div><div class="eyebrow">GLOSSARY</div><h2>化工热力学中英术语</h2></div></div><input id="glossarySearch" class="search-input" type="search" placeholder="搜索中文或 English term"><div class="table-wrap"><table id="glossaryTable"><thead><tr><th>中文</th><th>English</th></tr></thead><tbody></tbody></table></div></article>
-    <article class="panel-card gap-top"><div class="panel-heading"><div><div class="eyebrow">PROJECT NOTES</div><h2>数据、版权与项目说明</h2></div></div>
-      <div class="notice notice-info">本平台为课程学习辅助项目，非天津大学官方发布。项目标识：Untholionleen。引用教材和第三方数据时应遵循相应版权、许可与署名要求。</div>
-      <p>教材《化工热力学》（第三版）用于建立课程知识结构。公开国际数据来源仅按官方允许的接口、可下载数据或已获授权的方式导入。DDBST、NIST TDE、REFPROP 等受限数据不会因为网站提供链接就被视为可自由复制或再分发。</p>
-      <p class="muted small">本页面当前使用的 Supabase Publishable key 是公开客户端密钥。真正的数据保护由 PostgreSQL RLS 和最小权限授予承担；禁止把 service_role / secret key 或 SMTP 密码放入前端。</p>
-    </article>
-  </section>
+<main class="container">
+<section class="page active" id="p-home">
+ <div class="hero"><div class="kicker">TJU · SCHOOL OF CHEMICAL ENGINEERING</div><h2 id="heroTitle">从经典热力学到工程数字化应用</h2><p id="heroDesc">以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。</p><button class="btn gold" data-go="m1" id="start">进入学习平台</button></div>
+ <div class="result" id="baseline">版本说明：13.1.0 工程基线版。已实现功能可直接运行；未完成标准公式移植或数据核验的内容明确标记，不提供伪造数值。Supabase 本期不启用。</div>
+ <div class="grid">
+  <article class="card"><div class="kicker">01</div><h3>状态方程与热力学模型</h3><p>vdW、RK、SRK、PR 立方型 EOS、曲线与三维状态曲面入口。</p><button class="btn" data-go="m1">进入模块 →</button></article>
+  <article class="card"><div class="kicker">02</div><h3>工程图表与普遍化关联</h3><p>压缩因子曲线查询与数据导出，后续接入 Lee–Kesler 与工程图表。</p><button class="btn" data-go="m2">进入模块 →</button></article>
+  <article class="card"><div class="kicker">03</div><h3>热力学公式推导专题</h3><p>交互式公式推导，展示数学关系与物理含义。</p><button class="btn" data-go="m3">进入模块 →</button></article>
+  <article class="card"><div class="kicker">04</div><h3>水与水蒸气性质</h3><p>IF97 Region 4 饱和曲线及插值教学，其他区域待完整移植。</p><button class="btn" data-go="m4">进入模块 →</button></article>
+  <article class="card wide"><div class="kicker">05</div><h3>附录与学术参考</h3><p>主要符号、词汇、单位换算与数据溯源。</p><button class="btn" data-go="app">进入模块 →</button></article>
+ </div>
+</section>
+<section class="page" id="p-m1">
+ <div class="heading"><div><div class="kicker">MODULE 01</div><h2>状态方程与热力学模型</h2><p>纯物质计算器、交互曲线和混合物建设状态。</p></div><span class="tag">部分功能已实现</span></div>
+ <div class="tabs"><button class="active" data-sub="eos">纯物质 EOS</button><button data-sub="pvt">P-V-T 曲面</button><button data-sub="vle">混合物与 VLE</button></div>
+ <div class="sub active" id="s-eos"><div class="grid">
+  <div class="card"><h3>纯物质参数输入</h3><label>物质</label><select id="species"></select><div class="row three"><div><label>Tc / K</label><input id="tc" type="number" step="any"></div><div><label>Pc / MPa</label><input id="pc" type="number" step="any"></div><div><label>ω</label><input id="om" type="number" step="any"></div></div><label>状态方程</label><select id="model"><option value="pr">Peng–Robinson (PR)</option><option value="srk">Soave–Redlich–Kwong (SRK)</option><option value="rk">Redlich–Kwong (RK)</option><option value="vdw">van der Waals (vdW)</option><option disabled>PRG（定义待核实）</option></select><div class="row"><div><label>T / K</label><input id="temp" type="number" value="250" step="any"></div><div><label>P / MPa</label><input id="pres" type="number" value="2" step="any"></div></div><div class="actions"><button class="btn primary" id="calc">计算</button><button class="btn" id="reset">重置</button><button class="btn" id="csv">导出 CSV</button></div><div class="note" id="srcNote">物性参数来源和核验状态将随选择项显示。</div></div>
+  <div class="card"><h3>计算结果</h3><div class="result" id="msg">输入参数后执行计算。</div><div class="scroll" id="out"></div><div class="formula">P = RT/(V − b) − aα/(V² + ubV + wb²)</div><p class="note">全部有效实根均列出；多根不自动等同于稳定相。模型结果不等于高精度 REFPROP 结果。</p></div>
+ </div><div class="card"><h3>P-V 等温线（EOS 计算生成）</h3><canvas id="eosPlot" class="chart" width="1000" height="330"></canvas><button class="btn" id="curveCSV">导出曲线数据 CSV</button></div><div class="card"><h3>使用边界</h3><p>PRG 定义暂未核实，关闭计算。旧版 VLE 代码审计发现随机/演示输出，故本版关闭 VLE 数值计算，避免误导。</p></div></div>
+ <div class="sub" id="s-pvt"><div class="card"><h3>纯物质 P-V-T 关系</h3><p>下图为可拖动旋转的立方 EOS 原始状态曲面，并非经过 Maxwell 等面积条件求解的稳定两相包络线。</p><div class="row three"><div><label>模型</label><select id="pm"><option value="vdw">vdW</option><option value="pr">PR</option></select></div><div><label>Tc / K</label><input id="ptc" value="647.096" type="number"></div><div><label>Pc / MPa</label><input id="ppc" value="22.064" type="number"></div></div><div class="actions"><button class="btn" data-proj="3d">3D</button><button class="btn" data-proj="pv">P-V</button><button class="btn" data-proj="pt">P-T</button><button class="btn" data-proj="vt">V-T</button><button class="btn primary" id="draw3">重新绘制</button></div><canvas id="pvt" class="chart" width="1000" height="500"></canvas></div></div>
+ <div class="sub" id="s-vle"><div class="card"><span class="tag">待完成与验证</span><h3>二元混合物与汽液相平衡</h3><p>本版本暂不提供泡点、露点或闪蒸数值。正式开放前须实现混合规则、组分逸度相等、物料衡算、收敛判据，并与可靠参考数据交叉核验。</p></div></div>
+</section>
+<section class="page" id="p-m2">
+ <div class="heading"><div><div class="kicker">MODULE 02</div><h2>工程图表与普遍化关联</h2><p>当前提供真实组分 PR EOS 生成的约化压缩因子曲线，不冒充 Lee–Kesler 普遍化图。</p></div><span class="tag">模型生成</span></div>
+ <div class="card"><h3>压缩因子 Z 查询（PR EOS）</h3><div class="row three"><div><label>Tc / K</label><input id="ztc" value="190.56" type="number"></div><div><label>Pc / MPa</label><input id="zpc" value="4.599" type="number"></div><div><label>ω</label><input id="zom" value="0.011" type="number"></div></div><div class="row"><div><label>约化温度 Tr</label><input id="ztr" value="1.5" type="number" step="any"></div><div><label>约化压力 Pr</label><input id="zpr" value="1" type="number" step="any"></div></div><div class="actions"><button class="btn primary" id="zcalc">计算</button><button class="btn" id="zexport">导出曲线数据 CSV</button></div><div id="zmsg" class="result">等待计算。</div><canvas id="zplot" class="chart" width="1000" height="360"></canvas></div>
+ <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z</td><td>简单流体/参考流体关联</td><td>待实现与验证</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
+</section>
+<section class="page" id="p-m3">
+ <div class="heading"><div><div class="kicker">MODULE 03</div><h2>热力学公式推导专题</h2><p>首批 D1 范德华方程临界参数推导；其余专题登记为待审核。</p></div><span class="tag">D1 已录入</span></div>
+ <div class="grid"><div class="card"><h3>推导目录</h3><div class="list" id="dlist"></div></div><div class="card"><h3 id="dtitle">D1 范德华方程临界参数</h3><div id="deq" class="formula"></div><p id="dnote"></p><div class="actions"><button class="btn" id="dprev">上一步</button><button class="btn primary" id="dnext">下一步</button><button class="btn" id="dauto">自动播放</button></div><span id="dstep" class="note"></span></div></div>
+</section>
+<section class="page" id="p-m4">
+ <div class="heading"><div><div class="kicker">MODULE 04</div><h2>水与水蒸气性质</h2><p>目前实现 IAPWS-IF97 Region 4 饱和压力关系与教学插值器；其他区域完整物性暂未开放。</p></div><span class="tag">部分功能已实现</span></div>
+ <div class="tabs"><button class="active" data-steam="sat">饱和压力/温度</button><button data-steam="interp">插值教学</button><button data-steam="regions">五区状态</button></div>
+ <div class="sub active" id="steam-sat"><div class="grid"><div class="card"><h3>IF97 Region 4 饱和曲线</h3><label>查询方式</label><select id="smode"><option value="T">按温度 T 查询饱和压力</option><option value="P">按压力 P 查询饱和温度</option></select><label id="slabel">T / K</label><input id="sinput" value="373.15" type="number" step="any"><div class="actions"><button class="btn primary" id="scalc">计算</button></div><div id="sresult" class="result">温度范围 273.15–647.096 K。</div></div><div class="card"><h3>适用范围</h3><p>Region 4 饱和线：273.15 K ≤ T ≤ 647.096 K；压力范围为三相点至临界点。此处不代表已经完成 Region 1/2/3/5 性质计算。</p><a href="https://iapws.org/technical-guidance/release/IF97-Rev" target="_blank" rel="noopener">IAPWS-IF97 官方发布文件</a></div></div><div class="card"><h3>饱和压力曲线</h3><canvas id="satplot" class="chart" width="1000" height="340"></canvas></div></div>
+ <div class="sub" id="steam-interp"><div class="card"><h3>双线性插值计算器</h3><p class="note">只对用户输入的网格数据插值，不代表 IF97 物性查询；超出网格范围时拒绝外推。</p><div class="row three"><div><label>x0</label><input id="ix0" value="1" type="number"></div><div><label>x1</label><input id="ix1" value="2" type="number"></div><div><label>x</label><input id="ix" value="1.4" type="number"></div><div><label>y0</label><input id="iy0" value="300" type="number"></div><div><label>y1</label><input id="iy1" value="400" type="number"></div><div><label>y</label><input id="iy" value="350" type="number"></div><div><label>f00</label><input id="f00" value="10" type="number"></div><div><label>f10</label><input id="f10" value="20" type="number"></div><div><label>f01</label><input id="f01" value="15" type="number"></div><div><label>f11</label><input id="f11" value="27" type="number"></div></div><button class="btn primary" id="icalc">计算插值</button><div class="formula">f=(1−t)(1−u)f₀₀+t(1−u)f₁₀+(1−t)uf₀₁+tu f₁₁</div><div id="iresult" class="result"></div></div></div>
+ <div class="sub" id="steam-regions"><div class="card"><h3>IF97 五区域实施状态</h3><div class="scroll"><table><tr><th>区域</th><th>主要状态</th><th>当前状态</th></tr><tr><td>1</td><td>压缩液体</td><td>待移植</td></tr><tr><td>2</td><td>过热蒸汽</td><td>待移植</td></tr><tr><td>3</td><td>高密度/临界附近</td><td>待移植</td></tr><tr><td>4</td><td>饱和曲线</td><td>已实现</td></tr><tr><td>5</td><td>高温蒸汽</td><td>待移植</td></tr></table></div><p>未完成区域不提供虚假的 h、s、u、cp、cv 数值。</p></div></div>
+</section>
+<section class="page" id="p-app">
+ <div class="heading"><div><div class="kicker">APPENDICES</div><h2>附录与学术参考</h2><p>全站符号、术语和单位查询。</p></div></div>
+ <div class="grid"><div class="card"><h3>化工热力学术语</h3><input id="gsearch" placeholder="搜索中文或英文"><div id="gloss" class="list" style="margin-top:10px;max-height:350px;overflow:auto"></div></div><div class="card"><h3>常用单位换算</h3><label>类型</label><select id="utype"><option value="p">压力：MPa / bar / kPa / atm</option><option value="e">能量：J / kJ / cal</option><option value="t">温度：K / °C</option></select><label>数值</label><input id="uval" type="number" value="1"><div class="row"><div><label>从</label><select id="ufrom"></select></div><div><label>到</label><select id="uto"></select></div></div><button class="btn primary" id="uconvert">换算</button><div id="ures" class="result">—</div></div></div>
+ <div class="card"><h3>主要符号</h3><div class="scroll"><table><thead><tr><th>符号</th><th>中文名称</th><th>英文名称</th><th>SI 单位</th></tr></thead><tbody id="symbols"></tbody></table></div></div>
+ <div class="card"><h3>数据来源与学术版权</h3><ul><li><a href="https://iapws.org/" target="_blank" rel="noopener">IAPWS</a>：水与水蒸气工业标准公式。</li><li><a href="https://webbook.nist.gov/chemistry/" target="_blank" rel="noopener">NIST Chemistry WebBook</a>：物性数据核对。</li><li><a href="https://pjb10.user.srcf.net/thermo/" target="_blank" rel="noopener">Patrick J. Barrie 原始教学程序</a>：结构参考，代码使用须遵守作者许可。</li><li>夏淑倩、马沛生、李永红主编：《化工热力学》第三版，化学工业出版社，2023。</li></ul><p class="note">第三方教材、软件、数据库和论文均应注明来源并遵守版权/许可。教学近似数据不得冒充标准数据。</p></div>
+</section>
 </main>
-
-<footer class="site-footer"><div class="wrap footer-inner"><div><b>TJU-ThermoHub</b><span>化工热力学自主学习平台 · 课程学习辅助</span></div><div>Project mark: Untholionleen · Data provenance first · Non-official educational project</div></div></footer>
-
-<!-- AUTH MODAL -->
-<div class="modal-backdrop hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-  <div class="modal-card">
-    <button class="modal-close" id="closeAuth" aria-label="关闭">×</button>
-    <div class="eyebrow">SUPABASE AUTH</div><h2 id="authTitle">账户登录</h2>
-    <div class="auth-tabs"><button class="auth-tab active" data-auth-tab="login">登录</button><button class="auth-tab" data-auth-tab="signup">注册</button><button class="auth-tab" data-auth-tab="recover">找回密码</button></div>
-    <form id="loginForm" class="auth-form">
-      <div class="field"><label for="loginEmail">邮箱</label><input id="loginEmail" type="email" required autocomplete="email"></div>
-      <div class="field"><label for="loginPassword">密码</label><input id="loginPassword" type="password" required autocomplete="current-password"></div>
-      <button class="btn btn-primary full-width" type="submit">登录</button>
-    </form>
-    <form id="signupForm" class="auth-form hidden">
-      <div class="field"><label for="signupName">姓名 / 昵称</label><input id="signupName" type="text" maxlength="60" required autocomplete="name"></div>
-      <div class="field"><label for="signupEmail">邮箱</label><input id="signupEmail" type="email" required autocomplete="email"></div>
-      <div class="field"><label for="signupPassword">密码（至少 8 位）</label><input id="signupPassword" type="password" minlength="8" required autocomplete="new-password"></div>
-      <div class="field"><label for="signupPassword2">确认密码</label><input id="signupPassword2" type="password" minlength="8" required autocomplete="new-password"></div>
-      <button class="btn btn-primary full-width" type="submit">创建学生账户</button>
-      <p class="muted small">注册后默认分配 student 权限；邮箱确认完成后即可登录。</p>
-    </form>
-    <form id="recoverForm" class="auth-form hidden">
-      <div class="field"><label for="recoverEmail">注册邮箱</label><input id="recoverEmail" type="email" required autocomplete="email"></div>
-      <button class="btn btn-primary full-width" type="submit">发送密码重置邮件</button>
-    </form>
-    <form id="updatePasswordForm" class="auth-form hidden">
-      <div class="field"><label for="newPassword">新密码</label><input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></div>
-      <div class="field"><label for="newPassword2">确认新密码</label><input id="newPassword2" type="password" minlength="8" required autocomplete="new-password"></div>
-      <button class="btn btn-primary full-width" type="submit">更新密码</button>
-    </form>
-    <div id="authMessage" class="auth-message" aria-live="polite"></div>
-    <div class="auth-footnote">登录服务由 Supabase Auth 提供。网页仅使用 Publishable key；账户权限与数据访问由数据库 RLS 控制。</div>
-  </div>
-</div>
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
-</body>
-</html>
+<footer class="footer"><div class="footergrid"><div><b>JsPSCES-TJU · TJU-ThermoHub</b><p>天津大学化工热力学学生自主学习网站</p><p>GitHub：<a href="https://github.com/Untholionleen" target="_blank">Untholionleen</a></p></div><div><b>学术与版权</b><p>理论指导信息：天津大学化工学院夏淑倩教授</p><p>项目发起与版权归属：Untholionleen</p></div><div><b>原始参考</b><p><a href="https://pjb10.user.srcf.net/thermo/" target="_blank">Patrick Barrie Thermodynamics Programs</a></p><p>Version 13.1.0（Nv3.1.0）</p></div></div><hr style="border-color:#ffffff22"><p>本网站用于教学与工程辅助查询。计算结果须结合模型适用范围和数据来源独立核验，不作为重大工程决策的唯一依据。</p></footer>
+<script>
+(function(){
+"use strict";
+const R=8.31446261815324, $=id=>document.getElementById(id), names=[
+["nitrogen","氮气","Nitrogen",126.2,3.394,.0372,"待复核"],
+["oxygen","氧气","Oxygen",154.58,5.043,.0222,"待复核"],
+["hydrogen","氢气","Hydrogen",33.145,1.2964,-.219,"待复核"],
+["carbon-dioxide","二氧化碳","Carbon dioxide",304.1282,7.3773,.2239,"待复核"],
+["methane","甲烷","Methane",190.56,4.599,.011,"教材附录3"],
+["ethane","乙烷","Ethane",305.32,4.872,.099,"教材附录3"],
+["propane","丙烷","Propane",369.83,4.248,.152,"教材附录3"],
+["n-butane","正丁烷","n-Butane",425.12,3.796,.199,"教材附录3"],
+["n-pentane","正戊烷","n-Pentane",469.7,3.370,.249,"教材附录3"],
+["n-hexane","正己烷","n-Hexane",507.6,3.025,.305,"教材附录3"],
+["ethylene","乙烯","Ethylene",282.34,5.041,.085,"教材附录3"],
+["propylene","丙烯","Propylene",364.9,4.60,.142,"教材附录3"],
+["acetylene","乙炔","Acetylene",308.3,6.138,.187,"教材附录3"],
+["benzene","苯","Benzene",562.05,4.895,.211,"教材附录3"],
+["toluene","甲苯","Toluene",591.75,4.108,.264,"教材附录3"],
+["water","水","Water",647.096,22.064,.344,"IAPWS 临界点参考"]
+];
+function cbrt(x){return Math.sign(x)*Math.pow(Math.abs(x),1/3)}
+function roots(a,b,c){let p=b-a*a/3,q=2*a*a*a/27-a*b/3+c,d=q*q/4+p*p*p/27,e=1e-14;if(d>e){let s=Math.sqrt(d);return [cbrt(-q/2+s)+cbrt(-q/2-s)-a/3]}if(Math.abs(d)<=e){let u=cbrt(-q/2);return [...new Set([2*u-a/3,-u-a/3])].sort((x,y)=>x-y)}let rr=2*Math.sqrt(-p/3),ph=Math.acos(Math.max(-1,Math.min(1,3*q/(2*p)*Math.sqrt(-3/p))));return [rr*Math.cos(ph/3)-a/3,rr*Math.cos((ph+2*Math.PI)/3)-a/3,rr*Math.cos((ph+4*Math.PI)/3)-a/3].sort((x,y)=>x-y)}
+function modelPars(m,T,Tc,Pc,w){let tr=T/Tc,a,b,da=0,u=1,v=0,al=1,mm;if(m==="vdw"){a=27/64*R*R*Tc*Tc/Pc;b=R*Tc/(8*Pc);u=0;v=0}else if(m==="rk"){a=.42748*R*R*Math.pow(Tc,2.5)/(Pc*Math.sqrt(T));b=.08664*R*Tc/Pc;da=-.5*a/T}else if(m==="srk"){mm=.480+1.574*w-.176*w*w;al=Math.pow(1+mm*(1-Math.sqrt(tr)),2);a=.42747*R*R*Tc*Tc/Pc*al;b=.08664*R*Tc/Pc;da=-.42747*R*R*Tc*Tc/Pc*mm*Math.sqrt(al/(T*Tc))}else{mm=w>.491?.379642+1.48503*w-.164423*w*w+.016666*w*w*w:.37464+1.54226*w-.26992*w*w;al=Math.pow(1+mm*(1-Math.sqrt(tr)),2);a=.45724*R*R*Tc*Tc/Pc*al;b=.07780*R*Tc/Pc;da=-.45724*R*R*Tc*Tc/Pc*mm*Math.sqrt(al/(T*Tc));u=2;v=-1}return {a,b,da,u,v,al}}
+function pressure(m,T,V,Tc,Pc,w){let p=modelPars(m,T,Tc,Pc*1e6,w),den=V*V+p.u*p.b*V+p.v*p.b*p.b;return R*T/(V-p.b)-p.a/den}
+function eos(m,T,P,Tc,Pc,w){if([T,P,Tc,Pc,w].some(x=>!Number.isFinite(x))||T<=0||P<=0||Tc<=0||Pc<=0)throw Error("温度、压力及临界参数必须为有效正值。");let p=modelPars(m,T,Tc,Pc*1e6,w),PP=P*1e6,A=p.a*PP/(R*R*T*T),B=p.b*PP/(R*T),c2=(p.u-1)*B-1,c1=A-p.u*B-(p.u-p.v)*B*B,c0=-(A*B+p.v*B*B+p.v*B*B*B),zs=roots(c2,c1,c0).filter(z=>z>B&&z>0);if(!zs.length)throw Error("当前条件未找到满足 Z > B 的正实根。");return zs.map(z=>{let V=z*R*T/PP,ln;if(m==="vdw")ln=z-1-Math.log(z-B)-A/z;else if(m==="pr")ln=z-1-Math.log(z-B)-A/(2*Math.sqrt(2)*B)*Math.log((z+(1+Math.sqrt(2))*B)/(z+(1-Math.sqrt(2))*B));else ln=z-1-Math.log(z-B)-A/B*Math.log(1+B/z);return {Z:z,V:V,phi:Math.exp(ln),lnphi:ln}})}
+function plot(canvas,series,xmin,xmax,ymin,ymax,xlab,ylab){let c=canvas.getContext("2d"),w=canvas.width,h=canvas.height,L=60,Rt=20,T=20,B=48;c.clearRect(0,0,w,h);c.fillStyle="#fff";c.fillRect(0,0,w,h);c.strokeStyle="#e3eaf0";for(let i=0;i<=5;i++){let x=L+(w-L-Rt)*i/5,y=T+(h-T-B)*i/5;c.beginPath();c.moveTo(x,T);c.lineTo(x,h-B);c.stroke();c.beginPath();c.moveTo(L,y);c.lineTo(w-Rt,y);c.stroke()}c.strokeStyle="#567";c.beginPath();c.moveTo(L,T);c.lineTo(L,h-B);c.lineTo(w-Rt,h-B);c.stroke();let X=x=>L+(x-xmin)/(xmax-xmin)*(w-L-Rt),Y=y=>h-B-(y-ymin)/(ymax-ymin)*(h-T-B);series.forEach((s,k)=>{c.strokeStyle=s.color||"#133963";c.lineWidth=2;c.beginPath();let started=false;s.data.forEach(pt=>{if(!Number.isFinite(pt[1])){started=false;return}if(!started){c.moveTo(X(pt[0]),Y(pt[1]));started=true}else c.lineTo(X(pt[0]),Y(pt[1]))});c.stroke()});c.fillStyle="#345";c.font="12px sans-serif";c.textAlign="center";c.fillText(xlab,(L+w-Rt)/2,h-12);c.save();c.translate(14,h/2);c.rotate(-Math.PI/2);c.fillText(ylab,0,0);c.restore()}
+function download(name,rows){let csv="\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replaceAll('"','""')+'"').join(",")).join("\r\n"),a=document.createElement("a"),u=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function show(id,text,kind){$(id).textContent=text;$(id).className="result"+(kind?" "+kind:"")}
+function initChem(){names.forEach(x=>{let o=document.createElement("option");o.value=x[0];o.textContent=x[1]+" / "+x[2];$("species").append(o)});$("species").value="methane";loadChem()}
+function loadChem(){let x=names.find(a=>a[0]===$("species").value);$("tc").value=x[3];$("pc").value=x[4];$("om").value=x[5];$("srcNote").textContent="数据来源："+x[6]+"；待复核数据不作为高精度工程参考。"}
+let last=null,lastCurve=[],projection="3d",didx=0,dstep=0,auto=null,lang="zh";
+function calculate(){try{let m=$("model").value,r=eos(m,+$("temp").value,+$("pres").value,+$("tc").value,+$("pc").value,+$("om").value);last={model:m,T:+$("temp").value,P:+$("pres").value,Tc:+$("tc").value,Pc:+$("pc").value,omega:+$("om").value,roots:r};$("out").innerHTML="<table><thead><tr><th>根序号</th><th>Z</th><th>Vm (m³/mol)</th><th>φ</th><th>ln φ</th></tr></thead><tbody>"+r.map((x,i)=>"<tr><td>"+(i+1)+"</td><td>"+x.Z.toFixed(7)+"</td><td>"+x.V.toExponential(7)+"</td><td>"+x.phi.toFixed(7)+"</td><td>"+x.lnphi.toFixed(7)+"</td></tr>").join("")+"</tbody></table>";show("msg","计算完成，得到 "+r.length+" 个有效实根。","ok");lastCurve=curve(m,+$("temp").value,+$("tc").value,+$("pc").value,+$("om").value);plot($("eosPlot"),[{data:lastCurve}],1.2,9.2,0,Math.max(1,+$("pc").value*3),"V/Vc","P / MPa");let hist=JSON.parse(localStorage.getItem("tju-thermohub-history")||"[]");hist.unshift({time:new Date().toISOString(),...last});localStorage.setItem("tju-thermohub-history",JSON.stringify(hist.slice(0,50)))}catch(e){show("msg",e.message,"err");$("out").innerHTML="";last=null}}
+function curve(m,T,Tc,Pc,w){let a=[];for(let i=0;i<160;i++){let vc=1.2+i/159*8,V=vc*R*Tc/(Pc*1e6);try{let p=pressure(m,T,V,Tc,Pc,w)/1e6;a.push([vc,p>0?p:NaN])}catch(e){a.push([vc,NaN])}}return a}
+const satN=[0.11670521452767e4,-0.72421316703206e6,-0.17073846940092e2,0.12020824702470e5,-0.32325550322333e7,0.14915108613530e2,-0.48232657361591e4,0.40511340542057e6,-0.23855557567849e0,0.65017534844798e3];
+function psat(T){if(T<273.15||T>647.096)throw Error("IF97 Region 4 温度范围：273.15–647.096 K。");let n=satN,th=T+n[8]/(T-n[9]),A=th*th+n[0]*th+n[1],B=n[2]*th*th+n[3]*th+n[4],C=n[5]*th*th+n[6]*th+n[7];return Math.pow(2*C/(-B+Math.sqrt(B*B-4*A*C)),4)}
+function tsat(P){if(P<.000611657||P>22.064)throw Error("压力必须在三相点压力与临界压力之间。");let lo=273.15,hi=647.096;for(let i=0;i<90;i++){let mid=(lo+hi)/2;if(psat(mid)>P)hi=mid;else lo=mid}return (lo+hi)/2}
+function satCalc(){try{let v=+$("sinput").value;if($("smode").value==="T")show("sresult","T = "+v+" K → Psat = "+psat(v).toFixed(9)+" MPa","ok");else show("sresult","P = "+v+" MPa → Tsat = "+tsat(v).toFixed(7)+" K","ok")}catch(e){show("sresult",e.message,"err")}}
+function satPlot(){let d=[];for(let i=0;i<=120;i++){let t=273.15+(647.096-273.15)*i/120;d.push([t,psat(t)])}plot($("satplot"),[{data:d}],273.15,647.096,0,22.1,"T / K","Psat / MPa")}
+function bilinear(){try{let ids=["ix0","ix1","iy0","iy1","f00","f10","f01","f11","ix","iy"],v=ids.map(x=>+$ (x).value),[x0,x1,y0,y1,f00,f10,f01,f11,x,y]=v;if(x1===x0||y1===y0||x<Math.min(x0,x1)||x>Math.max(x0,x1)||y<Math.min(y0,y1)||y>Math.max(y0,y1))throw Error("网格区间无效或目标点超出范围；拒绝外推。");let t=(x-x0)/(x1-x0),u=(y-y0)/(y1-y0),f=(1-t)*(1-u)*f00+t*(1-u)*f10+(1-t)*u*f01+t*u*f11;show("iresult","f(x,y) = "+f+"\nt = "+t+"；u = "+u,"ok")}catch(e){show("iresult",e.message,"err")}}
+const steps=[
+["P = RT/(V − b) − a/V²","从范德华状态方程出发，其中 a、b 为物质参数。"],
+["(∂P/∂V)T = −RT/(V−b)² + 2a/V³ = 0","临界等温线上，一阶体积偏导数为零。"],
+["(∂²P/∂V²)T = 2RT/(V−b)³ − 6a/V⁴ = 0","临界等温线上，二阶体积偏导数也为零。"],
+["Vc = 3b；Tc = 8a/(27Rb)","联立两个临界条件，得到临界摩尔体积和临界温度。"],
+["Pc = a/(27b²)；a = 27R²Tc²/(64Pc)；b = RTc/(8Pc)","将结果代回状态方程，得到临界压力和 a、b 的表达式。"]
+];
+const derivs=[["D1","范德华方程临界参数",true],["D2","Peng–Robinson 参数与温度函数",false],["D3","立方型 EOS 的 Z 多项式",false],["D4","逸度系数与相平衡判据",false],["D5","剩余焓与剩余熵",false],["D6","Maxwell 等面积条件",false],["D7","Clapeyron 方程",false],["D8","维里方程",false],["D9","Joule–Thomson 系数",false],["D10","Gibbs–Duhem 方程",false],["D11","Rachford–Rice 闪蒸衡算",false]];
+function showDeriv(){let d=derivs[didx];$("dlist").innerHTML=derivs.map((x,i)=>'<button class="'+(i===didx?"active":"")+'" data-di="'+i+'">'+x[0]+" · "+x[1]+" — "+(x[2]?"步骤已录入":"待推导审核")+"</button>").join("");document.querySelectorAll("[data-di]").forEach(b=>b.onclick=()=>{didx=+b.dataset.di;dstep=0;showDeriv()});$("dtitle").textContent=d[0]+" · "+d[1];if(!d[2]){$("deq").textContent="该专题已登记，完整推导需依据教材逐式核对后录入。";$("dnote").textContent="暂无可播放步骤。";$("dstep").textContent="待审核";$("dprev").disabled=true;$("dnext").disabled=true;$("dauto").disabled=true;return}$("deq").textContent=steps[dstep][0];$("dnote").textContent=steps[dstep][1];$("dstep").textContent=(dstep+1)+" / "+steps.length;$("dprev").disabled=dstep===0;$("dnext").disabled=dstep===steps.length-1;$("dauto").disabled=false}
+function zCalc(){try{let tc=+$("ztc").value,pc=+$("zpc").value,w=+$("zom").value,tr=+$("ztr").value,pr=+$("zpr").value;if(tr<=0||pr<=0||pr>10)throw Error("Tr 必须大于零，且 0 < Pr ≤ 10。");let rr=eos("pr",tr*tc,pr*pc,tc,pc,w),z=rr[rr.length-1].Z;show("zmsg","Tr="+tr+"；Pr="+pr+"；Z(PR)="+z.toFixed(7)+"。此为 PR EOS 结果，不是 Lee–Kesler 普遍化关联。","ok");let series=[],rows=[["Tr","Pr","Z","Model","Tc_K","Pc_MPa","omega"]];[.7,.8,.9,1,1.2,1.5,2].forEach((t,k)=>{let d=[];for(let i=0;i<100;i++){let p=.03+i/99*9.97;try{let z0=eos("pr",t*tc,p*pc,tc,pc,w).slice(-1)[0].Z;d.push([p,z0]);rows.push([t,p,z0,"PR",tc,pc,w])}catch(e){d.push([p,NaN])}}series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d"][k]})});window._zrows=rows;plot($("zplot"),series,0,10,0,2.2,"Pr","Z")}
+catch(e){show("zmsg",e.message,"err")}}
+function initUnits(){let opts={p:["MPa","bar","kPa","atm"],e:["J","kJ","cal"],t:["K","°C"]};function fill(){let a=opts[$("utype").value];$("ufrom").innerHTML=a.map(x=>"<option>"+x+"</option>").join("");$("uto").innerHTML=a.map((x,i)=>'<option '+(i===1?"selected":"")+'>'+x+"</option>").join("")}$("utype").onchange=fill;fill();$("uconvert").onclick=()=>{let type=$("utype").value,v=+$("uval").value,f=$("ufrom").value,t=$("uto").value,r;if(type==="t"){let k=f==="K"?v:v+273.15;r=t==="K"?k:k-273.15}else{let base=type==="p"?{MPa:1e6,bar:1e5,kPa:1e3,atm:101325}:{J:1,kJ:1000,cal:4.184};r=v*base[f]/base[t]}show("ures",v+" "+f+" = "+r+" "+t,"ok")}}
+const glossary=[["压缩因子","Compressibility factor","Z"],["状态方程","Equation of state","EOS"],["逸度","Fugacity","f"],["逸度系数","Fugacity coefficient","φ"],["偏心因子","Acentric factor","ω"],["剩余焓","Enthalpy departure","Hᴿ"],["剩余熵","Entropy departure","Sᴿ"],["临界温度","Critical temperature","Tc"],["临界压力","Critical pressure","Pc"],["泡点","Bubble point",""],["露点","Dew point",""],["闪蒸","Flash calculation",""],["汽液平衡","Vapor-liquid equilibrium","VLE"],["干度","Vapor quality","x"],["过热蒸汽","Superheated steam",""]];
+function renderGloss(q){$("gloss").innerHTML=glossary.filter(x=>x.join(" ").toLowerCase().includes((q||"").toLowerCase())).map(x=>"<div>"+x[0]+" · "+x[1]+" · "+x[2]+"</div>").join("")||"未找到匹配术语。"}
+const symbols=[["P","压力","Pressure","Pa"],["T","热力学温度","Temperature","K"],["V","体积","Volume","m³"],["Vm","摩尔体积","Molar volume","m³/mol"],["v","比体积","Specific volume","m³/kg"],["Z","压缩因子","Compressibility factor","—"],["H","焓","Enthalpy","J"],["S","熵","Entropy","J/K"],["U","内能","Internal energy","J"],["φ","逸度系数","Fugacity coefficient","—"],["ω","偏心因子","Acentric factor","—"],["Tc","临界温度","Critical temperature","K"],["Pc","临界压力","Critical pressure","Pa"],["R","气体常数","Gas constant","J/(mol·K)"]];
+function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("dnext").onclick=()=>{dstep=Math.min(steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";};}
+function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="p-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p))}
+function sub(id){document.querySelectorAll("#p-m1 .sub").forEach(x=>x.classList.toggle("active",x.id==="s-"+id));document.querySelectorAll("#p-m1 [data-sub]").forEach(x=>x.classList.toggle("active",x.dataset.sub===id))}
+function steam(id){document.querySelectorAll("#p-m4 .sub").forEach(x=>x.classList.toggle("active",x.id==="steam-"+id));document.querySelectorAll("#p-m4 [data-steam]").forEach(x=>x.classList.toggle("active",x.dataset.steam===id))}
+let rotX=-.55,rotY=.65,drag=null;
+function drawPvt(){let canvas=$("pvt"),c=canvas.getContext("2d"),w=canvas.width,h=canvas.height;c.clearRect(0,0,w,h);c.fillStyle="#fff";c.fillRect(0,0,w,h);if(projection!=="3d"){let d=[];if(projection==="pv"){let tc=+$("ptc").value,pc=+$("ppc").value;for(let i=0;i<130;i++){let vc=1.2+i/129*8,V=vc*R*tc/(pc*1e6);try{d.push([vc,pressure($("pm").value,.9*tc,V,tc,pc,0)/1e6])}catch(e){d.push([vc,NaN])}}plot(canvas,[{data:d}],1.2,9.2,0,pc*3,"V/Vc","P / MPa");return}}let proj=(x,y,z)=>{let yy=y*Math.cos(rotX)-z*Math.sin(rotX),zz=y*Math.sin(rotX)+z*Math.cos(rotX),xx=x*Math.cos(rotY)-zz*Math.sin(rotY),zz2=x*Math.sin(rotY)+zz*Math.cos(rotY),s=1/(2.7+zz2*.2);return [w/2+xx*w*.28*s,h*.52-yy*h*.32*s]};let tc=+$("ptc").value,pc=+$("ppc").value;let grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{let v=1.15+i/29*7.5,t=.7+j/16*1.0,V=v*R*tc/(pc*1e6),P;try{P=pressure($("pm").value,t*tc,V,tc,pc,.344)/1e6/pc}catch(e){P=NaN}return proj((v-4.4)/4.1,(t-1.2)/.7,Math.max(-1.3,Math.min(2.5,P-.4)))}));c.strokeStyle="#2a6089";for(let j=0;j<grid.length;j++){c.beginPath();grid[j].forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke()}c.strokeStyle="#c5a059";for(let i=0;i<30;i+=2){c.beginPath();grid.forEach((row,j)=>j?c.lineTo(row[i][0],row[i][1]):c.moveTo(row[i][0],row[i][1]));c.stroke()}c.fillStyle="#173b60";c.font="bold 16px sans-serif";c.textAlign="center";c.fillText("EOS P-V-T surface · drag to rotate",w/2,26);if(!canvas.dataset.bound){canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!drag)return;rotY+=(e.clientX-drag[0])*.008;rotX+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];drawPvt()};canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;canvas.dataset.bound="1"}}
+document.addEventListener("DOMContentLoaded",init);
+})();
+</script>
+</body></html>
