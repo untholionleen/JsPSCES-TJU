@@ -53,6 +53,7 @@ jobs:
           node tests/if97-smoke.js
           node tests/mixture-smoke.js
           node tests/lee-kesler-smoke.js
+          node tests/coexistence-smoke.js
 
       - name: Prepare static site
         run: |
