@@ -151,7 +151,7 @@ function showDeriv(){
   $("dnote").textContent=lang==='zh'?step[1]:step[2];
   $("dstep").textContent=(lang==='zh'?'步骤 ':'Step ')+(dstep+1)+' / '+d.steps.length+' · '+(lang==='zh'?'待教师审核':'Pending instructor review');
   $("dprev").disabled=dstep===0;
-  $("dnext").disabled=dstep===d.derivs[didx].steps.length-1;
+  $("dnext").disabled=dstep===d.steps.length-1;
   $("dauto").disabled=false;
   $("dtarget").textContent=lang==='zh'?'用它去算 →':'Use in calculator →';
   $("dtarget").onclick=()=>go(d.target);
