@@ -83,7 +83,7 @@
     return {Z,lnphi,phi:lnphi.map(Math.exp),roots:m.zRoots,A,B,a:am,b:bm};
   }
   function wilsonK(T,P,list) {
-    return list.map(c=>Math.exp(Math.log(c[4]/P)+5.373*(1+c[5])*(1-c[3]/T)));
+    return list.map(c=>Math.exp(Math.log(c[4]*1e6/P)+5.373*(1+c[5])*(1-c[3]/T)));
   }
   function rr(z,K) {
     const f0=z.reduce((s,zi,i)=>s+zi*(K[i]-1),0);
@@ -219,7 +219,7 @@
       let r;
       if(mode==='flash') r=flash(T,P*1e6,selected.list,selected.z,kij);
       else r=envelope(T,selected.list,selected.z,kij,mode);
-      r.z=normalize(selected.z); r.list=selected.list;
+      r.z=normalize(selected.z); r.iterations=r.outerIterations || 70; r.list=selected.list;
       if(mode!=='flash') {
         const beta=mode==='bubble'?0:1;
         r.beta=beta;r.phase=mode==='bubble'?'泡点液相':'露点气相';
