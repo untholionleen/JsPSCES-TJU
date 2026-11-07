@@ -49,8 +49,10 @@ jobs:
           node --check assets/vendor/iapws97-browser.js
           node --check assets/js/steam/full.js
           node --check assets/js/eos/mixture.js
+          node --check assets/js/eos/lee-kesler.js
           node tests/if97-smoke.js
-          node tests/mixture-smoke.js\n          node tests/lee-kesler-smoke.js
+          node tests/mixture-smoke.js
+          node tests/lee-kesler-smoke.js
 
       - name: Prepare static site
         run: |
