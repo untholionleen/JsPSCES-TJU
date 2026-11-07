@@ -1,0 +1,71 @@
+name: Deploy TJU-ThermoHub to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Validate site source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          assert "<!doctype html>" in html.lower(), "Missing HTML5 doctype"
+          assert 'id="p-home"' in html, "Missing home page"
+          assert 'id="p-m1"' in html and 'id="p-m2"' in html
+          assert 'id="p-m3"' in html and 'id="p-m4"' in html
+          assert 'id="p-app"' in html, "Missing appendix page"
+          assert "supabase" not in html.lower(), "Supabase must remain disabled in this release"
+          scripts = re.findall(r"<script>([\\s\\S]*?)</script>", html, re.I)
+          assert scripts, "No inline application script found"
+          Path("/tmp/tju-thermohub-app.js").write_text(scripts[-1], encoding="utf-8")
+          print(f"Validated HTML entry; inline JS length={len(scripts[-1])}")
+          PY
+          node --check /tmp/tju-thermohub-app.js
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          touch _site/.nojekyll
+          cat > _site/robots.txt <<'EOF'
+          User-agent: *
+          Allow: /
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
