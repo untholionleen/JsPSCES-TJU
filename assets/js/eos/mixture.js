@@ -184,7 +184,10 @@
       if(!row.querySelector('[data-mix-active]').checked) continue;
       const c=components.find(x=>x[0]===row.querySelector('[data-mix-species]').value);
       if(!c) continue;
-      list.push(c); z.push(Number(row.querySelector('[data-mix-z]').value));
+      const zi=Number(row.querySelector('[data-mix-z]').value);
+      if(!Number.isFinite(zi)||zi<0) throw new Error('摩尔分率必须是非负有限数。');
+      if(zi===0) continue;
+      list.push(c); z.push(zi);
     }
     if(list.length<2) throw new Error('请至少勾选两种组分。');
     return {list,z};
