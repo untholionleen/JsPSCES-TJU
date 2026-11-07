@@ -26,28 +26,36 @@ jobs:
       - name: Set up Pages
         uses: actions/configure-pages@v5
 
-      - name: Validate site source
+      - name: Validate site source and numerical engines
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           html = Path("index.html").read_text(encoding="utf-8")
           assert "<!doctype html>" in html.lower(), "Missing HTML5 doctype"
           for page_id in ("p-home", "p-m1", "p-m2", "p-m3", "p-m4", "p-app"):
               assert f'id="{page_id}"' in html, f"Missing page {page_id}"
           for forbidden_runtime in ("supabase-js", "supabase.co", "createClient("):
               assert forbidden_runtime not in html, f"Unexpected live backend integration: {forbidden_runtime}"
-          start = html.find("<script>")
-          end = html.rfind("</script>")
-          assert start >= 0 and end > start, "Inline application script not found"
-          Path("/tmp/tju-thermohub-app.js").write_text(html[start + 8:end], encoding="utf-8")
-          print("HTML page structure and offline/no-live-Supabase constraints validated.")
+          for required in ("assets/vendor/iapws97-browser.js", "assets/js/steam/full.js"):
+              assert Path(required).is_file(), f"Missing required offline engine: {required}"
+              assert f'src="{required}"' in html, f"Missing script reference: {required}"
+          scripts = re.findall(r"<script>([\s\S]*?)</script>", html, re.I)
+          assert scripts, "Inline application script not found"
+          Path("/tmp/tju-thermohub-app.js").write_text(scripts[-1], encoding="utf-8")
+          print("HTML structure, offline engine files and no-live-Supabase constraints validated.")
           PY
           node --check /tmp/tju-thermohub-app.js
+          node --check assets/vendor/iapws97-browser.js
+          node --check assets/js/steam/full.js
+          node tests/if97-smoke.js
 
       - name: Prepare static site
         run: |
           mkdir -p _site
           cp index.html _site/index.html
+          cp -R assets _site/assets
+          cp -R licenses _site/licenses
           touch _site/.nojekyll
           cat > _site/robots.txt <<'EOF'
           User-agent: *
