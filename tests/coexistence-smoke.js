@@ -1,7 +1,7 @@
 /* Cubic-EOS vapor-liquid coexistence (equal fugacity / Maxwell plateau) regression. */
 const fs=require('fs'),vm=require('vm');
 const html=fs.readFileSync('index.html','utf8');
-const matches=[...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+const matches=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
 if(!matches.length)throw new Error('Inline site script was not found.');
 const document={addEventListener(){},getElementById(){return null},querySelectorAll(){return []}};
 const window={document};
