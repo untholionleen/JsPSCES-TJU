@@ -33,7 +33,7 @@
   <div class="card"><h3>纯物质参数输入</h3><label>物质</label><select id="species"></select><div class="row three"><div><label>Tc / K</label><input id="tc" type="number" step="any"></div><div><label>Pc / MPa</label><input id="pc" type="number" step="any"></div><div><label>ω</label><input id="om" type="number" step="any"></div></div><label>状态方程</label><select id="model"><option value="pr">Peng–Robinson (PR)</option><option value="srk">Soave–Redlich–Kwong (SRK)</option><option value="rk">Redlich–Kwong (RK)</option><option value="vdw">van der Waals (vdW)</option><option disabled>PRG（定义待核实）</option></select><div class="row"><div><label>T / K</label><input id="temp" type="number" value="250" step="any"></div><div><label>P / MPa</label><input id="pres" type="number" value="2" step="any"></div></div><div class="actions"><button class="btn primary" id="calc">计算</button><button class="btn" id="reset">重置</button><button class="btn" id="csv">导出 CSV</button></div><div class="note" id="srcNote">物性参数来源和核验状态将随选择项显示。</div></div>
   <div class="card"><h3>计算结果</h3><div class="result" id="msg">输入参数后执行计算。</div><div class="scroll" id="out"></div><div class="formula">P = RT/(V − b) − aα/(V² + ubV + wb²)</div><p class="note">全部有效实根均列出；多根不自动等同于稳定相。模型结果不等于高精度 REFPROP 结果。</p></div>
  </div><div class="card"><h3>P-V 等温线（EOS 计算生成）</h3><canvas id="eosPlot" class="chart" width="1000" height="330"></canvas><button class="btn" id="curveCSV">导出曲线数据 CSV</button></div><div class="card"><h3>使用边界</h3><p>PRG 定义暂未核实，关闭计算。旧版 VLE 代码审计发现随机/演示输出，故本版关闭 VLE 数值计算，避免误导。</p></div></div>
- <div class="sub" id="s-pvt"><div class="card"><h3>纯物质 P-V-T 关系</h3><p>下图为可拖动旋转的立方 EOS 原始状态曲面，并非经过 Maxwell 等面积条件求解的稳定两相包络线。</p><div class="row three"><div><label>模型</label><select id="pm"><option value="vdw">vdW</option><option value="pr">PR</option></select></div><div><label>Tc / K</label><input id="ptc" value="647.096" type="number"></div><div><label>Pc / MPa</label><input id="ppc" value="22.064" type="number"></div></div><div class="actions"><button class="btn" data-proj="3d">3D</button><button class="btn" data-proj="pv">P-V</button><button class="btn" data-proj="pt">P-T</button><button class="btn" data-proj="vt">V-T</button><button class="btn primary" id="draw3">重新绘制</button></div><canvas id="pvt" class="chart" width="1000" height="500"></canvas></div></div>
+ <div class="sub" id="s-pvt"><div class="card"><h3>纯物质 P-V-T 关系</h3><p>下图为可拖动旋转的立方 EOS 原始状态曲面，并非经过 Maxwell 等面积条件求解的稳定两相包络线。</p><div class="row three"><div><label>模型</label><select id="pm"><option value="vdw">vdW</option><option value="rk">RK</option><option value="srk">SRK</option><option value="pr" selected>PR</option></select></div><div><label>Tc / K</label><input id="ptc" value="647.096" type="number"></div><div><label>Pc / MPa</label><input id="ppc" value="22.064" type="number"></div><div><label>偏心因子 ω</label><input id="pomega" value="0.344" type="number" step="any"></div></div><div class="actions"><button class="btn" data-proj="3d">3D</button><button class="btn" data-proj="pv">P-V</button><button class="btn" data-proj="pt">P-T</button><button class="btn" data-proj="vt">V-T</button><button class="btn primary" id="draw3">重新绘制</button></div><canvas id="pvt" class="chart" width="1000" height="500"></canvas></div></div>
  <div class="sub" id="s-vle">
   <div class="grid">
    <div class="card"><h3>混合物相平衡计算器（PR φ–φ）</h3>
@@ -55,9 +55,16 @@
  </div>
 </section>
 <section class="page" id="p-m2">
- <div class="heading"><div><div class="kicker">MODULE 02</div><h2>工程图表与普遍化关联</h2><p>当前提供真实组分 PR EOS 生成的约化压缩因子曲线，不冒充 Lee–Kesler 普遍化图。</p></div><span class="tag">模型生成</span></div>
+ <div class="heading"><div><div class="kicker">MODULE 02</div><h2>工程图表与普遍化关联</h2><p>当前提供 PR EOS 的压缩因子曲线和 Pitzer 低压维里近似教学计算；完整 Lee–Kesler 高压普遍化关联仍待实现。</p></div><span class="tag">模型生成</span></div>
  <div class="card"><h3>压缩因子 Z 查询（PR EOS）</h3><div class="row three"><div><label>Tc / K</label><input id="ztc" value="190.56" type="number"></div><div><label>Pc / MPa</label><input id="zpc" value="4.599" type="number"></div><div><label>ω</label><input id="zom" value="0.011" type="number"></div></div><div class="row"><div><label>约化温度 Tr</label><input id="ztr" value="1.5" type="number" step="any"></div><div><label>约化压力 Pr</label><input id="zpr" value="1" type="number" step="any"></div></div><div class="actions"><button class="btn primary" id="zcalc">计算</button><button class="btn" id="zexport">导出曲线数据 CSV</button></div><div id="zmsg" class="result">等待计算。</div><canvas id="zplot" class="chart" width="1000" height="360"></canvas></div>
- <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z</td><td>简单流体/参考流体关联</td><td>待实现与验证</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
+  <div class="card"><h3>低压维里方程与 Pitzer 二阶维里系数</h3>
+  <div class="formula">Z ≈ 1 + (B⁰ + ωB¹) Pᵣ / Tᵣ</div>
+  <div class="row three"><div><label>约化温度 Tr</label><input id="virTr" type="number" value="1.5" step="any"></div><div><label>约化压力 Pr</label><input id="virPr" type="number" value="0.05" step="any"></div><div><label>偏心因子 ω</label><input id="virOmega" type="number" value="0.011" step="any"></div></div>
+  <div class="actions"><button class="btn primary" id="virCalc">计算低压 Z</button><button class="btn" id="virCSV">导出 Tr 扫描</button></div>
+  <div id="virResult" class="result">适用于低压、气相、维里展开收敛的初步估算；不是 Lee–Kesler 全压力范围结果。</div>
+  <canvas id="virPlot" class="chart" width="1000" height="320"></canvas>
+  <p class="note">所用二阶维里系数相关式：B⁰=0.083−0.422/Tr^1.6，B¹=0.139−0.172/Tr^4.2；请按课程教材指定版本复核其单位约定与适用范围。</p>
+ </div>\n <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z</td><td>简单流体/参考流体关联</td><td>待实现与验证</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
 </section>
 <section class="page" id="p-m3">
  <div class="heading"><div><div class="kicker">MODULE 03</div><h2>热力学公式推导专题</h2><p>首批 D1 范德华方程临界参数推导；首批 D1–D11 推导逐步展示；公式与说明仍需教师逐项审核。</p></div><span class="tag">D1–D11 草稿，待审核</span></div>
@@ -187,12 +194,102 @@ function initUnits(){let opts={p:["MPa","bar","kPa","atm"],e:["J","kJ","cal"],t:
 const glossary=[["压缩因子","Compressibility factor","Z"],["状态方程","Equation of state","EOS"],["逸度","Fugacity","f"],["逸度系数","Fugacity coefficient","φ"],["偏心因子","Acentric factor","ω"],["剩余焓","Enthalpy departure","Hᴿ"],["剩余熵","Entropy departure","Sᴿ"],["临界温度","Critical temperature","Tc"],["临界压力","Critical pressure","Pc"],["泡点","Bubble point",""],["露点","Dew point",""],["闪蒸","Flash calculation",""],["汽液平衡","Vapor-liquid equilibrium","VLE"],["干度","Vapor quality","x"],["过热蒸汽","Superheated steam",""]];
 function renderGloss(q){$("gloss").innerHTML=glossary.filter(x=>x.join(" ").toLowerCase().includes((q||"").toLowerCase())).map(x=>"<div>"+x[0]+" · "+x[1]+" · "+x[2]+"</div>").join("")||"未找到匹配术语。"}
 const symbols=[["P","压力","Pressure","Pa"],["T","热力学温度","Temperature","K"],["V","体积","Volume","m³"],["Vm","摩尔体积","Molar volume","m³/mol"],["v","比体积","Specific volume","m³/kg"],["Z","压缩因子","Compressibility factor","—"],["H","焓","Enthalpy","J"],["S","熵","Entropy","J/K"],["U","内能","Internal energy","J"],["φ","逸度系数","Fugacity coefficient","—"],["ω","偏心因子","Acentric factor","—"],["Tc","临界温度","Critical temperature","K"],["Pc","临界压力","Critical pressure","Pa"],["R","气体常数","Gas constant","J/(mol·K)"]];
-function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi","HR_kJ_mol","SR_J_molK"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi,x.HR/1000,x.SR])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("dnext").onclick=()=>{dstep=Math.min(derivs[didx].steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=derivs[didx].steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";showDeriv();};}
+function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi","HR_kJ_mol","SR_J_molK"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi,x.HR/1000,x.SR])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("virCalc").onclick=virialCalc;$("virCSV").onclick=()=>window._virRows?download("TJU-ThermoHub-Pitzer-virial.csv",window._virRows):show("virResult","请先计算。","err");virialCalc();$("dnext").onclick=()=>{dstep=Math.min(derivs[didx].steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=derivs[didx].steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";showDeriv();};}
 function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="p-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p))}
 function sub(id){document.querySelectorAll("#p-m1 .sub").forEach(x=>x.classList.toggle("active",x.id==="s-"+id));document.querySelectorAll("#p-m1 [data-sub]").forEach(x=>x.classList.toggle("active",x.dataset.sub===id))}
 function steam(id){document.querySelectorAll("#p-m4 .sub").forEach(x=>x.classList.toggle("active",x.id==="steam-"+id));document.querySelectorAll("#p-m4 [data-steam]").forEach(x=>x.classList.toggle("active",x.dataset.steam===id))}
 let rotX=-.55,rotY=.65,drag=null;
-function drawPvt(){let canvas=$("pvt"),c=canvas.getContext("2d"),w=canvas.width,h=canvas.height;c.clearRect(0,0,w,h);c.fillStyle="#fff";c.fillRect(0,0,w,h);if(projection!=="3d"){let d=[];if(projection==="pv"){let tc=+$("ptc").value,pc=+$("ppc").value;for(let i=0;i<130;i++){let vc=1.2+i/129*8,V=vc*R*tc/(pc*1e6);try{d.push([vc,pressure($("pm").value,.9*tc,V,tc,pc,0)/1e6])}catch(e){d.push([vc,NaN])}}plot(canvas,[{data:d}],1.2,9.2,0,pc*3,"V/Vc","P / MPa");return}}let proj=(x,y,z)=>{let yy=y*Math.cos(rotX)-z*Math.sin(rotX),zz=y*Math.sin(rotX)+z*Math.cos(rotX),xx=x*Math.cos(rotY)-zz*Math.sin(rotY),zz2=x*Math.sin(rotY)+zz*Math.cos(rotY),s=1/(2.7+zz2*.2);return [w/2+xx*w*.28*s,h*.52-yy*h*.32*s]};let tc=+$("ptc").value,pc=+$("ppc").value;let grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{let v=1.15+i/29*7.5,t=.7+j/16*1.0,V=v*R*tc/(pc*1e6),P;try{P=pressure($("pm").value,t*tc,V,tc,pc,.344)/1e6/pc}catch(e){P=NaN}return proj((v-4.4)/4.1,(t-1.2)/.7,Math.max(-1.3,Math.min(2.5,P-.4)))}));c.strokeStyle="#2a6089";for(let j=0;j<grid.length;j++){c.beginPath();grid[j].forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke()}c.strokeStyle="#c5a059";for(let i=0;i<30;i+=2){c.beginPath();grid.forEach((row,j)=>j?c.lineTo(row[i][0],row[i][1]):c.moveTo(row[i][0],row[i][1]));c.stroke()}c.fillStyle="#173b60";c.font="bold 16px sans-serif";c.textAlign="center";c.fillText("EOS P-V-T surface · drag to rotate",w/2,26);if(!canvas.dataset.bound){canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!drag)return;rotY+=(e.clientX-drag[0])*.008;rotX+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];drawPvt()};canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;canvas.dataset.bound="1"}}
+function drawPvt(){
+ let canvas=$("pvt"),tc=+$("ptc").value,pc=+$("ppc").value,w=+$("pomega").value,m=$("pm").value;
+ if(!(tc>0&&pc>0&&Number.isFinite(w))){show("msg","PVT 参数无效。","err");return}
+ if(projection!=="3d"){
+  let series=[];
+  if(projection==="pv"){
+   const temps=[.7,.85,1,1.15,1.35,1.6];
+   temps.forEach((tr,k)=>{
+    let d=[];
+    for(let i=0;i<180;i++){
+     const vr=1.08+i/179*9.0,V=vr*R*tc/(pc*1e6);
+     try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([vr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([vr,NaN])}
+    }
+    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]});
+   });
+   plot(canvas,series,1.08,10.08,0,pc*4,"V / Vc","P / MPa");
+   return;
+  }
+  if(projection==="pt"){
+   const volumes=[.45,.6,.8,1,1.3,1.8,2.5,4,7];
+   volumes.forEach((vr,k)=>{
+    const d=[];
+    for(let i=0;i<150;i++){
+     const tr=.7+i/149*.9,V=vr*R*tc/(pc*1e6);
+     try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([tr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([tr,NaN])}
+    }
+    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d","#9c5963","#547b85"][k]});
+   });
+   plot(canvas,series,.7,1.6,0,pc*5,"T / Tc","P / MPa");
+   return;
+  }
+  if(projection==="vt"){
+   const pressures=[.2,.5,1,2,4];
+   pressures.forEach((pr,k)=>{
+    const d=[],dl=[];
+    for(let i=0;i<150;i++){
+     const tr=.7+i/149*.9,T=tr*tc,P=pr*pc;
+     try{
+      const r=eos(m,T,P,tc,pc,w),vc=R*tc/(pc*1e6);
+      d.push([tr,r[r.length-1].V/vc]);
+      dl.push([tr,r[0].V/vc]);
+     }catch(e){d.push([tr,NaN]);dl.push([tr,NaN])}
+    }
+    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445"][k]});
+    series.push({data:dl,color:["#8aa6bd","#d6bd8b","#9ac4b3","#c0a3c5","#d5a98a"][k]});
+   });
+   plot(canvas,series,.7,1.6,0,10,"T / Tc","V / Vc (vapor/liquid roots)");
+   return;
+  }
+ }
+ let rotProj=(x,y,z)=>{
+  let yy=y*Math.cos(rotX)-z*Math.sin(rotX),zz=y*Math.sin(rotX)+z*Math.cos(rotX),
+      xx=x*Math.cos(rotY)-zz*Math.sin(rotY),zz2=x*Math.sin(rotY)+zz*Math.cos(rotY),sc=1/(2.7+zz2*.2);
+  return [canvas.width/2+xx*canvas.width*.28*sc,canvas.height*.52-yy*canvas.height*.32*sc];
+ };
+ const grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{
+  const vr=1.15+i/29*7.5,tr=.7+j/16*1.0,V=vr*R*tc/(pc*1e6);
+  let P;
+  try{P=pressure(m,tr*tc,V,tc,pc,w)/1e6/pc}catch(e){P=NaN}
+  return rotProj((vr-4.4)/4.1,(tr-1.2)/.7,Math.max(-1.3,Math.min(2.5,P-.4)));
+ }));
+ const c=canvas.getContext("2d"),ww=canvas.width,hh=canvas.height;
+ c.clearRect(0,0,ww,hh);c.fillStyle="#fff";c.fillRect(0,0,ww,hh);
+ c.strokeStyle="#2a6089";
+ for(let j=0;j<grid.length;j++){c.beginPath();grid[j].forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke()}
+ c.strokeStyle="#c5a059";
+ for(let i=0;i<30;i+=2){c.beginPath();grid.forEach((row,j)=>j?c.lineTo(row[i][0],row[i][1]):c.moveTo(row[i][0],row[i][1]));c.stroke()}
+ c.fillStyle="#173b60";c.font="bold 16px sans-serif";c.textAlign="center";c.fillText("EOS P-V-T raw surface · drag to rotate",ww/2,26);
+ if(!canvas.dataset.bound){
+  canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};
+  canvas.onpointermove=e=>{if(!drag)return;rotY+=(e.clientX-drag[0])*.008;rotX+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];drawPvt()};
+  canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;canvas.dataset.bound="1";
+ }
+}
+function virialCalc(){
+ try{
+  const tr=+$("virTr").value,pr=+$("virPr").value,omega=+$("virOmega").value;
+  if(!(tr>0)||!Number.isFinite(pr)||pr<0||!Number.isFinite(omega))throw new Error("Tr 必须大于零，Pr 不能为负，ω 必须为有限数。");
+  const B0=.083-.422/Math.pow(tr,1.6),B1=.139-.172/Math.pow(tr,4.2),B=B0+omega*B1,Z=1+B*pr/tr;
+  if(!Number.isFinite(Z)||Z<=0)throw new Error("近似结果非正或超出可用范围。请减小 Pr 并检查 Tr。");
+  show("virResult","B⁰ = "+B0.toFixed(7)+"；B¹ = "+B1.toFixed(7)+"；Bᵣ = "+B.toFixed(7)+"\nZ ≈ "+Z.toFixed(8)+"\n本结果是一阶低压维里近似，不是全压范围关联。","ok");
+  const curves=[];
+  [.7,.8,1,1.2,1.5,2].forEach((t,k)=>{
+   const d=[];
+   for(let i=0;i<=100;i++){const p=i/100*.5,b0=.083-.422/Math.pow(t,1.6),b1=.139-.172/Math.pow(t,4.2),z=1+(b0+omega*b1)*p/t;d.push([p,z])}
+   curves.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]});
+  });
+  plot($("virPlot"),curves,0,.5,0,1.5,"Pr","Z (second virial approximation)");
+  window._virRows=[["Tr","Pr","omega","B0","B1","Bstar","Z"],[tr,pr,omega,B0,B1,B,Z]];
+ }catch(e){show("virResult",e.message,"err")}
+}
 document.addEventListener("DOMContentLoaded",init);
 })();
 </script>
