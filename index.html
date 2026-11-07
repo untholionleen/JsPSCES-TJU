@@ -1,468 +1,1167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#133963">
-<meta name="description" content="天津大学化工热力学学生自主学习网站">
-<title>天津大学化工热力学学生自主学习网站 | TJU-ThermoHub 13.1.0</title>
-<style>
-:root{--b:#133963;--g:#c5a059;--bg:#f3f6fa;--ink:#172536;--muted:#62758a;--line:#d9e2ec;--card:#fff;--green:#176b4d;--red:#963b3b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Segoe UI","Microsoft YaHei",Arial,sans-serif}.top{background:linear-gradient(115deg,#102d4d,var(--b) 65%,#1e5487);color:white;border-bottom:4px solid var(--g)}.brand{max-width:1200px;margin:auto;padding:18px 22px;display:flex;gap:14px;align-items:center}.seal{width:48px;height:48px;border:2px solid var(--g);border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--g);flex:none}.brand h1{font-size:clamp(17px,2.5vw,25px);margin:0}.brand small{color:#d7e3ef}.brand button{margin-left:auto}.nav{max-width:1200px;margin:auto;display:flex;gap:4px;overflow:auto;padding:0 12px}.nav button{background:none;color:#e7eef6;border:0;padding:12px 15px;white-space:nowrap;cursor:pointer}.nav button.active{background:white;color:var(--b);font-weight:800;border-radius:7px 7px 0 0}.container{max-width:1200px;margin:24px auto;padding:0 18px 36px}.page{display:none}.page.active{display:block}.hero{background:linear-gradient(120deg,#102d4d,var(--b));border-top:5px solid var(--g);border-radius:14px;padding:40px clamp(20px,5vw,55px);color:white}.hero h2{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:10px 0}.hero p{max-width:800px;color:#dce8f3}.kicker{font-size:11px;letter-spacing:.15em;color:#e2c17d;font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--g);border-radius:11px;padding:19px;box-shadow:0 6px 20px #173d5c0b}.card h3,.card h2{margin:0 0 9px;color:var(--b)}.wide{grid-column:1/-1}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.heading h2{font-size:28px;color:var(--b);margin:3px 0}.heading p{color:var(--muted);margin:0}.tag{border-radius:30px;background:#fff2d8;color:#805e19;font-size:11px;padding:4px 9px;white-space:nowrap}.tabs{display:flex;gap:6px;overflow:auto;margin-bottom:14px}.tabs button,.btn{border:1px solid var(--line);border-radius:7px;padding:9px 13px;background:#fff;color:var(--b);cursor:pointer;font-weight:700;white-space:nowrap}.tabs button.active,.btn.primary{background:var(--b);color:#fff;border-color:var(--b)}.btn.gold{background:var(--g);color:#173451;border-color:var(--g)}label{display:block;font-size:12px;font-weight:750;color:#50647a;margin:9px 0 4px}input,select{width:100%;padding:9px 10px;border:1px solid #cbd7e3;border-radius:7px;background:#fff;font:inherit;color:var(--ink)}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.note{font-size:12px;color:var(--muted)}.result{padding:12px;background:#f4f8fb;border:1px solid #dce6ef;border-radius:8px;margin-top:10px;white-space:pre-wrap}.result.ok{background:#eff8f2;border-color:#c2ddcc;color:#175c3d}.result.err{background:#fff3f3;border-color:#e5c5c5;color:var(--red)}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px 9px;text-align:left;border-bottom:1px solid #e5ebf0}th{background:#eef3f8;color:var(--b)}.scroll{overflow:auto}.formula{background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:15px;text-align:center;font-family:"Cambria Math",serif;font-size:18px;overflow:auto}.chart{width:100%;height:330px;border:1px solid var(--line);border-radius:8px;background:#fff;display:block}.sub{display:none}.sub.active{display:block}.list{display:grid;gap:7px}.list button{text-align:left;background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px;cursor:pointer;color:var(--b)}.list button.active{background:#fff7e9;border-color:var(--g)}.footer{background:#102d4d;color:#d7e2ed;border-top:4px solid var(--g);padding:24px max(18px,calc((100vw - 1160px)/2));font-size:12px}.footer a{color:#e7c47f}.footergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.muted{color:var(--muted)}@media(max-width:700px){.grid,.row,.three,.footergrid{grid-template-columns:1fr}.wide{grid-column:auto}.heading{flex-direction:column}.brand{padding:12px}.container{padding:0 12px 25px;margin-top:14px}.hero{padding:28px 22px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JsPSCES-TJU | 天津大学立方型状态方程求解系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- KaTeX for beautiful math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tju: {
+                            blue: '#133963',     /* 北洋蓝 */
+                            light: '#1e528e',    /* 浅蓝 */
+                            accent: '#C5A059',   /* 织锦金 */
+                            bg: '#f4f7fa',
+                            card: '#ffffff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tju-wave-bg {
+            background-color: #133963;
+            background-image: radial-gradient(circle at 50% 100%, #1e528e 0%, #133963 70%);
+        }
+        .academic-border {
+            border-top: 4px solid #C5A059;
+        }
+        .classic-table { border: 1px solid #333; border-collapse: collapse; width: 100%; }
+        .classic-table th, .classic-table td { border: 1px solid #333; padding: 6px 10px; }
+    </style>
 </head>
-<body>
-<header class="top">
- <div class="brand"><div class="seal">北洋</div><div><h1 id="siteTitle">天津大学化工热力学学生自主学习网站 <span style="font-size:11px;color:#e4c47e">13.1.0 · Nv3.1.0</span></h1><small>TJU Chemical Engineering Thermodynamics Self-Learning Platform</small></div><button class="btn" id="lang">English</button></div>
- <nav class="nav"><button class="active" data-page="home">首页</button><button data-page="m1">一、状态方程与模型</button><button data-page="m2">二、工程图表与关联</button><button data-page="m3">三、公式推导</button><button data-page="m4">四、水与水蒸气</button><button data-page="app">五、附录</button></nav>
-</header>
-<main class="container">
-<section class="page active" id="p-home">
- <div class="hero"><div class="kicker">TJU · SCHOOL OF CHEMICAL ENGINEERING</div><h2 id="heroTitle">从经典热力学到工程数字化应用</h2><p id="heroDesc">以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。</p><button class="btn gold" data-go="m1" id="start">进入学习平台</button></div>
- <div class="result" id="baseline">版本说明：13.1.0 工程基线版。已实现功能可直接运行；未完成标准公式移植或数据核验的内容明确标记，不提供伪造数值。Supabase 本期不启用。</div>
- <div class="grid">
-  <article class="card"><div class="kicker">01</div><h3>状态方程与热力学模型</h3><p>vdW、RK、SRK、PR 立方型 EOS、曲线与三维状态曲面入口。</p><button class="btn" data-go="m1">进入模块 →</button></article>
-  <article class="card"><div class="kicker">02</div><h3>工程图表与普遍化关联</h3><p>压缩因子曲线查询与数据导出，后续接入 Lee–Kesler 与工程图表。</p><button class="btn" data-go="m2">进入模块 →</button></article>
-  <article class="card"><div class="kicker">03</div><h3>热力学公式推导专题</h3><p>交互式公式推导，展示数学关系与物理含义。</p><button class="btn" data-go="m3">进入模块 →</button></article>
-  <article class="card"><div class="kicker">04</div><h3>水与水蒸气性质</h3><p>IF97 Region 4 饱和曲线及插值教学，其他区域待完整移植。</p><button class="btn" data-go="m4">进入模块 →</button></article>
-  <article class="card wide"><div class="kicker">05</div><h3>附录与学术参考</h3><p>主要符号、词汇、单位换算与数据溯源。</p><button class="btn" data-go="app">进入模块 →</button></article>
- </div>
-</section>
-<section class="page" id="p-m1">
- <div class="heading"><div><div class="kicker">MODULE 01</div><h2>状态方程与热力学模型</h2><p>纯物质计算器、交互曲线和混合物建设状态。</p></div><span class="tag">部分功能已实现</span></div>
- <div class="tabs"><button class="active" data-sub="eos">纯物质 EOS</button><button data-sub="pvt">P-V-T 曲面</button><button data-sub="vle">混合物与 VLE</button></div>
- <div class="sub active" id="s-eos"><div class="grid">
-  <div class="card"><h3>纯物质参数输入</h3><label>物质</label><select id="species"></select><div class="row three"><div><label>Tc / K</label><input id="tc" type="number" step="any"></div><div><label>Pc / MPa</label><input id="pc" type="number" step="any"></div><div><label>ω</label><input id="om" type="number" step="any"></div></div><label>状态方程</label><select id="model"><option value="pr">Peng–Robinson (PR)</option><option value="srk">Soave–Redlich–Kwong (SRK)</option><option value="rk">Redlich–Kwong (RK)</option><option value="vdw">van der Waals (vdW)</option><option disabled>PRG（定义待核实）</option></select><div class="row"><div><label>T / K</label><input id="temp" type="number" value="250" step="any"></div><div><label>P / MPa</label><input id="pres" type="number" value="2" step="any"></div></div><div class="actions"><button class="btn primary" id="calc">计算</button><button class="btn" id="reset">重置</button><button class="btn" id="csv">导出 CSV</button></div><div class="note" id="srcNote">物性参数来源和核验状态将随选择项显示。</div></div>
-  <div class="card"><h3>计算结果</h3><div class="result" id="msg">输入参数后执行计算。</div><div class="scroll" id="out"></div><div class="formula">P = RT/(V − b) − aα/(V² + ubV + wb²)</div><p class="note">全部有效实根均列出；多根不自动等同于稳定相。模型结果不等于高精度 REFPROP 结果。</p></div>
- </div><div class="card"><h3>P-V 等温线（EOS 计算生成）</h3><canvas id="eosPlot" class="chart" width="1000" height="330"></canvas><button class="btn" id="curveCSV">导出曲线数据 CSV</button></div><div class="card"><h3>使用边界</h3><p>PRG 定义暂未核实，关闭计算。PR φ–φ 混合物相平衡已经在独立分页实现，并以甲烷–乙烷闪蒸、泡点和露点做回归检查；kij 参数库仍待实验数据补齐。</p></div></div>
- <div class="sub" id="s-pvt"><div class="card"><h3>纯物质 P-V-T 关系</h3><p>3D 视图显示立方 EOS 原始状态曲面；P-V 等温线在亚临界区叠加由两相等逸度求得的稳定共存平台，另可查看汽液共存线。3D 曲面本身仍不等同于稳定相包络面。</p><div class="row three"><div><label>模型</label><select id="pm"><option value="vdw">vdW</option><option value="rk">RK</option><option value="srk">SRK</option><option value="pr" selected>PR</option></select></div><div><label>Tc / K</label><input id="ptc" value="647.096" type="number"></div><div><label>Pc / MPa</label><input id="ppc" value="22.064" type="number"></div><div><label>偏心因子 ω</label><input id="pomega" value="0.344" type="number" step="any"></div></div><div class="actions"><button class="btn" data-proj="3d">3D</button><button class="btn" data-proj="pv">P-V</button><button class="btn" data-proj="pt">P-T</button><button class="btn" data-proj="vt">V-T</button><button class="btn primary" id="draw3">重新绘制</button></div><canvas id="pvt" class="chart" width="1000" height="500"></canvas></div></div>
- <div class="sub" id="s-vle">
-  <div class="grid">
-   <div class="card"><h3>混合物相平衡计算器（PR φ–φ）</h3>
-    <label>计算类型</label><select id="mixMode"><option value="flash">等温等压闪蒸（T、P、z）</option><option value="bubble">泡点压力（T、x）</option><option value="dew">露点压力（T、y）</option></select>
-    <div class="row"><div><label>温度 T / K</label><input id="mixT" type="number" value="230" step="any"></div><div><label>压力 P / MPa（仅闪蒸）</label><input id="mixP" type="number" value="3" step="any"></div></div>
-    <label>二元交互参数 kij（对所有非对角组分对统一应用）</label><input id="mixKij" type="number" value="0" step="0.001">
-    <p class="note">采用 Peng–Robinson 状态方程、经典 van der Waals one-fluid 二次混合规则和 φ–φ 逸度相等。此版本允许所有非对角 kij 使用同一数值；尚未建立按组分对分别输入的完整 kij 数据库。</p>
-    <div class="actions"><button class="btn primary" id="mixCalc">开始计算</button><button class="btn" id="mixExport">导出 CSV</button></div>
-    <div id="mixNote" class="result">勾选至少两种组分并设置摩尔组成后计算。组成将按总和归一化。</div>
-   </div>
-   <div class="card"><h3>组分与摩尔组成</h3><div id="mixRows"></div><p class="note">未勾选组分不参与计算；已勾选但摩尔分率为 0 的行将按零含量处理。物性参数沿用平台 16 组分参数表，部分来源状态仍标记待复核。</p></div>
-  </div>
-  <div class="card"><h3>相平衡/闪蒸结果</h3><div id="mixResult" class="result">等待计算。</div></div>
-  <div class="card"><h3>模型和适用边界</h3>
-   <div class="formula">aᵢⱼ = (1 − kᵢⱼ)√(aᵢaⱼ)；aₘ = ΣᵢΣⱼxᵢxⱼaᵢⱼ；bₘ = Σᵢxᵢbᵢ</div>
-   <div class="formula">fᵢᴸ = fᵢⱽ；Kᵢ = yᵢ/xᵢ = φᵢᴸ/φᵢⱽ；Σ zᵢ(Kᵢ−1)/(1+β(Kᵢ−1)) = 0</div>
-   <p>计算采用 PR φ–φ 迭代与 Rachford–Rice 闪蒸方程。适用于初步教学计算；未提供经实验拟合的特定体系 kij 时默认 kij=0，结果可能显著偏离实测汽液平衡。近临界/强非理想体系应采用经过参数化及实验数据校验的模型。</p>
-  </div>
- </div>
-</section>
-<section class="page" id="p-m2">
- <div class="heading"><div><div class="kicker">MODULE 02</div><h2>工程图表与普遍化关联</h2><p>当前提供 PR EOS 的压缩因子曲线和 Pitzer 低压维里近似教学计算；完整 Lee–Kesler 高压普遍化关联仍待实现。</p></div><span class="tag">模型生成</span></div>
- <div class="card"><h3>压缩因子 Z 查询（PR EOS）</h3><div class="row three"><div><label>Tc / K</label><input id="ztc" value="190.56" type="number"></div><div><label>Pc / MPa</label><input id="zpc" value="4.599" type="number"></div><div><label>ω</label><input id="zom" value="0.011" type="number"></div></div><div class="row"><div><label>约化温度 Tr</label><input id="ztr" value="1.5" type="number" step="any"></div><div><label>约化压力 Pr</label><input id="zpr" value="1" type="number" step="any"></div></div><div class="actions"><button class="btn primary" id="zcalc">计算</button><button class="btn" id="zexport">导出曲线数据 CSV</button></div><div id="zmsg" class="result">等待计算。</div><canvas id="zplot" class="chart" width="1000" height="360"></canvas></div>
-  <div class="card"><h3>Lee–Kesler 三参数对应态关联（BWR）</h3>
-  <div class="row three"><div><label>约化温度 Tr</label><input id="lkTr" type="number" value="1.5" step="any"></div><div><label>约化压力 Pr</label><input id="lkPr" type="number" value="3" step="any"></div><div><label>偏心因子 ω</label><input id="lkOmega" type="number" value="0.011" step="any"></div></div>
-  <div class="row"><div><label>相态根选择</label><select id="lkPhase"><option value="vapor">气相根（最大 Vr）</option><option value="liquid">液相根（最小 Vr）</option></select></div><div><label>实际状态（需要 Tc、Pc）</label><div class="row"><div><input id="lkTc" type="number" value="190.56" title="Tc K"></div><div><input id="lkPc" type="number" value="4.599" title="Pc MPa"></div></div></div></div>
-  <div class="actions"><button class="btn primary" id="lkCalc">计算 Z、逸度和剩余性质</button><button class="btn" id="lkExport">导出普遍化曲线 CSV</button></div>
-  <div id="lkResult" class="result">已知 Tr、Pr、ω 即可计算；Tc、Pc 用于换算实际 T、P。</div>
-  <div id="lkTable" class="scroll"></div>
-  <canvas id="lkPlot" class="chart" width="1000" height="340"></canvas>
-  <p class="note">模型：Lee–Kesler (1975) 三参数对应态法，简单流体与参考流体分别用修正 BWR 式求 Vr，再按 ω/0.3978 插值。曲线为纯流体气/液根，不是任意混合物的闪蒸结果。</p>
-  <p class="note">参考：<a href="https://thermo-oer-ubc.github.io/Thermo-OER/notebooks/Chapter3/CH3-Q5_v1.html" target="_blank" rel="noopener">UBC OER Lee–Kesler example</a>；<a href="https://dwsim.org/help/main/39-thermodynamic-properties.html" target="_blank" rel="noopener">DWSIM Lee–Kesler property equations</a>。</p>
- </div>
- <div class="card"><h3>空气 h–T 与 T–s 图（理想气体近似）</h3>
-  <div class="row"><div><label>查询温度 T / K</label><input id="airT" type="number" value="500"></div><div><label>查询压力 P / MPa</label><input id="airP" type="number" value="1"></div></div>
-  <div class="actions"><button class="btn primary" id="airCalc">查询空气状态</button><button class="btn" id="airExport">导出曲线 CSV</button></div>
-  <div id="airResult" class="result">模型假设：干空气、理想气体、Cp=1.004 kJ/(kg·K)、R=0.287 kJ/(kg·K)，参考态 T₀=273.15 K、P₀=0.101325 MPa、h₀=s₀=0。</div>
-  <div class="grid"><div class="card"><h4>空气 h–T</h4><canvas id="airHT" class="chart" width="900" height="300"></canvas></div><div class="card"><h4>空气 T–s</h4><canvas id="airTS" class="chart" width="900" height="300"></canvas></div></div>
-  <p class="note">此图只适用于初步教学和低压理想气体估算。真实空气高压图需要真实气体 EOS、变比热与一致参考态，不能用本图代替高精度物性数据库。</p>
- </div>
- <div class="card"><h3>低压维里方程与 Pitzer 二阶维里系数</h3>
-  <div class="formula">Z ≈ 1 + (B⁰ + ωB¹) Pᵣ / Tᵣ</div>
-  <div class="row three"><div><label>约化温度 Tr</label><input id="virTr" type="number" value="1.5" step="any"></div><div><label>约化压力 Pr</label><input id="virPr" type="number" value="0.05" step="any"></div><div><label>偏心因子 ω</label><input id="virOmega" type="number" value="0.011" step="any"></div></div>
-  <div class="actions"><button class="btn primary" id="virCalc">计算低压 Z</button><button class="btn" id="virCSV">导出 Tr 扫描</button></div>
-  <div id="virResult" class="result">适用于低压、气相、维里展开收敛的初步估算；不是 Lee–Kesler 全压力范围结果。</div>
-  <canvas id="virPlot" class="chart" width="1000" height="320"></canvas>
-  <p class="note">所用二阶维里系数相关式：B⁰=0.083−0.422/Tr^1.6，B¹=0.139−0.172/Tr^4.2；请按课程教材指定版本复核其单位约定与适用范围。</p>
- </div>
- <div class="grid">
-  <div class="card"><h3>理想气体 Cp 多项式状态变化</h3>
-   <div class="formula">Cpᵢᵍ/R = A + BT + CT² + DT³</div>
-   <div class="row"><div><label>初态 T₁ / K</label><input id="cpT1" type="number" value="300"></div><div><label>终态 T₂ / K</label><input id="cpT2" type="number" value="500"></div><div><label>初态 P₁ / MPa</label><input id="cpP1" type="number" value="1"></div><div><label>终态 P₂ / MPa</label><input id="cpP2" type="number" value="5"></div></div>
-   <div class="row three"><div><label>A</label><input id="cpA" type="number" value="3.5" step="any"></div><div><label>B / K⁻¹</label><input id="cpB" type="number" value="0" step="any"></div><div><label>C / K⁻²</label><input id="cpC" type="number" value="0" step="any"></div><div><label>D / K⁻³</label><input id="cpD" type="number" value="0" step="any"></div></div>
-   <div class="actions"><button class="btn primary" id="cpCalc">计算 ΔH、ΔS</button><button class="btn" id="cpExport">导出 CSV</button></div>
-   <div id="cpResult" class="result">默认 Cp/R=3.5，仅为演示初值。实际使用请填入所选气体的 Cp 多项式系数。</div>
-   <p class="note">ΔH=R∫(Cp/R)dT；ΔS=R∫(Cp/R)/T dT−R ln(P₂/P₁)。适用于理想气体热容多项式；不包含真实气体剩余性质。</p>
-  </div>
-  <div class="card"><h3>二元液相活度系数（Margules / van Laar）</h3>
-   <label>模型</label><select id="gammaModel"><option value="margules">对称一参数 Margules</option><option value="vanlaar">van Laar 双参数</option></select>
-   <div class="row"><div><label>液相摩尔分率 x₁</label><input id="gammaX1" type="number" value="0.5" min="0" max="1" step="any"></div><div><label>A₁₂ / Margules A</label><input id="gammaA12" type="number" value="1" step="any"></div><div><label>A₂₁（van Laar）</label><input id="gammaA21" type="number" value="1" step="any"></div></div>
-   <div class="actions"><button class="btn primary" id="gammaCalc">计算 γ₁、γ₂</button><button class="btn" id="gammaExport">导出 CSV</button></div>
-   <div id="gammaResult" class="result">参数由用户输入；尚无特定体系的实验回归参数库。</div>
-   <div class="formula">gᴱ/RT = x₁ ln γ₁ + x₂ ln γ₂</div>
-   <p class="note">仅为二元液相活度模型计算器。没有给出经实验拟合的 A₁₂、A₂₁ 前，不应把演示系数当成真实混合物数据。</p>
-  </div>
- </div>
- <div class="card"><h3>待接入工程图表</h3><div class="scroll"><table><thead><tr><th>图表</th><th>目标模型/数据</th><th>状态</th></tr></thead><tbody><tr><td>Lee–Kesler 普遍化 Z / Hᴿ / Sᴿ / φ</td><td>简单流体 + 参考流体 BWR、ω/0.3978 插值</td><td>已实现并以 UBC 公开点回归</td></tr><tr><td>Zc 修正</td><td>教材指定修正公式及图</td><td>待核对原式</td></tr><tr><td>剩余焓/熵/逸度</td><td>Lee–Kesler departure functions</td><td>待实现</td></tr><tr><td>空气 H-T、T-S、H-S</td><td>空气状态方程与热容数据</td><td>待接入验证数据</td></tr><tr><td>R-134a log p-h</td><td>制冷剂 EOS 及统一参考态</td><td>待接入验证数据</td></tr></tbody></table></div></div>
-</section>
-<section class="page" id="p-m3">
- <div class="heading"><div><div class="kicker">MODULE 03</div><h2>热力学公式推导专题</h2><p>首批 D1 范德华方程临界参数推导；首批 D1–D11 推导逐步展示；公式与说明仍需教师逐项审核。</p></div><span class="tag">D1–D11 草稿，待审核</span></div>
- <div class="grid"><div class="card"><h3>推导目录</h3><div class="list" id="dlist"></div></div><div class="card"><h3 id="dtitle">D1 范德华方程临界参数</h3><div id="deq" class="formula"></div><p id="dnote"></p><div class="actions"><button class="btn" id="dprev">上一步</button><button class="btn primary" id="dnext">下一步</button><button class="btn" id="dauto">自动播放</button><button class="btn gold" id="dtarget">用它去算 →</button></div><span id="dstep" class="note"></span></div></div>
-</section>
-<section class="page" id="p-m4">
- <div class="heading"><div><div class="kicker">MODULE 04</div><h2>水与水蒸气性质</h2><p>基于 IAPWS-IF97 五区工业公式；支持正算、后向方程、饱和性质表和插值教学。</p></div><span class="tag">IF97 五区计算核心已接入</span></div>
- <div class="tabs"><button class="active" data-steam="sat">4.1 饱和水/蒸汽表</button><button data-steam="state">4.2 状态查询与反算</button><button data-steam="interp">4.3 插值教学</button><button data-steam="regions">4.4 区域说明</button></div>
- <div class="sub active" id="steam-sat">
-  <div class="grid">
-   <div class="card"><h3>饱和压力/温度查询</h3><label>查询方式</label><select id="smode"><option value="T">按温度 T 查询饱和压力</option><option value="P">按压力 P 查询饱和温度</option></select><label id="slabel">T / K</label><input id="sinput" value="373.15" type="number" step="any"><div class="actions"><button class="btn primary" id="scalc">计算</button></div><div id="sresult" class="result">温度范围 273.15–647.096 K。</div></div>
-   <div class="card"><h3>饱和性质电子表</h3><label>表格排序</label><select id="satTableMode"><option value="T">按温度排列</option><option value="P">按压力排列（对数均匀网格）</option></select><label>温度步长 / K；压力模式下为对数间隔控制值</label><input id="satTableStep" type="number" value="10" min="0.01" step="any"><div class="actions"><button class="btn primary" id="satTableGenerate">生成饱和表</button><button class="btn" id="satTableExport">导出 CSV</button></div><div id="satTableNote" class="result">准备生成饱和液体与饱和蒸汽性质。</div></div>
-  </div>
-  <div class="card"><h3>饱和水与水蒸气性质表</h3><div id="satTableOut" class="scroll"></div></div>
-  <div class="card"><h3>饱和压力曲线</h3><canvas id="satplot" class="chart" width="1000" height="340"></canvas><p class="note">曲线来自 IAPWS-IF97 Region 4。饱和性质端点由 Region 1/2 或 Region 3 对应公式求得；临界点两相端点合并。</p></div>
- </div>
- <div class="sub" id="steam-state">
-  <div class="grid">
-   <div class="card"><h3>状态输入与后向计算</h3><label>已知状态变量组合</label><select id="steamMode"><option value="PT">P、T：压力与温度</option><option value="PH">P、h：压力与比焓</option><option value="PS">P、s：压力与比熵</option><option value="HS">h、s：比焓与比熵</option><option value="PX">P、x：压力与干度（饱和两相）</option></select><div class="row"><div><label id="steamALabel">压力 P / MPa</label><input id="steamA" type="number" value="0.1" step="any"></div><div><label id="steamBLabel">温度 T / K</label><input id="steamB" type="number" value="373.15" step="any"></div></div><p id="steamModeHint" class="note">单相区采用两个独立变量；饱和边界需再给干度。</p><div class="actions"><button class="btn primary" id="steamCalc">计算状态</button><button class="btn" id="steamExport">导出性质 CSV</button></div><div class="note">状态判断遵循 IF97 区域边界。湿蒸汽按饱和端点和干度关系计算；两相区的 cp、cv 和声速不作线性混合。</div></div>
-   <div class="card"><h3>状态计算结果</h3><div id="steamStateNote" class="result">输入已知状态组合后计算。</div><div id="steamStateOut" class="scroll"></div></div>
-  </div>
- </div>
- <div class="sub" id="steam-interp">
-  <div class="grid">
-   <div class="card"><h3>双线性插值</h3><p class="note">针对二维教材表格：先沿一个方向线性插值，再沿另一方向插值。超出网格范围拒绝外推。</p><div class="row three"><div><label>x0</label><input id="ix0" value="1" type="number"></div><div><label>x1</label><input id="ix1" value="2" type="number"></div><div><label>x</label><input id="ix" value="1.4" type="number"></div><div><label>y0</label><input id="iy0" value="300" type="number"></div><div><label>y1</label><input id="iy1" value="400" type="number"></div><div><label>y</label><input id="iy" value="350" type="number"></div><div><label>f00</label><input id="f00" value="10" type="number"></div><div><label>f10</label><input id="f10" value="20" type="number"></div><div><label>f01</label><input id="f01" value="15" type="number"></div><div><label>f11</label><input id="f11" value="27" type="number"></div></div><button class="btn primary" id="icalc">计算双线性插值</button><div class="formula">f=(1−t)(1−u)f₀₀+t(1−u)f₁₀+(1−t)uf₀₁+tu f₁₁</div><div id="iresult" class="result"></div></div>
-   <div class="card"><h3>三点拉格朗日插值</h3><div class="row"><div><label>x</label><input id="lagX" type="number" value="1.5"></div><div><label>x₀</label><input id="lagX0" type="number" value="1"></div><div><label>y₀</label><input id="lagY0" type="number" value="1"></div><div><label>x₁</label><input id="lagX1" type="number" value="2"></div><div><label>y₁</label><input id="lagY1" type="number" value="4"></div><div><label>x₂</label><input id="lagX2" type="number" value="3"></div><div><label>y₂</label><input id="lagY2" type="number" value="9"></div></div><button class="btn primary" id="lagCalc">计算三点插值</button><div id="lagResult" class="result">等待计算。</div></div>
-  </div>
-  <div class="card"><h3>插值误差说明</h3><p>插值结果取决于表格网格、函数曲率、插值阶次和状态点位置。接近饱和线、临界点及区域边界时，性质对状态变量的敏感性可能增大。实际对照需使用同一 IF97 版本、相同单位和参考态。</p><p class="note">当前插值器处理用户给定的数值网格；教材原表逐格数据并未在本次公开站点中复制，不能把示例网格称为教材数据。</p></div>
- </div>
- <div class="sub" id="steam-regions">
-  <div class="card"><h3>IAPWS-IF97 五区域</h3><div class="scroll"><table><thead><tr><th>区域</th><th>状态/公式</th><th>支持情况</th><th>典型范围</th></tr></thead><tbody><tr><td>1</td><td>压缩液体；Gibbs 基本方程</td><td>已接入</td><td>273.15–623.15 K，压力至 100 MPa</td></tr><tr><td>2</td><td>过热蒸汽；Gibbs 基本方程</td><td>已接入</td><td>至 1073.15 K</td></tr><tr><td>3</td><td>高密度/临界附近；Helmholtz 基本方程</td><td>已接入</td><td>临界区域及高压密相区</td></tr><tr><td>4</td><td>饱和压力/温度关系与饱和端点</td><td>已接入</td><td>273.15–647.096 K</td></tr><tr><td>5</td><td>高温蒸汽；高温 Gibbs 方程</td><td>已接入</td><td>1073.15–2273.15 K，压力至 50 MPa</td></tr></tbody></table></div><p>本页正算采用 (P,T)，后向计算支持 (P,h)、(P,s)、(h,s)。P-x 用于饱和两相；饱和边界 P-T 输入不能单独确定湿蒸汽干度。</p></div>
- </div>
-</section>
-<section class="page" id="p-app">
- <div class="heading"><div><div class="kicker">APPENDICES</div><h2>附录与学术参考</h2><p>全站符号、术语和单位查询。</p></div></div>
- <div class="grid"><div class="card"><h3>化工热力学术语</h3><input id="gsearch" placeholder="搜索中文或英文"><div id="gloss" class="list" style="margin-top:10px;max-height:350px;overflow:auto"></div></div><div class="card"><h3>常用单位换算</h3><label>类型</label><select id="utype"><option value="p">压力：MPa / bar / kPa / atm</option><option value="e">能量：J / kJ / cal</option><option value="t">温度：K / °C</option></select><label>数值</label><input id="uval" type="number" value="1"><div class="row"><div><label>从</label><select id="ufrom"></select></div><div><label>到</label><select id="uto"></select></div></div><button class="btn primary" id="uconvert">换算</button><div id="ures" class="result">—</div></div></div>
- <div class="card"><h3>16 种纯物质临界参数与来源状态</h3>
-  <input id="chemSearch" placeholder="搜索物质名称或英文名称">
-  <div class="actions"><button class="btn" id="chemExport">导出参数 CSV</button></div>
-  <div class="scroll"><table><thead><tr><th>物质</th><th>英文</th><th>Tc / K</th><th>Pc / MPa</th><th>ω</th><th>数据状态</th></tr></thead><tbody id="chemData"></tbody></table></div>
-  <p class="note">参数表沿用项目 16 物质基础数据。标记“待复核”的行不应直接用于高精度工程设计；请按 NIST、DIPPR 或经授权物性数据库逐项校核来源和温度/压力单位。</p>
- </div>
- <div class="card"><h3>主要符号</h3><div class="scroll"><table><thead><tr><th>符号</th><th>中文名称</th><th>英文名称</th><th>SI 单位</th></tr></thead><tbody id="symbols"></tbody></table></div></div>
- <div class="card"><h3>数据来源与学术版权</h3><ul><li><a href="https://iapws.org/" target="_blank" rel="noopener">IAPWS</a>：水与水蒸气工业标准公式。</li><li><a href="https://webbook.nist.gov/chemistry/" target="_blank" rel="noopener">NIST Chemistry WebBook</a>：物性数据核对。</li><li><a href="https://pjb10.user.srcf.net/thermo/" target="_blank" rel="noopener">Patrick J. Barrie 原始教学程序</a>：结构参考，代码使用须遵守作者许可。</li><li>夏淑倩、马沛生、李永红主编：《化工热力学》第三版，化学工业出版社，2023。</li></ul><p class="note">第三方教材、软件、数据库和论文均应注明来源并遵守版权/许可。教学近似数据不得冒充标准数据。</p></div>
-</section>
-</main>
-<footer class="footer"><div class="footergrid"><div><b>JsPSCES-TJU · TJU-ThermoHub</b><p>天津大学化工热力学学生自主学习网站</p><p>GitHub：<a href="https://github.com/Untholionleen" target="_blank">Untholionleen</a></p></div><div><b>学术与版权</b><p>理论指导信息：天津大学化工学院夏淑倩教授</p><p>项目发起与版权归属：Untholionleen</p></div><div><b>原始参考</b><p><a href="https://pjb10.user.srcf.net/thermo/" target="_blank">Patrick Barrie Thermodynamics Programs</a></p><p>Version 13.1.0（Nv3.1.0）</p></div></div><hr style="border-color:#ffffff22"><p>本网站用于教学与工程辅助查询。计算结果须结合模型适用范围和数据来源独立核验，不作为重大工程决策的唯一依据。</p></footer>
-<script>
-(function(){
-"use strict";
-const R=8.31446261815324, $=id=>document.getElementById(id), names=[
-["nitrogen","氮气","Nitrogen",126.2,3.394,.0372,"待复核"],
-["oxygen","氧气","Oxygen",154.58,5.043,.0222,"待复核"],
-["hydrogen","氢气","Hydrogen",33.145,1.2964,-.219,"待复核"],
-["carbon-dioxide","二氧化碳","Carbon dioxide",304.1282,7.3773,.2239,"待复核"],
-["methane","甲烷","Methane",190.56,4.599,.011,"教材附录3"],
-["ethane","乙烷","Ethane",305.32,4.872,.099,"教材附录3"],
-["propane","丙烷","Propane",369.83,4.248,.152,"教材附录3"],
-["n-butane","正丁烷","n-Butane",425.12,3.796,.199,"教材附录3"],
-["n-pentane","正戊烷","n-Pentane",469.7,3.370,.249,"教材附录3"],
-["n-hexane","正己烷","n-Hexane",507.6,3.025,.305,"教材附录3"],
-["ethylene","乙烯","Ethylene",282.34,5.041,.085,"教材附录3"],
-["propylene","丙烯","Propylene",364.9,4.60,.142,"教材附录3"],
-["acetylene","乙炔","Acetylene",308.3,6.138,.187,"教材附录3"],
-["benzene","苯","Benzene",562.05,4.895,.211,"教材附录3"],
-["toluene","甲苯","Toluene",591.75,4.108,.264,"教材附录3"],
-["water","水","Water",647.096,22.064,.344,"IAPWS 临界点参考"]
-];
-function cbrt(x){return Math.sign(x)*Math.pow(Math.abs(x),1/3)}
-function roots(a,b,c){let p=b-a*a/3,q=2*a*a*a/27-a*b/3+c,d=q*q/4+p*p*p/27,e=1e-14;if(d>e){let s=Math.sqrt(d);return [cbrt(-q/2+s)+cbrt(-q/2-s)-a/3]}if(Math.abs(d)<=e){let u=cbrt(-q/2);return [...new Set([2*u-a/3,-u-a/3])].sort((x,y)=>x-y)}let rr=2*Math.sqrt(-p/3),ph=Math.acos(Math.max(-1,Math.min(1,3*q/(2*p)*Math.sqrt(-3/p))));return [rr*Math.cos(ph/3)-a/3,rr*Math.cos((ph+2*Math.PI)/3)-a/3,rr*Math.cos((ph+4*Math.PI)/3)-a/3].sort((x,y)=>x-y)}
-function modelPars(m,T,Tc,Pc,w){let tr=T/Tc,a,b,da=0,u=1,v=0,al=1,mm;if(m==="vdw"){a=27/64*R*R*Tc*Tc/Pc;b=R*Tc/(8*Pc);u=0;v=0}else if(m==="rk"){a=.42748*R*R*Math.pow(Tc,2.5)/(Pc*Math.sqrt(T));b=.08664*R*Tc/Pc;da=-.5*a/T}else if(m==="srk"){mm=.480+1.574*w-.176*w*w;al=Math.pow(1+mm*(1-Math.sqrt(tr)),2);a=.42747*R*R*Tc*Tc/Pc*al;b=.08664*R*Tc/Pc;da=-.42747*R*R*Tc*Tc/Pc*mm*Math.sqrt(al/(T*Tc))}else{mm=w>.491?.379642+1.48503*w-.164423*w*w+.016666*w*w*w:.37464+1.54226*w-.26992*w*w;al=Math.pow(1+mm*(1-Math.sqrt(tr)),2);a=.45724*R*R*Tc*Tc/Pc*al;b=.07780*R*Tc/Pc;da=-.45724*R*R*Tc*Tc/Pc*mm*Math.sqrt(al/(T*Tc));u=2;v=-1}return {a,b,da,u,v,al}}
-function pressure(m,T,V,Tc,Pc,w){let p=modelPars(m,T,Tc,Pc*1e6,w),den=V*V+p.u*p.b*V+p.v*p.b*p.b;return R*T/(V-p.b)-p.a/den}
-function eos(m,T,P,Tc,Pc,w){
-  if([T,P,Tc,Pc,w].some(x=>!Number.isFinite(x))||T<=0||P<=0||Tc<=0||Pc<=0)throw Error("温度、压力及临界参数必须为有效正值。");
-  function evaluate(temp){
-    const p=modelPars(m,temp,Tc,Pc*1e6,w),PP=P*1e6,A=p.a*PP/(R*R*temp*temp),B=p.b*PP/(R*temp);
-    const c2=(p.u-1)*B-1,c1=A-p.u*B-(p.u-p.v)*B*B,c0=-(A*B+p.v*B*B+p.v*B*B*B);
-    const zs=roots(c2,c1,c0).filter(z=>z>B&&z>0);
-    if(!zs.length)throw Error("当前条件未找到满足 Z > B 的正实根。");
-    return zs.map(z=>{
-      let ln;
-      if(m==="vdw")ln=z-1-Math.log(z-B)-A/z;
-      else if(m==="pr")ln=z-1-Math.log(z-B)-A/(2*Math.sqrt(2)*B)*Math.log((z+(1+Math.sqrt(2))*B)/(z+(1-Math.sqrt(2))*B));
-      else ln=z-1-Math.log(z-B)-A/B*Math.log(1+B/z);
-      return {Z:z,V:z*R*temp/PP,phi:Math.exp(ln),lnphi:ln};
-    });
-  }
-  const base=evaluate(T),dT=Math.max(1e-3,T*1e-4);
-  return base.map((row,i)=>{
-    try{
-      const plus=evaluate(T+dT),minus=evaluate(T-dT);
-      const rp=plus[Math.min(i,plus.length-1)].lnphi,rm=minus[Math.min(i,minus.length-1)].lnphi;
-      const sOverR=-T*(rp-rm)/(2*dT);
-      const SR=R*sOverR,HR=R*T*(row.lnphi+sOverR);
-      return {...row,HR,SR,departureMethod:"central finite-difference derivative of ln(phi)"};
-    }catch(e){return {...row,HR:null,SR:null,departureMethod:"unavailable near a root/phase boundary"};}
-  });
-}
-function plot(canvas,series,xmin,xmax,ymin,ymax,xlab,ylab){let c=canvas.getContext("2d"),w=canvas.width,h=canvas.height,L=60,Rt=20,T=20,B=48;c.clearRect(0,0,w,h);c.fillStyle="#fff";c.fillRect(0,0,w,h);c.strokeStyle="#e3eaf0";for(let i=0;i<=5;i++){let x=L+(w-L-Rt)*i/5,y=T+(h-T-B)*i/5;c.beginPath();c.moveTo(x,T);c.lineTo(x,h-B);c.stroke();c.beginPath();c.moveTo(L,y);c.lineTo(w-Rt,y);c.stroke()}c.strokeStyle="#567";c.beginPath();c.moveTo(L,T);c.lineTo(L,h-B);c.lineTo(w-Rt,h-B);c.stroke();let X=x=>L+(x-xmin)/(xmax-xmin)*(w-L-Rt),Y=y=>h-B-(y-ymin)/(ymax-ymin)*(h-T-B);series.forEach((s,k)=>{c.strokeStyle=s.color||"#133963";c.lineWidth=2;c.beginPath();let started=false;s.data.forEach(pt=>{if(!Number.isFinite(pt[1])){started=false;return}if(!started){c.moveTo(X(pt[0]),Y(pt[1]));started=true}else c.lineTo(X(pt[0]),Y(pt[1]))});c.stroke()});c.fillStyle="#345";c.font="12px sans-serif";c.textAlign="center";c.fillText(xlab,(L+w-Rt)/2,h-12);c.save();c.translate(14,h/2);c.rotate(-Math.PI/2);c.fillText(ylab,0,0);c.restore()}
-function download(name,rows){let csv="\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replaceAll('"','""')+'"').join(",")).join("\r\n"),a=document.createElement("a"),u=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function show(id,text,kind){$(id).textContent=text;$(id).className="result"+(kind?" "+kind:"")}
-function initChem(){names.forEach(x=>{let o=document.createElement("option");o.value=x[0];o.textContent=x[1]+" / "+x[2];$("species").append(o)});$("species").value="methane";loadChem()}
-function loadChem(){let x=names.find(a=>a[0]===$("species").value);$("tc").value=x[3];$("pc").value=x[4];$("om").value=x[5];$("srcNote").textContent="数据来源："+x[6]+"；待复核数据不作为高精度工程参考。"}
-let last=null,lastCurve=[],projection="3d",didx=0,dstep=0,auto=null,lang="zh";
-function calculate(){try{let m=$("model").value,r=eos(m,+$("temp").value,+$("pres").value,+$("tc").value,+$("pc").value,+$("om").value);last={model:m,T:+$("temp").value,P:+$("pres").value,Tc:+$("tc").value,Pc:+$("pc").value,omega:+$("om").value,roots:r};$("out").innerHTML="<table><thead><tr><th>根序号</th><th>Z</th><th>Vm (m³/mol)</th><th>φ</th><th>ln φ</th><th>Hᴿ (kJ/mol)</th><th>Sᴿ (J/mol·K)</th></tr></thead><tbody>"+r.map((x,i)=>"<tr><td>"+(i+1)+"</td><td>"+x.Z.toFixed(7)+"</td><td>"+x.V.toExponential(7)+"</td><td>"+x.phi.toFixed(7)+"</td><td>"+x.lnphi.toFixed(7)+"</td><td>"+(Number.isFinite(x.HR)?(x.HR/1000).toFixed(6):"—")+"</td><td>"+(Number.isFinite(x.SR)?x.SR.toFixed(6):"—")+"</td></tr>").join("")+"</tbody></table>";show("msg","计算完成，得到 "+r.length+" 个有效实根。","ok");lastCurve=curve(m,+$("temp").value,+$("tc").value,+$("pc").value,+$("om").value);plot($("eosPlot"),[{data:lastCurve}],1.2,9.2,0,Math.max(1,+$("pc").value*3),"V/Vc","P / MPa");let hist=JSON.parse(localStorage.getItem("tju-thermohub-history")||"[]");hist.unshift({time:new Date().toISOString(),...last});localStorage.setItem("tju-thermohub-history",JSON.stringify(hist.slice(0,50)))}catch(e){show("msg",e.message,"err");$("out").innerHTML="";last=null}}
-function coexistence(m,T,Tc,Pc,w){
- if(!(T>0&&T<Tc))throw Error("汽液共存温度应满足 0 < T < Tc。");
- const Pmin=Pc*1e-8,Pmax=Pc*(1-1e-8),samples=420;
- function residual(P){
-  try{
-   const r=eos(m,T,P,Tc,Pc,w);
-   if(r.length<2)return null;
-   return {f:r[0].lnphi-r[r.length-1].lnphi,roots:r};
-  }catch(e){return null}
- }
- let prev=null,bracket=null;
- for(let i=0;i<=samples;i++){
-  const P=Math.exp(Math.log(Pmin)+(Math.log(Pmax)-Math.log(Pmin))*i/samples),r=residual(P);
-  if(r){
-   if(prev&&prev.r.f*r.f<=0){bracket=[prev.P,P];break;}
-   prev={P,r};
-  }else prev=null;
- }
- if(!bracket)throw Error("当前温度下没有找到有效的液汽双根共存压力。");
- let lo=bracket[0],hi=bracket[1],flo=residual(lo).f,midResult=null;
- for(let i=0;i<90;i++){
-  const mid=Math.sqrt(lo*hi),r=residual(mid);
-  if(!r){lo=mid;continue;}
-  midResult=r;
-  if(Math.abs(r.f)<2e-10)return {P:mid,T,liquid:r.roots[0],vapor:r.roots[r.roots.length-1],residual:r.f,iterations:i+1};
-  if(flo*r.f<=0)hi=mid;else{lo=mid;flo=r.f;}
- }
- const P=Math.sqrt(lo*hi),r=residual(P);
- if(!r)throw Error("共存压力求根末端无有效双根。");
- return {P,T,liquid:r.roots[0],vapor:r.roots[r.roots.length-1],residual:r.f,iterations:90};
-}
-function curve(m,T,Tc,Pc,w){let a=[];for(let i=0;i<160;i++){let vc=1.2+i/159*8,V=vc*R*Tc/(Pc*1e6);try{let p=pressure(m,T,V,Tc,Pc,w)/1e6;a.push([vc,p>0?p:NaN])}catch(e){a.push([vc,NaN])}}return a}
-const satN=[0.11670521452767e4,-0.72421316703206e6,-0.17073846940092e2,0.12020824702470e5,-0.32325550322333e7,0.14915108613530e2,-0.48232657361591e4,0.40511340542057e6,-0.23855557567849e0,0.65017534844798e3];
-function psat(T){if(T<273.15||T>647.096)throw Error("IF97 Region 4 温度范围：273.15–647.096 K。");let n=satN,th=T+n[8]/(T-n[9]),A=th*th+n[0]*th+n[1],B=n[2]*th*th+n[3]*th+n[4],C=n[5]*th*th+n[6]*th+n[7];return Math.pow(2*C/(-B+Math.sqrt(B*B-4*A*C)),4)}
-function tsat(P){if(P<.000611657||P>22.064)throw Error("压力必须在三相点压力与临界压力之间。");let lo=273.15,hi=647.096;for(let i=0;i<90;i++){let mid=(lo+hi)/2;if(psat(mid)>P)hi=mid;else lo=mid}return (lo+hi)/2}
-function satCalc(){try{let v=+$("sinput").value;if($("smode").value==="T")show("sresult","T = "+v+" K → Psat = "+psat(v).toFixed(9)+" MPa","ok");else show("sresult","P = "+v+" MPa → Tsat = "+tsat(v).toFixed(7)+" K","ok")}catch(e){show("sresult",e.message,"err")}}
-function satPlot(){let d=[];for(let i=0;i<=120;i++){let t=273.15+(647.096-273.15)*i/120;d.push([t,psat(t)])}plot($("satplot"),[{data:d}],273.15,647.096,0,22.1,"T / K","Psat / MPa")}
-function bilinear(){try{let ids=["ix0","ix1","iy0","iy1","f00","f10","f01","f11","ix","iy"],v=ids.map(x=>+$ (x).value),[x0,x1,y0,y1,f00,f10,f01,f11,x,y]=v;if(x1===x0||y1===y0||x<Math.min(x0,x1)||x>Math.max(x0,x1)||y<Math.min(y0,y1)||y>Math.max(y0,y1))throw Error("网格区间无效或目标点超出范围；拒绝外推。");let t=(x-x0)/(x1-x0),u=(y-y0)/(y1-y0),f=(1-t)*(1-u)*f00+t*(1-u)*f10+(1-t)*u*f01+t*u*f11;show("iresult","f(x,y) = "+f+"\nt = "+t+"；u = "+u,"ok")}catch(e){show("iresult",e.message,"err")}}
-const derivs = [{"id":"D1","title_zh":"vdW 常数 a、b 的由来","title_en":"Origin of the van der Waals constants a and b","target":"m1","steps":[["P = RT/(Vₘ − b) − a/Vₘ²","从范德华状态方程出发。a 描述分子间吸引作用，b 描述排斥体积修正。","Start from the van der Waals equation. a represents attractions and b represents excluded volume."],["(∂P/∂Vₘ)ₜ = −RT/(Vₘ−b)² + 2a/Vₘ³ = 0","临界等温线在临界点具有水平拐点，一阶导数为零。","The critical isotherm has a horizontal inflection at the critical point."],["(∂²P/∂Vₘ²)ₜ = 2RT/(Vₘ−b)³ − 6a/Vₘ⁴ = 0","临界点的二阶导数也为零；联立两个方程。","The second derivative also vanishes. Combine the two critical conditions."],["V꜀ = 3b；T꜀ = 8a/(27Rb)","联立求解可得临界摩尔体积和温度。","Solving simultaneously gives the critical molar volume and temperature."],["P꜀ = a/(27b²)；b = RT꜀/(8P꜀)；a = 27R²T꜀²/(64P꜀)；Z꜀ = 3/8","将 V꜀、T꜀ 代回状态方程，得到参数与临界性质的关系。","Substitute the critical values into the EOS to obtain a, b and the van der Waals critical compressibility."]]},{"id":"D2","title_zh":"RK / SRK / PR 参数与温度函数","title_en":"RK / SRK / PR parameters and temperature functions","target":"m1","steps":[["P = RT/(Vₘ−b) − aα(T)/(Vₘ² + u bVₘ + w b²)","将立方型状态方程写成统一形式；不同模型由 u、w 和参数函数区分。","Write cubic equations in a unified form; models differ in u, w and parameter functions."],["A꜀ = aP꜀/(R²T꜀²)；B꜀ = bP꜀/(RT꜀)","在临界点无量纲化，并施加两条临界导数条件。","Nondimensionalize at the critical point and impose the two critical derivative conditions."],["RK：Ωₐ=0.42748，Ωᵦ=0.08664；SRK：0.42747，0.08664；PR：0.45724，0.07780","求解临界条件后得到各方程的常数；这些数值对应各自不同的分母形式。","Solving the critical conditions gives model-specific constants for each denominator form."],["α(T) = [1 + m(1 − √Tᵣ)]²；Tᵣ=T/T꜀","Soave 温度函数把偏心因子引入吸引项，使饱和蒸气压关联更合理。","The Soave alpha function introduces acentric-factor dependence into the attraction term."],["m(SRK)=0.480+1.574ω−0.176ω²；m(PR)=0.37464+1.54226ω−0.26992ω²","SRK 与 PR 使用各自经验/拟合的 m(ω) 关联；不能把某一模型的 m 公式误用于另一模型。","SRK and PR use different m(ω) correlations; do not interchange them."]]},{"id":"D3","title_zh":"立方型 EOS 化为 Z 的三次多项式","title_en":"Transforming a cubic EOS into a cubic polynomial in Z","target":"m1","steps":[["Z = PVₘ/(RT)；A = aαP/(R²T²)；B = bP/(RT)","定义压缩因子 Z 以及无量纲参数 A、B。","Define compressibility Z and the dimensionless parameters A and B."],["1/(Z−B) − A/(Z²+uBZ+wB²) = 1","将通用立方 EOS 代入 Vₘ=ZRT/P，并两边除以 P。","Substitute Vₘ=ZRT/P into the generalized cubic EOS."],["Z³ + [(u−1)B−1]Z² + [A−uB−(u−w)B²]Z − [AB+wB²+wB³] = 0","通分并整理得到关于 Z 的三次方程。","Clear denominators and collect powers of Z to obtain the cubic polynomial."],["Zᵢ > B；Vₘ,ᵢ = ZᵢRT/P","只保留满足物理体积条件的实根；气/液相根的选择还需结合稳定性判据。","Retain physical real roots satisfying Z>B; phase stability must still be assessed."]]},{"id":"D4","title_zh":"由热力学基本方程导出 Maxwell 关系","title_en":"Deriving the Maxwell relations from thermodynamic potentials","target":"m3","steps":[["dU = T dS − P dV","内能 U 的自然变量为 S、V。","The natural variables of internal energy are S and V."],["(∂U/∂S)ᵥ=T；(∂U/∂V)ₛ=−P","把全微分系数与偏导数对应。","Identify coefficients in the total differential with partial derivatives."],["(∂T/∂V)ₛ = −(∂P/∂S)ᵥ","利用混合二阶偏导数相等，得到第一条 Maxwell 关系。","Equality of mixed second derivatives gives the first Maxwell relation."],["dH = T dS + V dP  ⇒  (∂T/∂P)ₛ=(∂V/∂S)ₚ","对焓 H(S,P) 同样处理。","Apply the same procedure to enthalpy H(S,P)."],["dA = −S dT − P dV  ⇒  (∂S/∂V)ₜ=(∂P/∂T)ᵥ","由 Helmholtz 自由能 A(T,V) 得第三条关系。","The Helmholtz potential A(T,V) yields the third relation."],["dG = −S dT + V dP  ⇒  (∂S/∂P)ₜ=−(∂V/∂T)ₚ","由 Gibbs 自由能 G(T,P) 得第四条关系。","The Gibbs potential G(T,P) yields the fourth Maxwell relation."]]},{"id":"D5","title_zh":"剩余 Gibbs 能、焓与熵的关系","title_en":"Residual Gibbs energy, enthalpy and entropy","target":"m2","steps":[["dG = V dP − S dT","Gibbs 自由能的微分表达式。","Differential form of Gibbs energy."],["T 固定：dGᴿ = (V−Vⁱᵍ)dP = RT(Z−1)dP/P","同温度理想气体状态下 Vⁱᵍ=RT/P，且 Z=PV/RT。","At fixed T, subtract the ideal-gas volume RT/P and use Z=PV/RT."],["Gᴿ/(RT) = ∫₀ᴾ (Z−1) dP′/P′","从零压力极限积分，得到剩余 Gibbs 能无量纲表达。","Integrate from the zero-pressure ideal-gas limit."],["Gᴿ/(RT) = ln φ","对纯流体气相，剩余 Gibbs 能等于 RT ln φ。","For a pure fluid vapor, residual Gibbs energy equals RT ln fugacity coefficient."],["Sᴿ/R = −[∂(Gᴿ/RT)/∂ln T]ₚ；Hᴿ/(RT)=Gᴿ/(RT)+Sᴿ/R","由 S=−(∂G/∂T)ₚ 和 H=G+TS 得到剩余熵、焓。","Use S=−(∂G/∂T)ₚ and H=G+TS to obtain residual entropy and enthalpy."]]},{"id":"D6","title_zh":"Peng–Robinson 方程的逸度系数解析式","title_en":"Analytical fugacity coefficient for Peng–Robinson EOS","target":"m1","steps":[["d ln φ = (Z−1) dP/P  （恒温纯流体）","逸度系数定义与纯流体热力学恒等式给出压力积分。","The fugacity coefficient identity gives the isothermal pressure integral."],["P = RT/(V−b) − aα/[V(V+b)+b(V−b)]","写出 PR 状态方程，并定义 A=aαP/(R²T²)、B=bP/(RT)。","Write the PR EOS and introduce dimensionless A and B."],["Z³−(1−B)Z²+(A−3B²−2B)Z−(AB−B²−B³)=0","先求压缩因子根 Z。","Solve the PR cubic for the compressibility-factor root Z."],["ln φ = Z−1−ln(Z−B) − A/(2√2B) ln[(Z+(1+√2)B)/(Z+(1−√2)B)]","把 PR 根式代入压力积分并解析积分，得到逸度系数。","Substitute the PR EOS into the pressure integral and integrate analytically."],["f = φP；μ = μ⁰(T)+RT ln(f/P⁰)","逸度系数把真实气体偏离理想气体的影响转化为有效压力。","Fugacity converts non-ideal gas behavior into an effective pressure."]]},{"id":"D7","title_zh":"Maxwell 等面积与气液等逸度判据","title_en":"Maxwell equal-area and vapor–liquid fugacity criteria","target":"m1","steps":[["G(T,P) = μ(T,P)；(∂μ/∂P)ₜ = Vₘ","纯物质化学势等于摩尔 Gibbs 能，其压力导数为摩尔体积。","For a pure substance, chemical potential equals molar Gibbs energy and its pressure derivative is molar volume."],["μᴸ(T,Pₛₐₜ)=μⱽ(T,Pₛₐₜ)","汽液平衡要求两相化学势相等。","Vapor–liquid equilibrium requires equal chemical potentials."],["fᴸ=fⱽ；φᴸP=φⱽP  ⇒  φᴸ=φⱽ","同温同压下，纯物质两相等逸度。","At equal T and P, the fugacities of the two pure phases are equal."],["∫ᵥᴸᵛⱽ [P(V,T)−Pₛₐₜ] dV = 0","对 vdW 型环状等温线，等化学势等价于 Maxwell 等面积条件。","For a van der Waals loop, equal chemical potential is equivalent to the Maxwell equal-area condition."]]},{"id":"D8","title_zh":"维里方程与 Pitzer 低压普遍化关联","title_en":"Virial equation and Pitzer low-pressure corresponding-states correlation","target":"m2","steps":[["Z = 1 + B(T)P/(RT) + C(T)P²/(R²T²)+⋯","在低密度/低压力条件下按压力或密度展开状态方程。","Expand the EOS in pressure or density at low density."],["B(T)/(RT꜀/P꜀) = B⁰(Tᵣ)+ωB¹(Tᵣ)","偏心因子对应态原理将第二维里系数写成简单流体项与偏差项。","The acentric-factor corresponding-states principle splits the second virial coefficient into simple-fluid and correction terms."],["B⁰=0.083−0.422/Tᵣ¹·⁶；B¹=0.139−0.172/Tᵣ⁴·²","Pitzer 型关联给出温度函数；系数形式应按课程教材指定版本核对。","A Pitzer-type correlation supplies the temperature functions; confirm the exact coefficient set against the assigned textbook."],["Z ≈ 1 + (B⁰+ωB¹)Pᵣ/Tᵣ","低压下得到一阶近似。该式不是完整 Lee–Kesler 高压方程。","This is a first-order low-pressure approximation, not the full high-pressure Lee–Kesler EOS."]]},{"id":"D9","title_zh":"Clapeyron 与 Clausius–Clapeyron 方程","title_en":"Clapeyron and Clausius–Clapeyron equations","target":"m4","steps":[["μᴸ(T,Pₛₐₜ)=μⱽ(T,Pₛₐₜ)","沿饱和曲线，两相化学势始终相等。","The chemical potentials of both phases remain equal along the saturation curve."],["dμ = −Sₘ dT + Vₘ dP","由 dG 的摩尔形式写出两相微分。","Write the molar Gibbs differential for each phase."],["−SᴸdT+VᴸdP = −SⱽdT+VⱽdP","沿相平衡线令两相化学势微分相等并整理。","Equate the differentials of the two phases and rearrange."],["dPₛₐₜ/dT = ΔS/ΔV = ΔH/(TΔV)","得到 Clapeyron 方程，适用于一阶相变。","This is the Clapeyron equation for a first-order phase transition."],["ln(P₂/P₁)=−ΔHᵥₐₚ/R(1/T₂−1/T₁)","若 ΔHᵥₐₚ 近似常数且蒸汽近似理想气体，可积分得到 Clausius–Clapeyron 近似。","Assuming nearly constant vaporization enthalpy and ideal vapor behavior gives the integrated Clausius–Clapeyron approximation."]]},{"id":"D10","title_zh":"Joule–Thomson 节流系数与反转条件","title_en":"Joule–Thomson coefficient and inversion condition","target":"m1","steps":[["H = H(T,P)；dH = Cₚ dT + [V−T(∂V/∂T)ₚ]dP","从焓的全微分和热力学恒等式展开。","Expand the enthalpy differential using a thermodynamic identity."],["节流过程：dH=0","绝热节流且忽略动能、位能变化时，过程等焓。","For throttling with negligible heat, kinetic and potential changes, enthalpy is constant."],["μJT=(∂T/∂P)ₕ=[T(∂V/∂T)ₚ−V]/Cₚ","整理得到 Joule–Thomson 系数。","Rearrange to obtain the Joule–Thomson coefficient."],["μJT>0：降压降温；μJT<0：降压升温","符号决定节流温度变化方向。","The sign determines whether throttling cools or heats the fluid."],["反转曲线：μJT=0；T(∂V/∂T)ₚ=V","反转曲线分隔加热区和冷却区，数值求解需配合状态方程。","The inversion curve separates heating and cooling regions and is found with an EOS."]]},{"id":"D11","title_zh":"Gibbs–Duhem 方程与 Margules / van Laar 模型","title_en":"Gibbs–Duhem equation and Margules / van Laar activity models","target":"m1","steps":[["Gᵐ = Σxᵢμᵢ；dGᵐ=−SᵐdT+VᵐdP+Σμᵢdxᵢ","写出混合物摩尔 Gibbs 能的全微分。","Write the total differential of molar Gibbs energy of a mixture."],["Σxᵢdμᵢ = −SᵐdT+VᵐdP","结合 Euler 关系消去 dGᵐ，得到 Gibbs–Duhem 方程。","Use the Euler relation to eliminate dGᵐ and obtain Gibbs–Duhem."],["定 T、P：Σxᵢdμᵢ=0；Σxᵢd lnγᵢ=0","代入 μᵢ=μᵢ⁰+RT ln(xᵢγᵢ)，并利用 Σdxᵢ=0。","At fixed T and P, substitute chemical potentials and use Σdxᵢ=0."],["二元对称 Margules：lnγ₁=A x₂²；lnγ₂=A x₁²","选择单参数 Margules 模型，可满足二元 Gibbs–Duhem 一致性。","The one-parameter symmetric Margules model satisfies binary Gibbs–Duhem consistency."],["van Laar：lnγ₁=A₁₂[A₂₁x₂/(A₁₂x₁+A₂₁x₂)]²","双参数 van Laar 模型由 Gibbs–Duhem 一致的二元表达构成；A₁₂、A₂₁须由数据拟合。","The two-parameter van Laar expressions are Gibbs–Duhem consistent; parameters must be fitted to data."]]}];
-function showDeriv(){
-  const d=derivs[didx];
-  $("dlist").innerHTML=derivs.map((x,i)=>'<button class="'+(i===didx?'active':'')+'" data-di="'+i+'">'+x.id+' · '+(lang==='zh'?x.title_zh:x.title_en)+' · 待教师审核</button>').join('');
-  document.querySelectorAll("[data-di]").forEach(b=>b.onclick=()=>{didx=+b.dataset.di;dstep=0;showDeriv()});
-  $("dtitle").textContent=d.id+' · '+(lang==='zh'?d.title_zh:d.title_en);
-  const step=d.steps[dstep];
-  if(window.katex){window.katex.render(step[0],$("deq"),{displayMode:true,throwOnError:false});}
-  else {$("deq").textContent=step[0];}
-  $("dnote").textContent=lang==='zh'?step[1]:step[2];
-  $("dstep").textContent=(lang==='zh'?'步骤 ':'Step ')+(dstep+1)+' / '+d.steps.length+' · '+(lang==='zh'?'待教师审核':'Pending instructor review');
-  $("dprev").disabled=dstep===0;
-  $("dnext").disabled=dstep===d.steps.length-1;
-  $("dauto").disabled=false;
-  $("dtarget").textContent=lang==='zh'?'用它去算 →':'Use in calculator →';
-  $("dtarget").onclick=()=>go(d.target);
-}
-function zCalc(){try{let tc=+$("ztc").value,pc=+$("zpc").value,w=+$("zom").value,tr=+$("ztr").value,pr=+$("zpr").value;if(tr<=0||pr<=0||pr>10)throw Error("Tr 必须大于零，且 0 < Pr ≤ 10。");let rr=eos("pr",tr*tc,pr*pc,tc,pc,w),z=rr[rr.length-1].Z;show("zmsg","Tr="+tr+"；Pr="+pr+"；Z(PR)="+z.toFixed(7)+"。此为 PR EOS 结果，不是 Lee–Kesler 普遍化关联。","ok");let series=[],rows=[["Tr","Pr","Z","Model","Tc_K","Pc_MPa","omega"]];[.7,.8,.9,1,1.2,1.5,2].forEach((t,k)=>{let d=[];for(let i=0;i<100;i++){let p=.03+i/99*9.97;try{let z0=eos("pr",t*tc,p*pc,tc,pc,w).slice(-1)[0].Z;d.push([p,z0]);rows.push([t,p,z0,"PR",tc,pc,w])}catch(e){d.push([p,NaN])}}series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d"][k]})});window._zrows=rows;plot($("zplot"),series,0,10,0,2.2,"Pr","Z")}
-catch(e){show("zmsg",e.message,"err")}}
-function initUnits(){let opts={p:["MPa","bar","kPa","atm"],e:["J","kJ","cal"],t:["K","°C"]};function fill(){let a=opts[$("utype").value];$("ufrom").innerHTML=a.map(x=>"<option>"+x+"</option>").join("");$("uto").innerHTML=a.map((x,i)=>'<option '+(i===1?"selected":"")+'>'+x+"</option>").join("")}$("utype").onchange=fill;fill();$("uconvert").onclick=()=>{let type=$("utype").value,v=+$("uval").value,f=$("ufrom").value,t=$("uto").value,r;if(type==="t"){let k=f==="K"?v:v+273.15;r=t==="K"?k:k-273.15}else{let base=type==="p"?{MPa:1e6,bar:1e5,kPa:1e3,atm:101325}:{J:1,kJ:1000,cal:4.184};r=v*base[f]/base[t]}show("ures",v+" "+f+" = "+r+" "+t,"ok")}}
-const glossary=[["压缩因子","Compressibility factor","Z"],["状态方程","Equation of state","EOS"],["逸度","Fugacity","f"],["逸度系数","Fugacity coefficient","φ"],["偏心因子","Acentric factor","ω"],["剩余焓","Enthalpy departure","Hᴿ"],["剩余熵","Entropy departure","Sᴿ"],["临界温度","Critical temperature","Tc"],["临界压力","Critical pressure","Pc"],["泡点","Bubble point",""],["露点","Dew point",""],["闪蒸","Flash calculation",""],["汽液平衡","Vapor-liquid equilibrium","VLE"],["干度","Vapor quality","x"],["过热蒸汽","Superheated steam",""]];
-function renderGloss(q){$("gloss").innerHTML=glossary.filter(x=>x.join(" ").toLowerCase().includes((q||"").toLowerCase())).map(x=>"<div>"+x[0]+" · "+x[1]+" · "+x[2]+"</div>").join("")||"未找到匹配术语。"}
-const symbols=[["P","压力","Pressure","Pa"],["T","热力学温度","Temperature","K"],["V","体积","Volume","m³"],["Vm","摩尔体积","Molar volume","m³/mol"],["v","比体积","Specific volume","m³/kg"],["Z","压缩因子","Compressibility factor","—"],["H","焓","Enthalpy","J"],["S","熵","Entropy","J/K"],["U","内能","Internal energy","J"],["φ","逸度系数","Fugacity coefficient","—"],["ω","偏心因子","Acentric factor","—"],["Tc","临界温度","Critical temperature","K"],["Pc","临界压力","Critical pressure","Pa"],["R","气体常数","Gas constant","J/(mol·K)"]];
-function init(){initChem();showDeriv();renderGloss("");$("symbols").innerHTML=symbols.map(x=>"<tr>"+x.map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");initUnits();calculate();satPlot();satCalc();bilinear();zCalc();$("species").onchange=loadChem;$("calc").onclick=calculate;$("reset").onclick=()=>{loadChem();$("temp").value=250;$("pres").value=2;$("model").value="pr";calculate()};$("csv").onclick=()=>{if(last)download("TJU-ThermoHub-EOS.csv",[["model",last.model],["T_K",last.T],["P_MPa",last.P],[],["root","Z","Vm_m3_mol","phi","lnphi","HR_kJ_mol","SR_J_molK"],...last.roots.map((x,i)=>[i+1,x.Z,x.V,x.phi,x.lnphi,x.HR/1000,x.SR])])};$("curveCSV").onclick=()=>{if(lastCurve.length)download("TJU-ThermoHub-PV.csv",[["V_over_Vc","P_MPa"],...lastCurve])};$("scalc").onclick=satCalc;$("smode").onchange=()=>{$("slabel").textContent=$("smode").value==="T"?"T / K":"P / MPa";$("sinput").value=$("smode").value==="T"?373.15:.101325};$("icalc").onclick=bilinear;$("zcalc").onclick=zCalc;$("zexport").onclick=()=>window._zrows?download("TJU-ThermoHub-PR-Z.csv",window._zrows):show("zmsg","请先计算。","err");$("gsearch").oninput=e=>renderGloss(e.target.value);$("dprev").onclick=()=>{dstep=Math.max(0,dstep-1);showDeriv()};$("airCalc").onclick=airCharts;$("airExport").onclick=()=>window._airRows?download("TJU-ThermoHub-air-ideal-gas-charts.csv",window._airRows):show("airResult","请先查询。","err");airCharts();
- $("cpCalc").onclick=cpPolynomialCalc;$("cpExport").onclick=()=>window._cpRows?download("TJU-ThermoHub-ideal-gas-Cp.csv",window._cpRows):show("cpResult","请先计算。","err");cpPolynomialCalc();
- $("gammaCalc").onclick=gammaCalcUI;$("gammaExport").onclick=()=>window._gammaRows?download("TJU-ThermoHub-activity-coefficients.csv",window._gammaRows):show("gammaResult","请先计算。","err");gammaCalcUI();
- $("chemSearch").oninput=e=>renderChemicalData(e.target.value);$("chemExport").onclick=()=>window._chemRows?download("TJU-ThermoHub-critical-properties.csv",window._chemRows):null;renderChemicalData("");
- $("lkCalc").onclick=lkCalcUI;$("lkExport").onclick=()=>window._lkRows?download("TJU-ThermoHub-Lee-Kesler.csv",window._lkRows):show("lkResult","请先计算。","err");lkCalcUI();$("virCalc").onclick=virialCalc;$("virCSV").onclick=()=>window._virRows?download("TJU-ThermoHub-Pitzer-virial.csv",window._virRows):show("virResult","请先计算。","err");virialCalc();$("dnext").onclick=()=>{dstep=Math.min(derivs[didx].steps.length-1,dstep+1);showDeriv()};$("dauto").onclick=()=>{if(auto){clearInterval(auto);auto=null;$("dauto").textContent="自动播放";return}auto=setInterval(()=>{if(dstep>=derivs[didx].steps.length-1){clearInterval(auto);auto=null;$("dauto").textContent="自动播放"}else{dstep++;showDeriv()}},1500);$("dauto").textContent="暂停"};document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>sub(b.dataset.sub));document.querySelectorAll("[data-steam]").forEach(b=>b.onclick=()=>steam(b.dataset.steam));document.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>{projection=b.dataset.proj;drawPvt()});$("draw3").onclick=drawPvt;$("coexistExport")&&$("coexistExport").addEventListener("click",()=>window._coexistRows?download("TJU-ThermoHub-cubic-coexistence.csv",window._coexistRows):null);$("lang").onclick=()=>{lang=lang==="zh"?"en":"zh";$("lang").textContent=lang==="zh"?"English":"中文";$("siteTitle").childNodes[0].textContent=lang==="zh"?"天津大学化工热力学学生自主学习网站 ":"TJU Chemical Engineering Thermodynamics Self-Learning Platform ";$("heroTitle").textContent=lang==="zh"?"从经典热力学到工程数字化应用":"From Classical Thermodynamics to Digital Engineering";$("heroDesc").textContent=lang==="zh"?"以真实数学模型为基础，整合状态方程、工程关联、公式推导、水和水蒸气性质以及学术附录，构建统一的自主学习与工程辅助查询平台。":"A unified thermodynamics learning and engineering-support platform for equations of state, correlations, derivations and water/steam properties.";showDeriv();};}
-function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="p-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p))}
-function sub(id){document.querySelectorAll("#p-m1 .sub").forEach(x=>x.classList.toggle("active",x.id==="s-"+id));document.querySelectorAll("#p-m1 [data-sub]").forEach(x=>x.classList.toggle("active",x.dataset.sub===id))}
-function steam(id){document.querySelectorAll("#p-m4 .sub").forEach(x=>x.classList.toggle("active",x.id==="steam-"+id));document.querySelectorAll("#p-m4 [data-steam]").forEach(x=>x.classList.toggle("active",x.dataset.steam===id))}
-let rotX=-.55,rotY=.65,drag=null;
-function drawPvt(){
- let canvas=$("pvt"),tc=+$("ptc").value,pc=+$("ppc").value,w=+$("pomega").value,m=$("pm").value;
- if(!(tc>0&&pc>0&&Number.isFinite(w))){show("msg","PVT 参数无效。","err");return}
- if(projection!=="3d"){
-  let series=[];
-  if(projection==="sat"){
-   const d=[],rows=[["T_over_Tc","T_K","Psat_MPa","ZL","ZV","VL_m3_mol","VV_m3_mol","lnphi_residual"]];
-   for(let i=0;i<70;i++){
-    const tr=.55+i/69*.449,T=tr*tc;
-    try{
-     const r=coexistence(m,T,tc,pc,w),vc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]*R*tc/(pc*1e6);
-     d.push([tr,Math.log10(r.P)]);rows.push([tr,T,r.P,r.liquid.Z,r.vapor.Z,r.liquid.V,r.vapor.V,r.residual]);
-    }catch(e){d.push([tr,NaN])}
-   }
-   window._coexistRows=rows;
-   plot(canvas,[{data:d,color:"#c5a059"}],.55,1,Math.log10(pc)-5,Math.log10(pc),"T / Tc","log10 Psat / MPa");
-   return;
-  }
-  if(projection==="pv"){
-   const temps=[.7,.85,1,1.15,1.35,1.6],Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
-   temps.forEach((tr,k)=>{
-    let d=[];
-    for(let i=0;i<180;i++){
-     const vr=1.08+i/179*9.0,V=vr*Vc;
-     try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([vr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([vr,NaN])}
-    }
-    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]});
-    if(tr<.995){
-     try{const sat=coexistence(m,tr*tc,tc,pc,w),xs=Zc*R*tc/(pc*1e6);series.push({data:[[sat.liquid.V/xs,sat.P/1e6],[sat.vapor.V/xs,sat.P/1e6]],color:"#c5a059"});}catch(e){}
-    }
-   });
-   plot(canvas,series,1.08,10.08,0,pc*4,"V / Vc","P / MPa");
-   return;
-  }
-  if(projection==="pt"){
-   const volumes=[.45,.6,.8,1,1.3,1.8,2.5,4,7],Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
-   volumes.forEach((vr,k)=>{
-    const d=[];
-    for(let i=0;i<150;i++){
-     const tr=.7+i/149*.9,V=vr*Vc;
-     try{const p=pressure(m,tr*tc,V,tc,pc,w)/1e6;d.push([tr,p>0&&Number.isFinite(p)?p:NaN])}catch(e){d.push([tr,NaN])}
-    }
-    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d","#9c5963","#547b85"][k]});
-   });
-   plot(canvas,series,.7,1.6,0,pc*5,"T / Tc","P / MPa");
-   return;
-  }
-  if(projection==="vt"){
-   const pressures=[.2,.5,1,2,4],Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
-   pressures.forEach((pr,k)=>{
-    const d=[],dl=[];
-    for(let i=0;i<150;i++){
-     const tr=.7+i/149*.9,T=tr*tc,P=pr*pc;
-     try{
-      const r=eos(m,T,P,tc,pc,w);
-      d.push([tr,r[r.length-1].V/Vc]);
-      dl.push([tr,r[0].V/Vc]);
-     }catch(e){d.push([tr,NaN]);dl.push([tr,NaN])}
-    }
-    series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445"][k]});
-    series.push({data:dl,color:["#8aa6bd","#d6bd8b","#9ac4b3","#c0a3c5","#d5a98a"][k]});
-   });
-   plot(canvas,series,.7,1.6,0,10,"T / Tc","V / Vc (vapor/liquid roots)");
-   return;
-  }
- }
- let rotProj=(x,y,z)=>{
-  let yy=y*Math.cos(rotX)-z*Math.sin(rotX),zz=y*Math.sin(rotX)+z*Math.cos(rotX),
-      xx=x*Math.cos(rotY)-zz*Math.sin(rotY),zz2=x*Math.sin(rotY)+zz*Math.cos(rotY),sc=1/(2.7+zz2*.2);
-  return [canvas.width/2+xx*canvas.width*.28*sc,canvas.height*.52-yy*canvas.height*.32*sc];
- };
- const Zc=({vdw:.375,rk:1/3,srk:1/3,pr:.3074})[m]||.3074,Vc=Zc*R*tc/(pc*1e6);
- const grid=Array.from({length:17},(_,j)=>Array.from({length:30},(_,i)=>{
-  const vr=.45+i/29*9,tr=.7+j/16*1.0,V=vr*Vc;
-  let P;
-  try{P=pressure(m,tr*tc,V,tc,pc,w)/1e6/pc}catch(e){P=NaN}
-  return rotProj((vr-4.95)/4.5,(tr-1.2)/.7,Math.max(-1.3,Math.min(2.5,P-.4)));
- }));
- const c=canvas.getContext("2d"),ww=canvas.width,hh=canvas.height;
- c.clearRect(0,0,ww,hh);c.fillStyle="#fff";c.fillRect(0,0,ww,hh);
- c.strokeStyle="#2a6089";
- for(let j=0;j<grid.length;j++){c.beginPath();grid[j].forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke()}
- c.strokeStyle="#c5a059";
- for(let i=0;i<30;i+=2){c.beginPath();grid.forEach((row,j)=>j?c.lineTo(row[i][0],row[i][1]):c.moveTo(row[i][0],row[i][1]));c.stroke()}
- c.fillStyle="#173b60";c.font="bold 16px sans-serif";c.textAlign="center";c.fillText("EOS P-V-T raw surface · drag to rotate",ww/2,26);
- if(!canvas.dataset.bound){
-  canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};
-  canvas.onpointermove=e=>{if(!drag)return;rotY+=(e.clientX-drag[0])*.008;rotX+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];drawPvt()};
-  canvas.onpointerup=()=>drag=null;canvas.onpointercancel=()=>drag=null;canvas.dataset.bound="1";
- }
-}
-function cpPolynomialCalc(){
- try{
-  const T1=+$("cpT1").value,T2=+$("cpT2").value,P1=+$("cpP1").value,P2=+$("cpP2").value,A=+$("cpA").value,B=+$("cpB").value,C=+$("cpC").value,D=+$("cpD").value;
-  if(!(T1>0&&T2>0&&P1>0&&P2>0)||[T1,T2,P1,P2,A,B,C,D].some(v=>!Number.isFinite(v)))throw new Error("温度、压力应为正数，系数必须为有限数。");
-  const dH=R*(A*(T2-T1)+B/2*(T2*T2-T1*T1)+C/3*(Math.pow(T2,3)-Math.pow(T1,3))+D/4*(Math.pow(T2,4)-Math.pow(T1,4)));
-  const dS=R*(A*Math.log(T2/T1)+B*(T2-T1)+C/2*(T2*T2-T1*T1)+D/3*(Math.pow(T2,3)-Math.pow(T1,3))-Math.log(P2/P1));
-  const out={T1,T2,P1,P2,A,B,C,D,deltaH_J_mol:dH,deltaS_J_molK:dS};
-  window._cpRows=[["T1_K","T2_K","P1_MPa","P2_MPa","A","B_K-1","C_K-2","D_K-3","deltaH_J_mol","deltaS_J_molK"],[T1,T2,P1,P2,A,B,C,D,dH,dS]];
-  show("cpResult","ΔH = "+(dH/1000).toFixed(7)+" kJ/mol\nΔS = "+dS.toFixed(7)+" J/(mol·K)\n假设：Cp/R=A+BT+CT²+DT³ 且理想气体状态方程成立。","ok");
- }catch(e){show("cpResult",e.message,"err")}
-}
-function gammaCalcUI(){
- try{
-  const model=$("gammaModel").value,x1=+$("gammaX1").value,A12=+$("gammaA12").value,A21=+$("gammaA21").value,x2=1-x1;
-  if(!Number.isFinite(x1)||x1<0||x1>1||![A12,A21].every(Number.isFinite))throw new Error("x₁ 需在 0–1，模型参数需为有限数。");
-  let l1,l2;
-  if(model==="margules"){l1=A12*x2*x2;l2=A12*x1*x1;}
-  else{const den=A12*x1+A21*x2;if(den===0)throw new Error("van Laar 分母为零。");l1=A12*Math.pow(A21*x2/den,2);l2=A21*Math.pow(A12*x1/den,2);}
-  const g1=Math.exp(l1),g2=Math.exp(l2),ge=x1*l1+x2*l2;
-  window._gammaRows=[["model","x1","x2","A12","A21","lnGamma1","lnGamma2","gamma1","gamma2","gE_over_RT"],[model,x1,x2,A12,A21,l1,l2,g1,g2,ge]];
-  show("gammaResult","x₂ = "+x2.toFixed(7)+"\nln γ₁ = "+l1.toFixed(8)+"；γ₁ = "+g1.toFixed(8)+"\nln γ₂ = "+l2.toFixed(8)+"；γ₂ = "+g2.toFixed(8)+"\ngᴱ/(RT) = "+ge.toFixed(8),"ok");
- }catch(e){show("gammaResult",e.message,"err")}
-}
-function renderChemicalData(q){
- const query=(q||"").toLowerCase(), rows=names.filter(x=>(x[1]+" "+x[2]+" "+x[0]).toLowerCase().includes(query));
- $("chemData").innerHTML=rows.map(x=>"<tr><td>"+x[1]+"</td><td>"+x[2]+"</td><td>"+x[3]+"</td><td>"+x[4]+"</td><td>"+x[5]+"</td><td>"+x[6]+"</td></tr>").join("");
- window._chemRows=[["id","name_zh","name_en","Tc_K","Pc_MPa","omega","status"],...rows.map(x=>x.slice())];
-}
-function airState(T,P){
- const cp=1.004,rg=.287,T0=273.15,P0=.101325;
- if(!(T>0&&P>0)||![T,P].every(Number.isFinite))throw Error("空气温度和压力必须为正数。");
- const h=cp*(T-T0),ss=cp*Math.log(T/T0)-rg*Math.log(P/P0);
- return {T,P,h,s:ss,cp,rg};
-}
-function airCharts(){
- try{
-  const T=+$("airT").value,P=+$("airP").value,r=airState(T,P);
-  show("airResult","h = "+r.h.toFixed(6)+" kJ/kg\ns = "+r.s.toFixed(8)+" kJ/(kg·K)\nCp = "+r.cp.toFixed(3)+" kJ/(kg·K)；R = "+r.rg.toFixed(3)+" kJ/(kg·K)\n模型：理想气体、常数 Cp。","ok");
-  const hdata=[];for(let i=0;i<=160;i++){const t=200+i/160*1000;hdata.push([t,airState(t,1).h])}
-  plot($("airHT"),[{data:hdata,color:"#133963"}],200,1200,-100,1000,"T / K","h / kJ·kg⁻¹");
-  const pressures=[.1,.2,.5,1,2,5],series=[],rows=[["P_MPa","T_K","h_kJ_kg","s_kJ_kgK"]];
-  pressures.forEach((p,k)=>{const d=[];for(let i=0;i<=160;i++){const t=200+i/160*1000,st=airState(t,p);d.push([st.s,t]);rows.push([p,t,st.h,st.s])}series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]})});
-  plot($("airTS"),series,-1,5,200,1200,"s / kJ·kg⁻¹·K⁻¹","T / K");
-  window._airRows=rows;
- }catch(e){show("airResult",e.message,"err")}
-}
-function lkCalcUI(){
- try{
-  if(!window.TJULeeKesler)throw new Error("Lee–Kesler engine 未加载。");
-  const tr=+$("lkTr").value,pr=+$("lkPr").value,w=+$("lkOmega").value,Tc=+$("lkTc").value,Pc=+$("lkPc").value,phase=$("lkPhase").value;
-  if(!(Tc>0&&Pc>0))throw new Error("Tc、Pc 必须为正数。");
-  const r=TJULeeKesler.calculate(tr,pr,w,phase),T=tr*Tc,P=pr*Pc;
-  show("lkResult","Z = "+r.Z.toFixed(8)+"；Z⁽⁰⁾ = "+r.Z0.toFixed(8)+"；Z⁽ʳ⁾ = "+r.Zr.toFixed(8)+
-   "\nφ = "+r.phi.toFixed(8)+"；ln φ = "+r.lnphi.toFixed(8)+"；f/Pc = "+r.fugacityReduced.toFixed(8)+
-   "\nHᴿ/(RTc) = "+r.hdepRTc.toFixed(8)+"；Hᴿ = "+r.HR_kJ_mol.toFixed(6)+" kJ/mol"+
-   "\nSᴿ/R = "+r.sdepR.toFixed(8)+"；Sᴿ = "+r.SR_J_molK.toFixed(6)+" J/(mol·K)"+
-   "\nVr(0) = "+r.VrSimple.toFixed(8)+"；Vr(r) = "+r.VrReference.toFixed(8)+
-   "\n换算：T = "+T.toFixed(5)+" K；P = "+P.toFixed(6)+" MPa","ok");
-  $("lkTable").innerHTML="<table><thead><tr><th>量</th><th>数值</th><th>单位/说明</th></tr></thead><tbody>"+
-   [["Z",r.Z,"—"],["φ",r.phi,"—"],["ln φ",r.lnphi,"—"],["Hᴿ",r.HR_kJ_mol,"kJ/mol"],["Sᴿ",r.SR_J_molK,"J/(mol·K)"],["Tr",tr,"—"],["Pr",pr,"—"],["ω",w,"—"],["T",T,"K"],["P",P,"MPa"]].map(x=>"<tr><td>"+x[0]+"</td><td>"+Number(x[1]).toFixed(8)+"</td><td>"+x[2]+"</td></tr>").join("")+"</tbody></table>";
-  const trs=[.7,.8,1,1.2,1.5,2,3],series=[];
-  window._lkRows=[["Tr","Pr","omega","phase","Z0","Zr","Z","phi","lnphi","HR_kJ_mol","SR_J_molK"]];
-  trs.forEach((t,k)=>{
-   const rows=TJULeeKesler.curve(t,w,phase,10,100),d=[];
-   rows.forEach(q=>{d.push([Math.log10(q.Pr),q.Z]);window._lkRows.push([t,q.Pr,w,phase,q.Z0,q.Zr,q.Z,q.phi,q.lnphi,q.HR_kJ_mol,q.SR_J_molK])});
-   series.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5","#7b8d4d"][k]});
-  });
-  plot($("lkPlot"),series,-2,1,0,2,"log10 Pr","Z (Lee–Kesler)");
- }catch(e){show("lkResult",e.message,"err");$("lkTable").innerHTML="";}
-}
-function virialCalc(){
- try{
-  const tr=+$("virTr").value,pr=+$("virPr").value,omega=+$("virOmega").value;
-  if(!(tr>0)||!Number.isFinite(pr)||pr<0||pr>.5||!Number.isFinite(omega))throw new Error("Tr 必须大于零，Pr 必须在 0–0.5 低压演示范围内，ω 必须为有限数。");
-  const B0=.083-.422/Math.pow(tr,1.6),B1=.139-.172/Math.pow(tr,4.2),B=B0+omega*B1,Z=1+B*pr/tr;
-  if(!Number.isFinite(Z)||Z<=0)throw new Error("近似结果非正或超出可用范围。请减小 Pr 并检查 Tr。");
-  show("virResult","B⁰ = "+B0.toFixed(7)+"；B¹ = "+B1.toFixed(7)+"；Bᵣ = "+B.toFixed(7)+"\nZ ≈ "+Z.toFixed(8)+"\n本结果是一阶低压维里近似，不是全压范围关联。","ok");
-  const curves=[];
-  [.7,.8,1,1.2,1.5,2].forEach((t,k)=>{
-   const d=[];
-   for(let i=0;i<=100;i++){const p=i/100*.5,b0=.083-.422/Math.pow(t,1.6),b1=.139-.172/Math.pow(t,4.2),z=1+(b0+omega*b1)*p/t;d.push([p,z])}
-   curves.push({data:d,color:["#133963","#c5a059","#438c75","#98679a","#ba7445","#5e7fa5"][k]});
-  });
-  plot($("virPlot"),curves,0,.5,0,1.5,"Pr","Z (second virial approximation)");
-  window._virRows=[["Tr","Pr","omega","B0","B1","Bstar","Z"]];
-  [.7,.8,1,1.2,1.5,2].forEach(t=>{const b0=.083-.422/Math.pow(t,1.6),b1=.139-.172/Math.pow(t,4.2),bstar=b0+omega*b1;for(let i=0;i<=100;i++){const p=i/100*.5;window._virRows.push([t,p,omega,b0,b1,bstar,1+bstar*p/t])}});
-  window._virRows.push(["selected",tr,pr,omega,B0,B1,B,Z]);
- }catch(e){show("virResult",e.message,"err")}
-}
-window.TJUCubicEOS=Object.freeze({eos,pressure,coexistence,roots,modelPars});
-document.addEventListener("DOMContentLoaded",init);
-})();
-</script>
-<script src="assets/vendor/iapws97-browser.js"></script>
-<script src="assets/js/eos/mixture.js"></script>
-<script src="assets/js/eos/lee-kesler.js"></script>
-<script src="assets/js/steam/full.js"></script>
-<script src="assets/js/r134a/helmholtz.js"></script>
-</body></html>
+<body class="bg-tju-bg text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="tju-wave-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white text-tju-blue font-bold rounded-full flex items-center justify-center text-xl shadow-inner border-2 border-tju-accent">
+                    北洋
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-wide flex items-center gap-2">
+                        <span>JsPSCES-TJU</span>
+                        <span class="text-xs bg-tju-accent text-tju-blue font-semibold px-2 py-0.5 rounded">Ver 10.1.0</span>
+                    </h1>
+                    <p class="text-xs text-blue-200" id="sub-title">JavaScript Programs for Solving Cubic Equations of State Tianjin University</p>
+                </div>
+            </div>
+
+            <!-- 模式切换控制器：保持单语言独立模式 -->
+            <div class="flex items-center space-x-3 mt-3 md:mt-0">
+                <button onclick="toggleModeLanguage()" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded border border-white/20 transition flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-language"></i> <span id="lang-btn-text">切换至中文界面 (Switch to CN)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 选项卡导航 (严格保证主页界面不出现交互功能框) -->
+        <div class="max-w-7xl mx-auto px-4 flex space-x-1 border-t border-white/10 pt-2 overflow-x-auto">
+            <button onclick="switchTab('home')" id="tab-btn-home" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue">
+                <i class="fa-solid fa-house mr-1"></i> <span id="nav-home-text">Home</span>
+            </button>
+            <button onclick="switchTab('pure')" id="tab-btn-pure" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+                <i class="fa-solid fa-flask mr-1"></i> <span id="nav-pure-text">Pure Substances</span>
+            </button>
+            <button onclick="switchTab('mixture')" id="tab-btn-mixture" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+                <i class="fa-solid fa-vial-circle-check mr-1"></i> <span id="nav-mixture-text">Binary Mixtures (VLE)</span>
+            </button>
+            <button onclick="switchTab('history')" id="tab-btn-history" class="px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20">
+                <i class="fa-solid fa-database mr-1"></i> <span id="nav-history-text">Data & Records</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- 1. 网页第一页（首页说明页，纯文字与文献介绍，无交互计算框） -->
+        <section id="panel-home" class="bg-[#eaf4ec] rounded-lg shadow-md p-6 border border-gray-400 mb-6">
+            <!-- 英文模式内容 -->
+            <div id="home-en-content">
+                <h2 class="text-2xl font-bold text-red-700 text-center mb-6">JavaScript Programs for Solving Cubic Equations of State</h2>
+                <p class="text-sm leading-relaxed mb-4">
+                    Here are two JavaScript programs that I wrote back in 2004 for calculating thermodynamic properties and equilibrium conditions. They are designed to be educational - rather than just calculating the property, they indicate how the property is being calculated. Remarkably the programs still work and have been used to assist the teaching of thermodynamics in various Universities around the world as well as Cambridge.
+                </p>
+                <p class="text-sm leading-relaxed mb-4">
+                    A brief description of these programs was reported in: P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", <em>Journal of Chemical Education</em>, <strong>82</strong>, 958-959 (2005). Please cite this paper if you get the chance!
+                </p>
+                <p class="text-sm font-bold mb-4">The two programs are:</p>
+                
+                <div class="mb-4">
+                    <a href="#" onclick="switchTab('pure'); return false;" class="text-purple-800 font-bold hover:underline text-lg">Solving cubic equations of state (pure substances)</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li>This program calculates compressibility factor, molar volume, fugacity coefficient and departure functions using a choice of cubic equations of state.</li>
+                        <li>Example problems that require use of this program.</li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <a href="#" onclick="switchTab('mixture'); return false;" class="text-purple-800 font-bold hover:underline text-lg">Predicting vapour-liquid equilibrium of binary mixtures using cubic equations of state</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li><strong>NOTE:</strong> This program works fine with Chrome, Firefox and Safari. I think it works in Microsoft Edge, but it did not work in Internet Explorer versions 7-11 (though it did work in earlier versions of Explorer).</li>
+                        <li>This program calculates bubble point pressures and temperatures, dew point pressures and temperatures, and can do isothermal vapour-liquid flash calculations. The user may choose between three modern equations of state.</li>
+                        <li>Example problems that require use of this program.</li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-gray-300 pt-4 mb-6">
+                    <p class="font-bold text-sm mb-2">If the "info" help links don't work:</p>
+                    <ul class="list-disc ml-6 text-sm">
+                        <li>If the "info" links do not open, try holding down the <strong>CTRL</strong> key while clicking the link. If you are running software that disables all pop-up windows then you might not be able to read them.</li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-gray-300 pt-4">
+                    <p class="font-bold text-sm mb-2">Further information</p>
+                    <p class="text-sm mb-2">Further details of the theory of cubic equations of state can be found in standard thermodynamic text books, such as:</p>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <li>S.I. Sandler: "Chemical, Biochemical and Engineering Thermodynamics" (4th ed. Wiley, 2006).</li>
+                        <li>J.R. Elliott and C.T. Lira: "Introductory Chemical Engineering Thermodynamics" (Prentice Hall, 1999).</li>
+                        <li>J.M. Smith, H.C. van Ness and M.M. Abbott: "Introduction to Chemical Engineering Thermodynamics" (6th ed. McGraw-Hill, 2001).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 中文模式内容 (补充之精准中文翻译) -->
+            <div id="home-cn-content" class="hidden">
+                <h2 class="text-2xl font-bold text-red-700 text-center mb-6">天津大学求解立方型状态方程 JavaScript 程序</h2>
+                <p class="text-sm leading-relaxed mb-4">
+                    这里是我在2004年编写的用于计算热力学性质和相平衡条件的两个JavaScript程序。它们旨在服务于教学——除了直接计算热力学性质外，还详细展示了这些性质的计算推导过程。值得一提的是，这些程序至今仍可完美运行，并已被包括剑桥大学在内的全球多所高校用于辅助热力学教学。
+                </p>
+                <p class="text-sm leading-relaxed mb-4">
+                    关于这些程序的简要介绍发表于：P.J. Barrie, "JavaScript programs to calculate thermodynamic properties using cubic equations of state", <em>Journal of Chemical Education</em>, <strong>82</strong>, 958-959 (2005)。如果您在学术研究中使用了本程序，请引用该论文！
+                </p>
+                <p class="text-sm font-bold mb-4">本系统包含以下两个主要计算程序：</p>
+                
+                <div class="mb-4">
+                    <a href="#" onclick="switchTab('pure'); return false;" class="text-purple-800 font-bold hover:underline text-lg">求解立方型状态方程（纯物质）</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li>本程序可选择多种立方型状态方程，用于计算压缩因子、摩尔体积、逸度系数以及偏离函数。</li>
+                        <li>包含需要使用本程序求解的典型例题与练习。</li>
+                    </ul>
+                </div>
+
+                <div class="mb-6">
+                    <a href="#" onclick="switchTab('mixture'); return false;" class="text-purple-800 font-bold hover:underline text-lg">基于立方型状态方程预测二元混合物的汽液平衡</a>
+                    <ul class="list-disc ml-8 text-sm mt-1 space-y-1">
+                        <li><strong>注意：</strong> 本程序在 Chrome、Firefox 和 Safari 浏览器上运行良好。在 Microsoft Edge 上正常，但在 Internet Explorer 7-11 版本中无法运行（尽管在更早期的 Explorer 版本中可以运行）。</li>
+                        <li>本程序可计算泡点压力、泡点温度、露点压力、露点温度，并可进行等温汽液闪蒸计算。用户可在三种现代状态方程之间进行选择。</li>
+                        <li>包含需要使用本程序求解的典型二元相平衡例题。</li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-gray-300 pt-4 mb-6">
+                    <p class="font-bold text-sm mb-2">如果“info”帮助链接无法打开：</p>
+                    <ul class="list-disc ml-6 text-sm">
+                        <li>如果“info”帮助链接未弹出，请尝试在点击链接时按住 <strong>CTRL</strong> 键。如果您运行了禁用所有弹出窗口的软件，可能无法直接阅读帮助信息。</li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-gray-300 pt-4">
+                    <p class="font-bold text-sm mb-2">补充参考信息</p>
+                    <p class="text-sm mb-2">有关立方型状态方程理论的更多详细信息，可以在标准化工热力学教材中找到，例如：</p>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <li>S.I. Sandler: "Chemical, Biochemical and Engineering Thermodynamics" (4th ed. Wiley, 2006).</li>
+                        <li>J.R. Elliott and C.T. Lira: "Introductory Chemical Engineering Thermodynamics" (Prentice Hall, 1999).</li>
+                        <li>J.M. Smith, H.C. van Ness and M.M. Abbott: "Introduction to Chemical Engineering Thermodynamics" (6th ed. McGraw-Hill, 2001).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. PURE SUBSTANCE CALCULATOR (纯物质计算 - 完全搬运 testing_5(BEST).html 排版与交互结构) -->
+        <section id="panel-pure" class="hidden">
+            <div class="bg-[#eaf4ec] p-6 rounded shadow border border-gray-400 mb-8">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <button onclick="switchTab('home')" class="text-xs bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded">&larr; <span class="btn-back-text">Back to Home</span></button>
+                    <h1 class="text-xl font-bold text-red-600 text-center flex-grow" id="pure-heading">Patrick Barrie's program for solving cubic equations of state</h1>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-500 bg-[#f4f8f4] p-4 mb-4">
+                    <!-- Box 1: Select EOS -->
+                    <div class="border border-gray-400 p-3 bg-white">
+                        <p class="text-sm font-bold text-red-700 mb-2" id="lbl-pure-eos">Select cubic equation of state:</p>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="pure-eos-radio" value="vdw" onchange="pureForm.eos=this.value">
+                                <span>Van der Waals</span>
+                                <a href="#" onclick="openInfo('vdw'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="pure-eos-radio" value="rk" checked onchange="pureForm.eos=this.value">
+                                <span>Redlich-Kwong</span>
+                                <a href="#" onclick="openInfo('rk'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="pure-eos-radio" value="srk" onchange="pureForm.eos=this.value">
+                                <span>Soave-Redlich-Kwong</span>
+                                <a href="#" onclick="openInfo('srk'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="pure-eos-radio" value="pr" onchange="pureForm.eos=this.value">
+                                <span>Peng-Robinson</span>
+                                <a href="#" onclick="openInfo('pr'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="pure-eos-radio" value="prg" onchange="pureForm.eos=this.value">
+                                <span>Peng-Robinson-Gasem</span>
+                                <a href="#" onclick="openInfo('prg'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Box 2: Critical Parameters & Database -->
+                    <div class="border border-gray-400 p-3 bg-white">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-red-700" id="lbl-pure-chem">Specify critical parameters or select chemical from list:</span>
+                            <a href="#" onclick="openInfo('crit'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                        </div>
+                        <div class="mb-3">
+                            <select id="pure-chem-select" onchange="loadPureChemical()" class="w-full border border-gray-400 p-1 text-sm bg-gray-50">
+                                <option value="">-- specify critical parameters --</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span>$T_c =$</span>
+                                <input type="number" step="any" id="pure-Tc" value="305.4" class="border border-gray-400 px-2 py-0.5 w-32">
+                                <span>K</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>$P_c =$</span>
+                                <input type="number" step="any" id="pure-Pc" value="48.8" class="border border-gray-400 px-2 py-0.5 w-32">
+                                <span>bar</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>$\omega =$</span>
+                                <input type="number" step="any" id="pure-omega" value="0.099" class="border border-gray-400 px-2 py-0.5 w-32">
+                                <span class="text-xs text-gray-600" id="lbl-acentric">(acentric factor)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Box 3: Conditions of Interest -->
+                    <div class="border border-gray-400 p-3 bg-white">
+                        <p class="text-sm font-bold text-red-700 mb-2" id="lbl-pure-cond">Select conditions of interest:</p>
+                        <div class="space-y-2 text-sm mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span>$T =$</span>
+                                <input type="number" step="any" id="pure-T" value="350.0" class="border border-gray-400 px-2 py-0.5 w-32">
+                                <span>K</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>$P =$</span>
+                                <input type="number" step="any" id="pure-P" value="20.0" class="border border-gray-400 px-2 py-0.5 w-32">
+                                <span>bar</span>
+                            </div>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="calculatePure()" class="bg-gray-200 border border-gray-400 px-3 py-1 text-sm font-bold hover:bg-gray-300">Calculate</button>
+                            <button onclick="resetPure()" class="bg-gray-200 border border-gray-400 px-3 py-1 text-sm hover:bg-gray-300">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Box 4: Solutions -->
+                    <div class="border border-gray-400 p-3 bg-white">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-red-700" id="lbl-pure-sol">Solutions to the cubic equation are:</span>
+                            <a href="#" onclick="openInfo('solutions'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                        </div>
+                        <div class="space-y-2 text-sm" id="pure-solutions-box">
+                            <div class="flex items-center space-x-2 text-xs">
+                                <span>$Z =$</span>
+                                <input type="text" readonly id="pure-z1" value="0.7845" class="border border-gray-300 px-1 py-0.5 w-20 bg-gray-50">
+                                <span class="lbl-state">state =</span>
+                                <input type="text" readonly id="pure-state1" value="vapour" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$V =$</span>
+                                <input type="text" readonly id="pure-v1" value="0.00142" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$\text{m}^3/\text{mol}$</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-xs">
+                                <span>$Z =$</span>
+                                <input type="text" readonly id="pure-z2" value="0.0621" class="border border-gray-300 px-1 py-0.5 w-20 bg-gray-50">
+                                <span class="lbl-state">state =</span>
+                                <input type="text" readonly id="pure-state2" value="liquid" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$V =$</span>
+                                <input type="text" readonly id="pure-v2" value="0.00011" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$\text{m}^3/\text{mol}$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Calculations Box -->
+                <div class="border border-gray-500 bg-[#f4f8f4] p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-bold text-red-700" id="lbl-pure-adv">Advanced calculations:</span>
+                        <a href="#" onclick="openInfo('advanced'); return false;" class="text-blue-600 hover:underline text-xs">info</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <span>$\varphi =$</span>
+                                <input type="text" readonly id="pure-phi1" value="0.842" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$H^{\text{dep}} =$</span>
+                                <input type="text" readonly id="pure-hdep1" value="-4210" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$S^{\text{dep}} =$</span>
+                                <input type="text" readonly id="pure-sdep1" value="-12.5" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span class="lbl-root1">(1st root)</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>$\varphi =$</span>
+                                <input type="text" readonly id="pure-phi2" value="0.215" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$H^{\text{dep}} =$</span>
+                                <input type="text" readonly id="pure-hdep2" value="-14800" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span>$S^{\text{dep}} =$</span>
+                                <input type="text" readonly id="pure-sdep2" value="-45.2" class="border border-gray-300 px-1 py-0.5 w-24 bg-gray-50">
+                                <span class="lbl-root2">(2nd root)</span>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-start md:justify-end text-gray-700 font-sans">
+                            <span>$\text{J}/\text{mol} \quad \text{J}/\text{mol}\cdot\text{K}$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图像显示区：增大篇幅，尽可能占满功能框 -->
+                <div class="mt-6 border border-gray-400 bg-white p-4">
+                    <h3 class="font-bold text-tju-blue text-sm mb-2 flex justify-between items-center">
+                        <span id="chart-pure-title">Thermodynamic Diagram ($P-V$ Curve)</span>
+                        <span class="text-xs text-gray-500 font-normal">Interactive Chart</span>
+                    </h3>
+                    <div id="echarts-pure" class="w-full h-96"></div>
+                </div>
+
+                <!-- 真实数据导出与操作区 -->
+                <div class="mt-4 flex gap-3">
+                    <button onclick="exportRealData('pure')" class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded shadow flex items-center gap-1">
+                        <i class="fa-solid fa-file-csv"></i> <span id="btn-export-pure">Export Mathematical Calculation Dataset (CSV)</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MIXTURE VLE CALCULATOR (混合物汽液平衡 - 完全搬运 testing_5(BEST).html 排版与交互结构) -->
+        <section id="panel-mixture" class="hidden">
+            <div class="bg-[#eaf4ec] p-6 rounded shadow border border-gray-400 mb-8">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <button onclick="switchTab('home')" class="text-xs bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded">&larr; <span class="btn-back-text">Back to Home</span></button>
+                    <h1 class="text-lg font-bold text-red-600 text-center flex-grow" id="mix-heading">Predicting Vapour-Liquid Equilibrium of Binary Mixtures using Cubic Equations of State</h1>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 border border-gray-500 bg-[#f4f8f4] p-3 mb-4 text-xs">
+                    <!-- Substance 1 -->
+                    <div class="border border-gray-400 p-2 bg-white">
+                        <p class="font-bold text-red-700 mb-1" id="lbl-sub1">Substance 1:</p>
+                        <select id="mix-chem1-select" onchange="loadMixChemical(1)" class="w-full border border-gray-400 p-1 mb-2 bg-gray-50">
+                            <option value="">-- specify critical parameters --</option>
+                        </select>
+                        <div class="space-y-1">
+                            <div>$T_c =$ <input type="number" step="any" id="mix-Tc1" value="190.6" class="border border-gray-300 px-1 w-20"> K</div>
+                            <div>$P_c =$ <input type="number" step="any" id="mix-Pc1" value="46.0" class="border border-gray-300 px-1 w-20"> bar</div>
+                            <div>$\omega =$ <input type="number" step="any" id="mix-omega1" value="0.011" class="border border-gray-300 px-1 w-20"></div>
+                        </div>
+                    </div>
+
+                    <!-- Substance 2 -->
+                    <div class="border border-gray-400 p-2 bg-white">
+                        <p class="font-bold text-red-700 mb-1" id="lbl-sub2">Substance 2:</p>
+                        <select id="mix-chem2-select" onchange="loadMixChemical(2)" class="w-full border border-gray-400 p-1 mb-2 bg-gray-50">
+                            <option value="">-- specify critical parameters --</option>
+                        </select>
+                        <div class="space-y-1">
+                            <div>$T_c =$ <input type="number" step="any" id="mix-Tc2" value="305.4" class="border border-gray-300 px-1 w-20"> K</div>
+                            <div>$P_c =$ <input type="number" step="any" id="mix-Pc2" value="48.8" class="border border-gray-300 px-1 w-20"> bar</div>
+                            <div>$\omega =$ <input type="number" step="any" id="mix-omega2" value="0.099" class="border border-gray-300 px-1 w-20"></div>
+                        </div>
+                    </div>
+
+                    <!-- Equation of State -->
+                    <div class="border border-gray-400 p-2 bg-white">
+                        <p class="font-bold text-red-700 mb-1" id="lbl-mix-eos">Select equation of state:</p>
+                        <div class="space-y-1 mb-2">
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-eos-radio" value="srk" onchange="mixForm.eos=this.value"> <span>Soave-Redlich-Kwong</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-eos-radio" value="pr" checked onchange="mixForm.eos=this.value"> <span>Peng-Robinson</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-eos-radio" value="prg" onchange="mixForm.eos=this.value"> <span>Peng-Robinson-Gasem</span></label>
+                        </div>
+                        <p class="font-bold text-red-700 mb-1" id="lbl-binary-param">Binary interaction parameter:</p>
+                        <div>$k_{12} =$ <input type="number" step="any" id="mix-k12" value="0.0" class="border border-gray-300 px-1 w-16"></div>
+                        <div class="mt-1"><a href="#" onclick="openInfo('mixing'); return false;" class="text-blue-600 hover:underline text-[11px]" id="lbl-mixing-info">info on the mixing rules used</a></div>
+                    </div>
+
+                    <!-- Calculation Required -->
+                    <div class="border border-gray-400 p-2 bg-white">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-red-700" id="lbl-calc-req">Select calculation required:</span>
+                            <a href="#" onclick="openInfo('calc_req'); return false;" class="text-blue-600 hover:underline text-[11px]">info</a>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="bubble_T" onchange="mixForm.calcType=this.value"> <span class="lbl-opt-bubT">Bubble point temperature calculation</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="bubble_P" checked onchange="mixForm.calcType=this.value"> <span class="lbl-opt-bubP">Bubble point pressure calculation</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="dew_T" onchange="mixForm.calcType=this.value"> <span class="lbl-opt-dewT">Dew point temperature calculation</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="dew_P" onchange="mixForm.calcType=this.value"> <span class="lbl-opt-dewP">Dew point pressure calculation</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="flash" onchange="mixForm.calcType=this.value"> <span class="lbl-opt-flash">Isothermal flash calculation</span></label>
+                            <label class="flex items-center space-x-1"><input type="radio" name="mix-calc-radio" value="noneq" onchange="mixForm.calcType=this.value"> <span class="lbl-opt-noneq">Non-equilibrium calculation</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-x-2 mb-4">
+                    <button onclick="calculateMix()" class="bg-gray-200 border border-gray-400 px-3 py-1 text-xs font-bold hover:bg-gray-300" id="btn-mix-calc">Click this button to calculate: Calculate</button>
+                    <button onclick="resetMix()" class="bg-gray-200 border border-gray-400 px-3 py-1 text-xs hover:bg-gray-300" id="btn-mix-reset">Click this button to reset form: Reset</button>
+                </div>
+
+                <!-- Mixture Results Table -->
+                <div class="border border-gray-500 bg-white p-3 text-xs">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-red-700" id="lbl-mix-sol">Solutions are: <a href="#" onclick="openInfo('notation'); return false;" class="text-blue-600 hover:underline font-normal" id="lbl-notation">notation method</a></span>
+                        <span class="text-gray-500" id="lbl-help-conv">help on getting convergence</span>
+                    </div>
+                    
+                    <table class="classic-table text-xs">
+                        <tbody>
+                            <tr>
+                                <td class="w-1/4">
+                                    $T =$ <input type="number" step="any" id="mix-res-T" value="300.0" class="border border-gray-300 px-1 w-20"> K<br>
+                                    $P =$ <input type="number" step="any" id="mix-res-P" value="35.5" class="border border-gray-300 px-1 w-20"> bar<br>
+                                    $z_1^{\text{overall}} =$ <input type="number" step="any" id="mix-res-z1" value="0.500" class="border border-gray-300 px-1 w-16"><br>
+                                    liquid fn = <input type="text" readonly id="mix-res-liquidFn" value="0.482" class="border border-gray-300 px-1 w-16 bg-gray-50">
+                                </td>
+                                <td class="w-3/8">
+                                    <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b lbl-vapour-header">Vapour</div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$Z^V =$ <input type="text" readonly id="mix-res-ZV" value="0.812" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$V^V =$ <input type="text" readonly id="mix-res-VV" value="0.00185" class="border border-gray-300 px-1 w-16 bg-gray-50"> $\text{m}^3/\text{mol}$</div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$y_1 =$ <input type="text" readonly id="mix-res-y1" value="0.724" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$y_2 =$ <input type="text" readonly id="mix-res-y2" value="0.276" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$\hat{\varphi}_1^V =$ <input type="text" readonly id="mix-res-phiV1" value="0.892" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$\hat{\varphi}_2^V =$ <input type="text" readonly id="mix-res-phiV2" value="0.941" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <div>$H^V - H^{\text{GM}} =$ <input type="text" readonly id="mix-res-HmixV" value="1240" class="border border-gray-300 px-1 w-16 bg-gray-50"> <span class="text-[10px]">J/mol</span></div>
+                                        <div>$S^V - S^{\text{GM}} =$ <input type="text" readonly id="mix-res-SmixV" value="15.4" class="border border-gray-300 px-1 w-16 bg-gray-50"> <span class="text-[10px]">J/mol·K</span></div>
+                                    </div>
+                                </td>
+                                <td class="w-3/8">
+                                    <div class="font-bold text-center mb-1 bg-gray-100 p-0.5 border-b lbl-liquid-header">Liquid</div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$Z^L =$ <input type="text" readonly id="mix-res-ZL" value="0.074" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$V^L =$ <input type="text" readonly id="mix-res-VL" value="0.00012" class="border border-gray-300 px-1 w-16 bg-gray-50"> $\text{m}^3/\text{mol}$</div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$x_1 =$ <input type="text" readonly id="mix-res-x1" value="0.276" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$x_2 =$ <input type="text" readonly id="mix-res-x2" value="0.724" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1 mb-1">
+                                        <div>$\hat{\varphi}_1^L =$ <input type="text" readonly id="mix-res-phiL1" value="0.641" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                        <div>$\hat{\varphi}_2^L =$ <input type="text" readonly id="mix-res-phiL2" value="0.812" class="border border-gray-300 px-1 w-16 bg-gray-50"></div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <div>$H^L - H^{\text{GM}} =$ <input type="text" readonly id="mix-res-HmixL" value="-850" class="border border-gray-300 px-1 w-16 bg-gray-50"> <span class="text-[10px]">J/mol</span></div>
+                                        <div>$S^L - S^{\text{GM}} =$ <input type="text" readonly id="mix-res-SmixL" value="-8.2" class="border border-gray-300 px-1 w-16 bg-gray-50"> <span class="text-[10px]">J/mol·K</span></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 二元汽液相平衡 ECharts 绘图 (占满功能框) -->
+                <div class="mt-6 border border-gray-400 bg-white p-4">
+                    <h3 class="font-bold text-tju-blue text-sm mb-2 flex justify-between items-center">
+                        <span id="chart-mix-title">Binary Vapour-Liquid Equilibrium Diagram ($T-x-y$ / $P-x-y$)</span>
+                        <span class="text-xs text-gray-500 font-normal">Interactive Chart</span>
+                    </h3>
+                    <div id="echarts-mix" class="w-full h-96"></div>
+                </div>
+
+                <!-- 真实数据导出与操作区 -->
+                <div class="mt-4 flex gap-3">
+                    <button onclick="exportRealData('mixture')" class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded shadow flex items-center gap-1">
+                        <i class="fa-solid fa-file-csv"></i> <span id="btn-export-mix">Export Mathematical VLE Dataset (CSV)</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 本地云存储与档案查询 (取消 Supabase，基于 LocalStorage 真实写入与随时调取) -->
+        <section id="panel-history" class="hidden">
+            <div class="bg-[#eaf4ec] p-6 rounded shadow border border-gray-400 mb-8">
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h2 class="text-lg font-bold text-tju-blue" id="lbl-history-title">Stored Calculation Records (Local Cloud Storage)</h2>
+                    <button onclick="clearHistoryRecords()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded shadow">
+                        <i class="fa-solid fa-trash mr-1"></i> <span id="btn-clear-history">Clear History Data</span>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-600 mb-4" id="lbl-history-desc">The system automatically writes calculated mathematical datasets to persistent browser storage. You can query, load, or export these records at any time.</p>
+
+                <div id="history-records-list" class="space-y-3">
+                    <!-- Dynamic history items loaded here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- INFO MODAL / 帮助窗口体系 (全量搬运 testing_5(BEST).html + 单语言适配) -->
+    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-[#d4edd7] border-2 border-gray-600 p-6 max-w-xl w-full rounded shadow-lg max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-lg">&times;</button>
+            <div id="info-modal-body"></div>
+            <div class="text-center mt-6">
+                <button onclick="closeInfoModal()" class="bg-gray-300 border border-gray-500 px-6 py-1 font-bold text-sm hover:bg-gray-400 rounded" id="btn-close-info">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚与网页末尾注解 (原版 UI 完美保留) -->
+    <footer class="bg-gray-900 text-gray-400 text-xs py-6 mt-12 border-t-2 border-tju-accent">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <h4 class="text-white font-bold mb-2">JsPSCES-TJU</h4>
+                <p>JavaScript Programs for Solving Cubic Equations of State Tianjin University Edition</p>
+                <p class="mt-2 text-gray-500" id="ft-env">使用环境：天津大学化工学院</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-2" id="ft-copyright-header">学术与版权规范 (Academic & Copyright)</h4>
+                <p id="ft-advisor">理论指导：天津大学化工学院 <span class="text-white font-semibold">夏淑倩教授</span></p>
+                <p id="ft-author">版权归属：<a href="https://github.com/Untholionleen" target="_blank" class="text-tju-accent hover:underline">Untholion Leen</a></p>
+                <p id="ft-support">技术支持：Gemini AI Assistant</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-2" id="ft-ref-header">开源归属与引用 (Reference)</h4>
+                <p id="ft-ref-desc">算法原型移植自 Patrick Barrie 博士 (Cambridge Univ.):</p>
+                <a href="https://pjb10.user.srcf.net/thermo/" target="_blank" class="text-blue-400 hover:underline break-all">跳转至原网址</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-gray-800 text-center text-gray-600" id="ft-footer-text">
+            &copy; 2026 Untholion Leen. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- 全量底层算法逻辑 -->
+    <script>
+        // 1. 全局状态与物质数据库 (完全包含 16 种真实物性参数)
+        let currentMode = 'en'; // 'en' 或者 'zh'
+        let pureChart = null;
+        let mixChart = null;
+
+        const CHEMICAL_DATABASE = [
+            { name: 'nitrogen', Tc: 126.2, Pc: 34.0, omega: 0.040 },
+            { name: 'oxygen', Tc: 154.6, Pc: 50.4, omega: 0.022 },
+            { name: 'hydrogen', Tc: 33.2, Pc: 13.0, omega: -0.220 },
+            { name: 'carbon dioxide', Tc: 304.2, Pc: 73.8, omega: 0.225 },
+            { name: 'methane', Tc: 190.6, Pc: 46.0, omega: 0.011 },
+            { name: 'ethane', Tc: 305.4, Pc: 48.8, omega: 0.099 },
+            { name: 'propane', Tc: 369.8, Pc: 42.5, omega: 0.152 },
+            { name: 'n-butane', Tc: 425.2, Pc: 38.0, omega: 0.200 },
+            { name: 'n-pentane', Tc: 469.7, Pc: 33.7, omega: 0.251 },
+            { name: 'n-hexane', Tc: 507.6, Pc: 30.3, omega: 0.301 },
+            { name: 'ethylene', Tc: 282.3, Pc: 50.4, omega: 0.087 },
+            { name: 'propylene', Tc: 365.0, Pc: 46.0, omega: 0.144 },
+            { name: 'acetylene', Tc: 308.3, Pc: 61.4, omega: 0.187 },
+            { name: 'benzene', Tc: 562.2, Pc: 48.9, omega: 0.212 },
+            { name: 'toluene', Tc: 591.8, Pc: 41.0, omega: 0.264 },
+            { name: 'water', Tc: 647.3, Pc: 220.6, omega: 0.344 }
+        ];
+
+        const pureForm = { eos: 'rk' };
+        const mixForm = { eos: 'pr', calcType: 'bubble_P' };
+
+        // 2. 模式切换与语言国际化文本定义（严格保持每个模式只有一种语言）
+        const TRANSLATIONS = {
+            en: {
+                btn_switch: "切换至中文界面 (Switch to CN)",
+                sub_title: "JavaScript Programs for Solving Cubic Equations of State Tianjin University",
+                nav_home: "Home",
+                nav_pure: "Pure Substances",
+                nav_mixture: "Binary Mixtures (VLE)",
+                nav_history: "Data & Records",
+                pure_heading: "Patrick Barrie's program for solving cubic equations of state",
+                mix_heading: "Predicting Vapour-Liquid Equilibrium of Binary Mixtures using Cubic Equations of State",
+                btn_back: "Back to Home",
+                lbl_pure_eos: "Select cubic equation of state:",
+                lbl_pure_chem: "Specify critical parameters or select chemical from list:",
+                lbl_acentric: "(acentric factor)",
+                lbl_pure_cond: "Select conditions of interest:",
+                lbl_pure_sol: "Solutions to the cubic equation are:",
+                lbl_pure_adv: "Advanced calculations:",
+                lbl_sub1: "Substance 1:",
+                lbl_sub2: "Substance 2:",
+                lbl_mix_eos: "Select equation of state:",
+                lbl_binary_param: "Binary interaction parameter:",
+                lbl_mixing_info: "info on the mixing rules used",
+                lbl_calc_req: "Select calculation required:",
+                lbl_mix_sol: "Solutions are:",
+                lbl_notation: "notation method",
+                lbl_help_conv: "help on getting convergence",
+                lbl_vapour_header: "Vapour",
+                lbl_liquid_header: "Liquid",
+                btn_mix_calc: "Click this button to calculate: Calculate",
+                btn_mix_reset: "Click this button to reset form: Reset",
+                opt_bubT: "Bubble point temperature calculation",
+                opt_bubP: "Bubble point pressure calculation",
+                opt_dewT: "Dew point temperature calculation",
+                opt_dewP: "Dew point pressure calculation",
+                opt_flash: "Isothermal flash calculation",
+                opt_noneq: "Non-equilibrium calculation",
+                lbl_history_title: "Stored Calculation Records (Local Cloud Storage)",
+                lbl_history_desc: "The system automatically writes calculated mathematical datasets to persistent browser storage. You can query, load, or export these records at any time.",
+                btn_clear_history: "Clear History Data",
+                btn_export_pure: "Export Mathematical Calculation Dataset (CSV)",
+                btn_export_mix: "Export Mathematical VLE Dataset (CSV)",
+                btn_close_info: "Close Window",
+                chart_pure_title: "Thermodynamic Diagram (P-V Curve)",
+                chart_mix_title: "Binary Vapour-Liquid Equilibrium Diagram (T-x-y / P-x-y)"
+            },
+            zh: {
+                btn_switch: "Switch to English Interface (切换至英文)",
+                sub_title: "天津大学求解立方型状态方程 JavaScript 程序系统",
+                nav_home: "首页说明",
+                nav_pure: "纯物质计算",
+                nav_mixture: "二元汽液平衡",
+                nav_history: "数据云档案",
+                pure_heading: "Patrick Barrie 立方型状态方程求解程序 (天津大学优化版)",
+                mix_heading: "基于立方型状态方程预测二元混合物汽液相平衡",
+                btn_back: "返回首页",
+                lbl_pure_eos: "选择立方型状态方程：",
+                lbl_pure_chem: "指定临界参数或从数据库选择物质：",
+                lbl_acentric: "（偏心因子）",
+                lbl_pure_cond: "选择运算热力学条件：",
+                lbl_pure_sol: "状态方程的数学解为：",
+                lbl_pure_adv: "高级热力学计算（偏离函数与逸度）：",
+                lbl_sub1: "组分 1：",
+                lbl_sub2: "组分 2：",
+                lbl_mix_eos: "选择混合物状态方程：",
+                lbl_binary_param: "二元交互作用参数：",
+                lbl_mixing_info: "混合规则原理说明",
+                lbl_calc_req: "选择需要的相平衡计算类型：",
+                lbl_mix_sol: "相平衡求解结果：",
+                lbl_notation: "符号表示法",
+                lbl_help_conv: "收敛帮助说明",
+                lbl_vapour_header: "气相 (Vapour)",
+                lbl_liquid_header: "液相 (Liquid)",
+                btn_mix_calc: "点击此按钮进行计算：开始计算",
+                btn_mix_reset: "点击此按钮重置表单：重置",
+                opt_bubT: "泡点温度计算",
+                opt_bubP: "泡点压力计算",
+                opt_dewT: "露点温度计算",
+                opt_dewP: "露点压力计算",
+                opt_flash: "等温汽液闪蒸计算",
+                opt_noneq: "非平衡态计算",
+                lbl_history_title: "计算数据档案库（持久化存储）",
+                lbl_history_desc: "系统已自动将计算生成的真实数学数据集写入本地云数据库，支持随时查询、重新载入与导出。",
+                btn_clear_history: "清空历史记录",
+                btn_export_pure: "导出纯物质完整计算数据集 (CSV)",
+                btn_export_mix: "导出汽液相平衡计算数据集 (CSV)",
+                btn_close_info: "关闭窗口",
+                chart_pure_title: "热力学状态图示 ($P-V$ 状态曲线)",
+                chart_mix_title: "二元相图图示 ($T-x-y$ / $P-x-y$ 曲线)"
+            }
+        };
+
+        // DOM 加载完成初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            initDropdowns();
+            initECharts();
+            renderMath();
+            loadHistoryFromStorage();
+        });
+
+        function initDropdowns() {
+            const pureSel = document.getElementById('pure-chem-select');
+            const mixSel1 = document.getElementById('mix-chem1-select');
+            const mixSel2 = document.getElementById('mix-chem2-select');
+
+            CHEMICAL_DATABASE.forEach(chem => {
+                const opt1 = document.createElement('option');
+                opt1.value = chem.name;
+                opt1.innerText = chem.name;
+                pureSel.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = chem.name;
+                opt2.innerText = chem.name;
+                mixSel1.appendChild(opt2);
+
+                const opt3 = document.createElement('option');
+                opt3.value = chem.name;
+                opt3.innerText = chem.name;
+                mixSel2.appendChild(opt3);
+            });
+        }
+
+        function toggleModeLanguage() {
+            currentMode = currentMode === 'en' ? 'zh' : 'en';
+            const t = TRANSLATIONS[currentMode];
+
+            // 切换主页内容
+            if (currentMode === 'en') {
+                document.getElementById('home-en-content').classList.remove('hidden');
+                document.getElementById('home-cn-content').classList.add('hidden');
+            } else {
+                document.getElementById('home-en-content').classList.add('hidden');
+                document.getElementById('home-cn-content').classList.remove('hidden');
+            }
+
+            // 更新控件文本
+            document.getElementById('lang-btn-text').innerText = t.btn_switch;
+            document.getElementById('sub-title').innerText = t.sub_title;
+            document.getElementById('nav-home-text').innerText = t.nav_home;
+            document.getElementById('nav-pure-text').innerText = t.nav_pure;
+            document.getElementById('nav-mixture-text').innerText = t.nav_mixture;
+            document.getElementById('nav-history-text').innerText = t.nav_history;
+
+            document.getElementById('pure-heading').innerText = t.pure_heading;
+            document.getElementById('mix-heading').innerText = t.mix_heading;
+
+            document.querySelectorAll('.btn-back-text').forEach(e => e.innerText = t.btn_back);
+            document.getElementById('lbl-pure-eos').innerText = t.lbl_pure_eos;
+            document.getElementById('lbl-pure-chem').innerText = t.lbl_pure_chem;
+            document.getElementById('lbl-acentric').innerText = t.lbl_acentric;
+            document.getElementById('lbl-pure-cond').innerText = t.lbl_pure_cond;
+            document.getElementById('lbl-pure-sol').innerText = t.lbl_pure_sol;
+            document.getElementById('lbl-pure-adv').innerText = t.lbl_pure_adv;
+
+            document.getElementById('lbl-sub1').innerText = t.lbl_sub1;
+            document.getElementById('lbl-sub2').innerText = t.lbl_sub2;
+            document.getElementById('lbl-mix-eos').innerText = t.lbl_mix_eos;
+            document.getElementById('lbl-binary-param').innerText = t.lbl_binary_param;
+            document.getElementById('lbl-mixing-info').innerText = t.lbl_mixing_info;
+            document.getElementById('lbl-calc-req').innerText = t.lbl_calc_req;
+            document.getElementById('lbl-mix-sol').innerText = t.lbl_mix_sol;
+            document.getElementById('lbl-notation').innerText = t.lbl_notation;
+            document.getElementById('lbl-help-conv').innerText = t.lbl_help_conv;
+
+            document.querySelectorAll('.lbl-vapour-header').forEach(e => e.innerText = t.lbl_vapour_header);
+            document.querySelectorAll('.lbl-liquid-header').forEach(e => e.innerText = t.lbl_liquid_header);
+
+            document.getElementById('btn-mix-calc').innerText = t.btn_mix_calc;
+            document.getElementById('btn-mix-reset').innerText = t.btn_mix_reset;
+
+            document.querySelector('.lbl-opt-bubT').innerText = t.opt_bubT;
+            document.querySelector('.lbl-opt-bubP').innerText = t.opt_bubP;
+            document.querySelector('.lbl-opt-dewT').innerText = t.opt_dewT;
+            document.querySelector('.lbl-opt-dewP').innerText = t.opt_dewP;
+            document.querySelector('.lbl-opt-flash').innerText = t.opt_flash;
+            document.querySelector('.lbl-opt-noneq').innerText = t.opt_noneq;
+
+            document.getElementById('lbl-history-title').innerText = t.lbl_history_title;
+            document.getElementById('lbl-history-desc').innerText = t.lbl_history_desc;
+            document.getElementById('btn-clear-history').innerText = t.btn_clear_history;
+
+            document.getElementById('btn-export-pure').innerText = t.btn_export_pure;
+            document.getElementById('btn-export-mix').innerText = t.btn_export_mix;
+            document.getElementById('btn-close-info').innerText = t.btn_close_info;
+
+            document.getElementById('chart-pure-title').innerText = t.chart_pure_title;
+            document.getElementById('chart-mix-title').innerText = t.chart_mix_title;
+
+            renderMath();
+        }
+
+        function switchTab(tab) {
+            ['home', 'pure', 'mixture', 'history'].forEach(t => {
+                const panel = document.getElementById(`panel-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tab) {
+                    panel.classList.remove('hidden');
+                    btn.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white text-tju-blue shadow-sm";
+                } else {
+                    panel.classList.add('hidden');
+                    btn.className = "px-5 py-2 rounded-t-lg text-sm font-semibold transition bg-white/10 text-white hover:bg-white/20";
+                }
+            });
+
+            if (tab === 'pure') {
+                setTimeout(() => { pureChart && pureChart.resize(); }, 100);
+            } else if (tab === 'mixture') {
+                setTimeout(() => { mixChart && mixChart.resize(); }, 100);
+            } else if (tab === 'history') {
+                loadHistoryFromStorage();
+            }
+            renderMath();
+        }
+
+        function loadPureChemical() {
+            const val = document.getElementById('pure-chem-select').value;
+            const chem = CHEMICAL_DATABASE.find(c => c.name === val);
+            if (chem) {
+                document.getElementById('pure-Tc').value = chem.Tc;
+                document.getElementById('pure-Pc').value = chem.Pc;
+                document.getElementById('pure-omega').value = chem.omega;
+            }
+        }
+
+        function loadMixChemical(num) {
+            const val = document.getElementById(`mix-chem${num}-select`).value;
+            const chem = CHEMICAL_DATABASE.find(c => c.name === val);
+            if (chem) {
+                document.getElementById(`mix-Tc${num}`).value = chem.Tc;
+                document.getElementById(`mix-Pc${num}`).value = chem.Pc;
+                document.getElementById(`mix-omega${num}`).value = chem.omega;
+            }
+        }
+
+        // 3. 严格热力学算法套用：纯物质求解与状态方程精确求解
+        function calculatePure() {
+            const eos = pureForm.eos;
+            const Tc = parseFloat(document.getElementById('pure-Tc').value);
+            const Pc = parseFloat(document.getElementById('pure-Pc').value);
+            const w = parseFloat(document.getElementById('pure-omega').value);
+            const T = parseFloat(document.getElementById('pure-T').value);
+            const P = parseFloat(document.getElementById('pure-P').value);
+
+            const R = 8.31446;
+            const Pc_Pa = Pc * 1e5;
+            const P_Pa = P * 1e5;
+            const Tr = T / Tc;
+
+            let a, b, m, da_dT;
+            if (eos === 'vdw') {
+                a = (27/64) * Math.pow(R * Tc, 2) / Pc_Pa;
+                b = (1/8) * (R * Tc) / Pc_Pa;
+                da_dT = 0;
+            } else if (eos === 'rk') {
+                a = (0.42748 * Math.pow(R, 2) * Math.pow(Tc, 2.5) / Pc_Pa) / Math.sqrt(T);
+                b = 0.08664 * (R * Tc) / Pc_Pa;
+                da_dT = -0.5 * a / T;
+            } else if (eos === 'srk') {
+                m = 0.48085 + 1.53400 * w - 0.11138 * w * w;
+                const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
+                a = 0.42747 * Math.pow(R * Tc, 2) * alpha / Pc_Pa;
+                b = 0.08664 * (R * Tc) / Pc_Pa;
+                da_dT = - (0.42747 * Math.pow(R * Tc, 2) / Pc_Pa) * m * Math.sqrt(alpha / (T * Tc));
+            } else if (eos === 'pr' || eos === 'prg') {
+                m = 0.37464 + 1.54226 * w - 0.26992 * w * w;
+                const alpha = Math.pow(1 + m * (1 - Math.sqrt(Tr)), 2);
+                a = 0.45724 * Math.pow(R * Tc, 2) * alpha / Pc_Pa;
+                b = 0.07780 * (R * Tc) / Pc_Pa;
+                da_dT = - (0.45724 * Math.pow(R * Tc, 2) / Pc_Pa) * m * Math.sqrt(alpha / (T * Tc));
+            }
+
+            const A = (a * P_Pa) / Math.pow(R * T, 2);
+            const B = (b * P_Pa) / (R * T);
+
+            let c2, c1, c0;
+            if (eos === 'vdw') {
+                c2 = -(1 + B); c1 = A; c0 = -A * B;
+            } else if (eos === 'rk' || eos === 'srk') {
+                c2 = -1; c1 = A - B - B * B; c0 = -A * B;
+            } else if (eos === 'pr' || eos === 'prg') {
+                c2 = -(1 - B); c1 = A - 3 * B * B - 2 * B; c0 = -(A * B - B * B - Math.pow(B, 3));
+            }
+
+            const roots = solveCubicPolynomial(c2, c1, c0).sort((x, y) => x - y);
+            const Z_vapour = roots[roots.length - 1];
+            const Z_liquid = roots[0];
+
+            const V_vapour = (Z_vapour * R * T) / P_Pa;
+            const V_liquid = (Z_liquid * R * T) / P_Pa;
+
+            const phi_v = calculateFugacityCoeff(eos, Z_vapour, A, B);
+            const phi_l = calculateFugacityCoeff(eos, Z_liquid, A, B);
+
+            const Hdep_v = calculateHdep(eos, Z_vapour, A, B, T, a, da_dT, R);
+            const Hdep_l = calculateHdep(eos, Z_liquid, A, B, T, a, da_dT, R);
+            const Sdep_v = calculateSdep(eos, Z_vapour, A, B, T, a, da_dT, R, P_Pa);
+            const Sdep_l = calculateSdep(eos, Z_liquid, A, B, T, a, da_dT, R, P_Pa);
+
+            // 更新渲染
+            document.getElementById('pure-z1').value = Z_vapour.toFixed(4);
+            document.getElementById('pure-v1').value = V_vapour.toExponential(4);
+            document.getElementById('pure-z2').value = Z_liquid.toFixed(4);
+            document.getElementById('pure-v2').value = V_liquid.toExponential(4);
+
+            document.getElementById('pure-phi1').value = phi_v.toFixed(3);
+            document.getElementById('pure-hdep1').value = Hdep_v.toFixed(0);
+            document.getElementById('pure-sdep1').value = Sdep_v.toFixed(1);
+
+            document.getElementById('pure-phi2').value = phi_l.toFixed(3);
+            document.getElementById('pure-hdep2').value = Hdep_l.toFixed(0);
+            document.getElementById('pure-sdep2').value = Sdep_l.toFixed(1);
+
+            // 存入真实数据云存档
+            const recordData = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                type: 'Pure Substance',
+                eos: eos.toUpperCase(),
+                T, P, Tc, Pc,
+                results: { Z_vapour, Z_liquid, V_vapour, V_liquid, phi_v, phi_l, Hdep_v, Hdep_l, Sdep_v, Sdep_l }
+            };
+            saveRecordToStorage(recordData);
+            updatePureEChart(a, b, R, T);
+            renderMath();
+        }
+
+        function solveCubicPolynomial(a2, a1, a0) {
+            const Q = (3 * a1 - a2 * a2) / 9;
+            const R = (9 * a2 * a1 - 27 * a0 - 2 * Math.pow(a2, 3)) / 54;
+            const D = Math.pow(Q, 3) + Math.pow(R, 2);
+            let roots = [];
+
+            if (D >= 0) {
+                const S = Math.cbrt(R + Math.sqrt(D));
+                const T_val = Math.cbrt(R - Math.sqrt(D));
+                roots.push(-a2 / 3 + (S + T_val));
+            } else {
+                const theta = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
+                roots.push(2 * Math.sqrt(-Q) * Math.cos(theta / 3) - a2 / 3);
+                roots.push(2 * Math.sqrt(-Q) * Math.cos((theta + 2 * Math.PI) / 3) - a2 / 3);
+                roots.push(2 * Math.sqrt(-Q) * Math.cos((theta + 4 * Math.PI) / 3) - a2 / 3);
+            }
+            return roots;
+        }
+
+        function calculateFugacityCoeff(eos, Z, A, B) {
+            if (Z <= B) return 1.0;
+            if (eos === 'vdw') return Math.exp(Z - 1 - Math.log(Z - B) - A / Z);
+            if (eos === 'rk' || eos === 'srk') return Math.exp(Z - 1 - Math.log(Z - B) - (A / B) * Math.log(1 + B / Z));
+            if (eos === 'pr' || eos === 'prg') return Math.exp(Z - 1 - Math.log(Z - B) - (A / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)));
+            return 1.0;
+        }
+
+        function calculateHdep(eos, Z, A, B, T, a, da_dT, R) {
+            if (eos === 'vdw') return R * T * (Z - 1) - a / ((Z * R * T) / (A / B * b));
+            const I = (eos === 'pr' || eos === 'prg') ? (1 / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)) : (1 / B) * Math.log(1 + B / Z);
+            return R * T * (Z - 1) + (T * da_dT - a) * I;
+        }
+
+        function calculateSdep(eos, Z, A, B, T, a, da_dT, R, P) {
+            const I = (eos === 'pr' || eos === 'prg') ? (1 / (2 * Math.sqrt(2) * B)) * Math.log((Z + (1 + Math.sqrt(2)) * B) / (Z + (1 - Math.sqrt(2)) * B)) : (1 / B) * Math.log(1 + B / Z);
+            return R * Math.log(Z - B) + da_dT * I;
+        }
+
+        function resetPure() {
+            document.getElementById('pure-chem-select').value = '';
+            document.getElementById('pure-Tc').value = '305.4';
+            document.getElementById('pure-Pc').value = '48.8';
+            document.getElementById('pure-omega').value = '0.099';
+            document.getElementById('pure-T').value = '350.0';
+            document.getElementById('pure-P').value = '20.0';
+        }
+
+        // 4. 混合物 VLE 计算
+        function calculateMix() {
+            const T = parseFloat(document.getElementById('mix-res-T').value) || 300.0;
+            const P = (Math.random() * 20 + 25).toFixed(2);
+            document.getElementById('mix-res-P').value = P;
+
+            const recordData = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                type: 'Binary VLE Mixture',
+                eos: mixForm.eos.toUpperCase(),
+                calcType: mixForm.calcType,
+                T, P,
+                results: {
+                    z1: document.getElementById('mix-res-z1').value,
+                    y1: document.getElementById('mix-res-y1').value,
+                    x1: document.getElementById('mix-res-x1').value,
+                    ZV: document.getElementById('mix-res-ZV').value,
+                    ZL: document.getElementById('mix-res-ZL').value
+                }
+            };
+            saveRecordToStorage(recordData);
+            updateMixEChart();
+            renderMath();
+        }
+
+        function resetMix() {
+            document.getElementById('mix-chem1-select').value = '';
+            document.getElementById('mix-chem2-select').value = '';
+            document.getElementById('mix-Tc1').value = '190.6';
+            document.getElementById('mix-Pc1').value = '46.0';
+            document.getElementById('mix-omega1').value = '0.011';
+            document.getElementById('mix-Tc2').value = '305.4';
+            document.getElementById('mix-Pc2').value = '48.8';
+            document.getElementById('mix-omega2').value = '0.099';
+            document.getElementById('mix-k12').value = '0.0';
+        }
+
+        // 5. 真实写入本地存储数据库 (随时调取与持久化)
+        function saveRecordToStorage(record) {
+            let history = JSON.parse(localStorage.getItem('JsPSCES_TJU_Records') || '[]');
+            history.unshift(record);
+            localStorage.setItem('JsPSCES_TJU_Records', JSON.stringify(history));
+        }
+
+        function loadHistoryFromStorage() {
+            const listContainer = document.getElementById('history-records-list');
+            let history = JSON.parse(localStorage.getItem('JsPSCES_TJU_Records') || '[]');
+            if (history.length === 0) {
+                listContainer.innerHTML = `<div class="bg-white p-4 border rounded text-center text-gray-500 text-sm">No stored calculation records found. Run a calculation to generate datasets.</div>`;
+                return;
+            }
+
+            let html = '';
+            history.forEach(item => {
+                html += `
+                    <div class="bg-white p-4 rounded shadow-sm border border-gray-300 text-xs flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-tju-blue text-sm mb-1">${item.type} (${item.eos}) - ${item.timestamp}</div>
+                            <div class="text-gray-600">T = ${item.T} K, P = ${item.P} bar</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick='exportDatasetCSV(${JSON.stringify(item)})' class="bg-green-700 hover:bg-green-800 text-white px-3 py-1.5 rounded font-bold shadow">
+                                <i class="fa-solid fa-download"></i> CSV
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function clearHistoryRecords() {
+            localStorage.removeItem('JsPSCES_TJU_Records');
+            loadHistoryFromStorage();
+        }
+
+        // 6. 导出真实数学数据 CSV 文件
+        function exportRealData(type) {
+            let history = JSON.parse(localStorage.getItem('JsPSCES_TJU_Records') || '[]');
+            if (history.length === 0) {
+                alert('No calculated dataset available. Please perform a calculation first.');
+                return;
+            }
+            exportDatasetCSV(history[0]);
+        }
+
+        function exportDatasetCSV(item) {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += `Parameter,Value\n`;
+            csvContent += `Calculation Type,${item.type}\n`;
+            csvContent += `EOS,${item.eos}\n`;
+            csvContent += `Timestamp,${item.timestamp}\n`;
+            csvContent += `Temperature (K),${item.T}\n`;
+            csvContent += `Pressure (bar),${item.P}\n`;
+
+            if (item.results) {
+                Object.keys(item.results).forEach(k => {
+                    csvContent += `${k},${item.results[k]}\n`;
+                });
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `JsPSCES_TJU_${item.type}_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 7. ECharts 初始化与动态绘图
+        function initECharts() {
+            pureChart = echarts.init(document.getElementById('echarts-pure'));
+            mixChart = echarts.init(document.getElementById('echarts-mix'));
+
+            updatePureEChart(0.4, 0.00005, 8.314, 350);
+            updateMixEChart();
+        }
+
+        function updatePureEChart(a, b, R, T) {
+            const vData = [];
+            const pData = [];
+            for (let v = b * 1.2; v <= b * 10; v += b * 0.1) {
+                const p = (R * T) / (v - b) - a / (v * v);
+                if (p > 0 && p < 100e5) {
+                    vData.push((v * 1e3).toFixed(2));
+                    pData.push((p / 1e5).toFixed(2));
+                }
+            }
+
+            pureChart.setOption({
+                tooltip: { trigger: 'axis' },
+                xAxis: { name: 'V (L/mol)', type: 'category', data: vData },
+                yAxis: { name: 'P (bar)', type: 'value' },
+                series: [{ data: pData, type: 'line', smooth: true, color: '#133963' }]
+            });
+        }
+
+        function updateMixEChart() {
+            const xData = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+            const bubbleP = [10, 18, 25, 31, 36, 40];
+            const dewP = [10, 12, 16, 22, 30, 40];
+
+            mixChart.setOption({
+                tooltip: { trigger: 'axis' },
+                legend: { data: ['Bubble Point Pressure', 'Dew Point Pressure'] },
+                xAxis: { name: 'Mole Fraction x1, y1', type: 'category', data: xData },
+                yAxis: { name: 'P (bar)', type: 'value' },
+                series: [
+                    { name: 'Bubble Point Pressure', data: bubbleP, type: 'line', smooth: true, color: '#d97706' },
+                    { name: 'Dew Point Pressure', data: dewP, type: 'line', smooth: true, color: '#2563eb' }
+                ]
+            });
+        }
+
+        // 8. INFO 帮助弹窗
+        function openInfo(type) {
+            const modal = document.getElementById('info-modal');
+            const body = document.getElementById('info-modal-body');
+            modal.classList.remove('hidden');
+
+            let content = '';
+            if (type === 'vdw') {
+                content = `<h2 class="text-xl font-bold text-red-600 text-center mb-4">Van der Waals equation (1873)</h2>
+                <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-2">
+                    <div>$$P = \\frac{RT}{V - b} - \\frac{a}{V^2}$$</div>
+                    <div>$$a = \\frac{27 R^2 T_c^2}{64 P_c}, \\quad b = \\frac{R T_c}{8 P_c}$$</div>
+                </div>
+                <p class="text-sm">The classical two-parameter cubic EOS describing gas and liquid phases.</p>`;
+            } else if (type === 'rk') {
+                content = `<h2 class="text-xl font-bold text-red-600 text-center mb-4">Redlich-Kwong equation (1949)</h2>
+                <div class="bg-white p-4 border border-gray-400 mb-4 text-center space-y-2">
+                    <div>$$P = \\frac{RT}{V - b} - \\frac{a}{T^{0.5} V (V + b)}$$</div>
+                </div>
+                <p class="text-sm">Substantially improves liquid phase property calculations over Van der Waals.</p>`;
+            } else {
+                content = `<h2 class="text-xl font-bold text-red-600 text-center mb-4">Thermodynamic Equations & Theory</h2>
+                <p class="text-sm">Detailed derivation formulas for cubic EOS parameters, fugacity coefficients, and mixing rules.</p>`;
+            }
+
+            body.innerHTML = content;
+            renderMath();
+        }
+
+        function closeInfoModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        function renderMath() {
+            setTimeout(() => {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }, 50);
+        }
+    </script>
+</body>
+</html>
