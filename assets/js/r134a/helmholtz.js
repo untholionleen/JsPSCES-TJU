@@ -110,46 +110,21 @@
   return {liquid:sumTerms(T,rl),vapor:sumTerms(T,rv)};
  }
  function satAtT(T){
-  if(!(T>=169.85&&T<TC))throw new RangeError('Saturation T must satisfy 169.85 K ≤ T < 374.21 K.');
-  const anc=ancillary(T);
-  function residual(P){
-   const roots=rootsAt(T,P);
-   if(roots.length<2)return null;
-   const liquid=sumTerms(T,roots[roots.length-1]),vapor=sumTerms(T,roots[0]);
-   return {f:liquid.gRT-vapor.gRT,liquid,vapor,roots};
-  }
-  let bracket=null,prev=null;
-  for(let i=0;i<=80;i++){
-   const factor=.78+i*.44/80,P=anc.p*factor,r=residual(P);
-   if(!r)continue;
-   if(prev&&prev.r.f*r.f<=0){bracket=[prev.P,P];break;}
-   prev={P,r};
-  }
-  if(!bracket)throw new Error('R-134a saturation pressure could not be bracketed near the ancillary estimate.');
-  let lo=bracket[0],hi=bracket[1],rlo=residual(lo),flo=rlo.f,midR=null,midP=NaN;
-  for(let i=0;i<75;i++){
-   midP=(lo+hi)/2;midR=residual(midP);
-   if(!midR){lo=midP;continue;}
-   if(Math.abs(midR.f)<2e-11)break;
-   if(flo*midR.f<=0)hi=midP;else{lo=midP;flo=midR.f;}
-  }
-  if(!midR)throw new Error('R-134a saturation root did not converge.');
-  return {T,P:midP,p:midP/1e6,liquid:midR.liquid,vapor:midR.vapor,
-   hf:midR.liquid.h,hg:midR.vapor.h,hfg:midR.vapor.h-midR.liquid.h,
-   sf:midR.liquid.s,sg:midR.vapor.s,sfg:midR.vapor.s-midR.liquid.s,
-   vf:midR.liquid.v,vg:midR.vapor.v,residual:midR.f,iterations:75,ancillaryPressure:anc.p};
+  if(!(T>=169.85&&T<=TC))throw new RangeError('R-134a saturation range is 169.85–374.21 K.');
+  const anc=ancillary(T),liquid=sumTerms(T,anc.rhoL),vapor=sumTerms(T,anc.rhoV);
+  return {T,P:anc.p,p:anc.p/1e6,liquid,vapor,
+   hf:liquid.h,hg:vapor.h,hfg:vapor.h-liquid.h,
+   sf:liquid.s,sg:vapor.s,sfg:vapor.s-liquid.s,
+   vf:liquid.v,vg:vapor.v,residual:null,method:'published saturation ancillary correlations + Helmholtz EOS caloric properties',
+   ancillaryPressure:anc.p};
  }
  function satAtP(P){
-  if(!(P>0&&P<PC))throw new RangeError('Saturation P must be between 0 and 4.05928 MPa.');
-  const pMin=satAtT(169.85).P;
+  if(!(P>0&&P<PC))throw new RangeError('Saturation P must be between the triple-point pressure and 4.05928 MPa.');
+  const pMin=ancillary(169.85).p;
   if(P<pMin)throw new RangeError('Pressure is below the R-134a triple-point saturation pressure.');
-  let lo=169.85,hi=TC-0.015;
-  for(let i=0;i<45;i++){
-   const mid=(lo+hi)/2,pm=satAtT(mid).P;
-   if(pm>P)hi=mid;else lo=mid;
-  }
-  const T=(lo+hi)/2;
-  return satAtT(T);
+  let lo=169.85,hi=TC;
+  for(let i=0;i<70;i++){const mid=(lo+hi)/2;if(ancillary(mid).p>P)hi=mid;else lo=mid;}
+  return satAtT((lo+hi)/2);
  }
  function statePT(T,P,phase,scanN=320){
   if(!(T>=169.85&&T<=455)||!(P>0&&P<=70e6))throw new RangeError('R-134a validity: T 169.85–455 K; P up to 70 MPa.');
