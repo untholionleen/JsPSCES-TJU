@@ -11,7 +11,7 @@
   function __register(name, factory) {
     const module = { exports: {} };
     const require = (request) => {
-      const key = request.replace(/^\\.\\//, '');
+      const key = request.replace(/^\.\//, '');
       if (!modules[key]) throw new Error('IF97 module dependency not loaded: ' + request);
       return modules[key];
     };
