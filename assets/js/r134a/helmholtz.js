@@ -124,21 +124,23 @@
  }
  function satAtP(P){
   if(!(P>0&&P<PC))throw new RangeError('Saturation P must be between 0 and 4.05928 MPa.');
-  let lo=169.85,hi=TC;
-  for(let i=0;i<60;i++){
-   const mid=(lo+hi)/2,pm=ancillary(mid).p;
+  const pMin=satAtT(169.85).P;
+  if(P<pMin)throw new RangeError('Pressure is below the R-134a triple-point saturation pressure.');
+  let lo=169.85,hi=TC-0.015;
+  for(let i=0;i<45;i++){
+   const mid=(lo+hi)/2,pm=satAtT(mid).P;
    if(pm>P)hi=mid;else lo=mid;
   }
   const T=(lo+hi)/2;
   return satAtT(T);
  }
- function statePT(T,P,phase){
+ function statePT(T,P,phase,scanN=320){
   if(!(T>=169.85&&T<=455)||!(P>0&&P<=70e6))throw new RangeError('R-134a validity: T 169.85–455 K; P up to 70 MPa.');
   let chosenPhase=phase;
   if(!chosenPhase&&T<TC&&T>=169.85&&P<PC*.999){
    chosenPhase=P<ancillary(T).p?'vapor':'liquid';
   }
-  const roots=densityRoots(T,P,720);
+  const roots=densityRoots(T,P,scanN);
   if(!roots.length)throw new Error('No R-134a density root found at the requested T/P.');
   const rho=(chosenPhase==='liquid')?roots[roots.length-1]:roots[0];
   const st=sumTerms(T,rho);
@@ -152,18 +154,35 @@
    liquid:sat.liquid,vapor:sat.vapor,saturation:sat};
  }
  function pHCurve(options={}){
-  const tMin=options.tMin||175,tMax=options.tMax||373.8,tN=options.tN||42;
-  const satT=[],liq=[],vap=[],quality=[];
+  const tMin=options.tMin||175,tMax=options.tMax||370,tN=options.tN||52;
+  const liquid=[],vapor=[],quality={};
+  for(let q=1;q<=9;q++)quality[q/10]=[];
+  const saturation=[];
   for(let i=0;i<tN;i++){
    const T=tMin+(tMax-tMin)*i/(tN-1);
    try{
-    const s=satAtT(T);
-    satT.push({T,P_MPa:s.p,hf:s.hf,hg:s.hg});
-    liq.push([s.hf,Math.log10(s.p)]);vap.push([s.hg,Math.log10(s.p)]);
-    [.1,.2,.3,.4,.5,.6,.7,.8,.9].forEach(x=>quality.push({x,h:s.hf+x*s.hfg,logP:Math.log10(s.p)}));
+    const sat=satAtT(T);
+    saturation.push({T,P_MPa:sat.p,hf:sat.hf,hg:sat.hg});
+    liquid.push([sat.hf,Math.log10(sat.p)]);vapor.push([sat.hg,Math.log10(sat.p)]);
+    for(let q=1;q<=9;q++){const x=q/10;quality[x].push([sat.hf+x*sat.hfg,Math.log10(sat.p)]);}
    }catch(e){}
   }
-  return {liquid:liq,vapor:vap,saturation:satT,quality};
+  const isoT=[];
+  const temperatures=options.isotherms||[180,200,220,240,260,280,300,320,340,360,380,400];
+  for(const T of temperatures){
+   if(T<169.85||T>455)continue;
+   const points=[];
+   const pHi=Math.min(10e6,options.maxPressurePa||10e6),pLo=2e3;
+   for(let j=0;j<28;j++){
+    const P=Math.exp(Math.log(pLo)+(Math.log(pHi)-Math.log(pLo))*j/27);
+    if(T<TC && P<PC*.999){
+     try{const ps=satAtT(T).P;if(Math.abs(P-ps)<Math.max(100,ps*.012))continue;}catch(e){}
+    }
+    try{const st=statePT(T,P,undefined,170);points.push([st.h,Math.log10(P/1e6)]);}catch(e){}
+   }
+   isoT.push({T,data:points});
+  }
+  return {liquid,vapor,quality,saturation,isotherms:isoT};
  }
  g.TJUR134a=Object.freeze({sumTerms,statePT,statePX,satAtT,satAtP,densityRoots,pHCurve,constants:{R,M,TRED,RHOMOLAR_RED,TC,PC}});
 })(typeof window!=='undefined'?window:globalThis);
