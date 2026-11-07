@@ -171,11 +171,11 @@
     for(let it=0;it<70;it++){
       const mid=Math.sqrt(lo*hi);
       midResult=equilibriumAtPressure(T,mid,list,composition,kij,kind);
-      if(Math.abs(midResult.residual)<1e-9) return {P:mid,...midResult,iterations:it+1};
+      if(Math.abs(midResult.residual)<1e-9) return {P:mid,...midResult,outerIterations:it+1};
       if(flo*midResult.residual<=0) hi=mid; else {lo=mid;flo=midResult.residual;}
     }
     const P=Math.sqrt(lo*hi);
-    return {P,...equilibriumAtPressure(T,P,list,composition,kij,kind),iterations:70};
+    return {P,...equilibriumAtPressure(T,P,list,composition,kij,kind),outerIterations:70};
   }
   function selectedRows() {
     const rows=[...document.querySelectorAll('[data-mix-row]')];
