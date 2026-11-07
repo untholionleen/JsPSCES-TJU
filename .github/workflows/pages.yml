@@ -37,7 +37,7 @@ jobs:
               assert f'id="{page_id}"' in html, f"Missing page {page_id}"
           for forbidden_runtime in ("supabase-js", "supabase.co", "createClient("):
               assert forbidden_runtime not in html, f"Unexpected live backend integration: {forbidden_runtime}"
-          for required in ("assets/vendor/iapws97-browser.js", "assets/js/steam/full.js"):
+          for required in ("assets/vendor/iapws97-browser.js", "assets/js/steam/full.js", "assets/js/eos/lee-kesler.js"):
               assert Path(required).is_file(), f"Missing required offline engine: {required}"
               assert f'src="{required}"' in html, f"Missing script reference: {required}"
           scripts = re.findall(r"<script>([\s\S]*?)</script>", html, re.I)
@@ -50,7 +50,7 @@ jobs:
           node --check assets/js/steam/full.js
           node --check assets/js/eos/mixture.js
           node tests/if97-smoke.js
-          node tests/mixture-smoke.js
+          node tests/mixture-smoke.js\n          node tests/lee-kesler-smoke.js
 
       - name: Prepare static site
         run: |
