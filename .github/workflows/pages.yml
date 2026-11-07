@@ -1,0 +1,72 @@
+name: Deploy TJU-ThermoHub to GitHub Pages
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Validate site source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          assert "<!doctype html>" in html.lower(), "Missing HTML5 doctype"
+          for page_id in ("p-home", "p-m1", "p-m2", "p-m3", "p-m4", "p-app"):
+              assert f'id="{page_id}"' in html, f"Missing page {page_id}"
+          for forbidden_runtime in ("supabase-js", "supabase.co", "createClient("):
+              assert forbidden_runtime not in html, f"Unexpected live backend integration: {forbidden_runtime}"
+          start = html.find("<script>")
+          end = html.rfind("</script>")
+          assert start >= 0 and end > start, "Inline application script not found"
+          Path("/tmp/tju-thermohub-app.js").write_text(html[start + 8:end], encoding="utf-8")
+          print("HTML page structure and offline/no-live-Supabase constraints validated.")
+          PY
+          node --check /tmp/tju-thermohub-app.js
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          touch _site/.nojekyll
+          cat > _site/robots.txt <<'EOF'
+          User-agent: *
+          Allow: /
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
