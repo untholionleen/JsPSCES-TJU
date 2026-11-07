@@ -149,15 +149,15 @@
     if(kind==='bubble') {
       vapor=normalize(feed.map((v,i)=>v*K[i]));
       liquid=feed;
-      return {residual:feed.reduce((s,v,i)=>s+v*K[i],0)-1,K,x:liquid,y:vapor,phiL,phiV,iterations:err};
+      return {residual:feed.reduce((s,v,i)=>s+v*K[i],0)-1,K,x:liquid,y:vapor,phiL,phiV,innerResidual:err};
     }
     liquid=normalize(feed.map((v,i)=>v/K[i]));
     vapor=feed;
-    return {residual:feed.reduce((s,v,i)=>s+v/K[i],0)-1,K,x:liquid,y:vapor,phiL,phiV,iterations:err};
+    return {residual:feed.reduce((s,v,i)=>s+v/K[i],0)-1,K,x:liquid,y:vapor,phiL,phiV,innerResidual:err};
   }
   function envelope(T,list,composition,kij,kind) {
     const pressures=[];
-    for(let i=0;i<=120;i++) pressures.push(Math.exp(Math.log(.002)+(Math.log(100)-Math.log(.002))*i/120));
+    for(let i=0;i<=120;i++) pressures.push(Math.exp(Math.log(.002e6)+(Math.log(100e6)-Math.log(.002e6))*i/120));
     let bracket=null, prev=null;
     for(const P of pressures){
       try{
@@ -201,7 +201,7 @@
   }
   function showResult(r, kind) {
     const html = '<p><b>计算类型：</b>'+kind+'；<b>状态：</b>'+r.phase+'；<b>气相分率 β：</b>'+r.beta.toFixed(8)+'</p>'+
-      '<p>迭代：'+r.iterations+'；max |ΔlnK|='+r.residual.toExponential(3)+'；max fugacity residual='+r.fugacityResidual.toExponential(3)+'</p>'+
+      '<p>压力：'+(r.P/1e6).toFixed(7)+' MPa；迭代：'+(r.iterations||r.outerIterations||'—')+'；残差：'+r.residual.toExponential(3)+'；逸度残差：'+r.fugacityResidual.toExponential(3)+'</p>'+
       '<div class="scroll"><table><thead><tr><th>组分</th><th>zᵢ</th><th>Kᵢ</th><th>xᵢ</th><th>yᵢ</th></tr></thead><tbody>'+
       r.z.map((v,i)=>'<tr><td>'+components.find(c=>c[0]===selected.list[i][0])?.[1]+'</td><td>'+v.toFixed(7)+'</td><td>'+r.K[i].toFixed(7)+'</td><td>'+(r.x?r.x[i].toFixed(7):'—')+'</td><td>'+(r.y?r.y[i].toFixed(7):'—')+'</td></tr>').join('')+
       '</tbody></table></div>';
@@ -223,7 +223,7 @@
       if(mode!=='flash') {
         const beta=mode==='bubble'?0:1;
         r.beta=beta;r.phase=mode==='bubble'?'泡点液相':'露点气相';
-        r.z=r.list.map((_,i)=>r.x[i]);
+        r.z=normalize(selected.z);
         r.fugacityResidual=Math.max(...r.x.map((xi,i)=>Math.abs(Math.log(xi*r.phiL.phi[i]/(r.y[i]*r.phiV.phi[i])))));
       }
       last=r; showResult(r,mode==='flash'?'等温闪蒸':mode==='bubble'?'泡点压力':'露点压力');
