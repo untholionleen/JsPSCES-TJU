@@ -66,7 +66,7 @@
  }
  function densityRoots(T,P,scanN=320){
   if(!(T>0&&P>0))throw new RangeError('T and P must be positive.');
-  const min=1e-5,max=RHOMOLAR_RED*2.4,logMin=Math.log(min),logMax=Math.log(max);
+  const min=1e-5,max=RHOMOLAR_RED*4.2,logMin=Math.log(min),logMax=Math.log(max);
   const roots=[];
   let rho0=min,f0;
   try{f0=pOf(T,rho0)-P;}catch(e){f0=NaN;}
@@ -92,6 +92,23 @@
   return {p:ps,rhoL,rhoV};
  }
  function rootsAt(T,P){return densityRoots(T,P,500);}
+ function saturationDensityPair(T,P,anc){
+  function rootAround(phase){
+   const guess=phase==='vapor'?anc.rhoV:anc.rhoL;
+   let lo,hi;
+   if(phase==='vapor'){lo=Math.max(1e-6,guess*.18);hi=Math.min(RHOMOLAR_RED*.995,guess*4.2);}
+   else{lo=Math.max(RHOMOLAR_RED*1.005,guess*.68);hi=Math.min(RHOMOLAR_RED*4.1,guess*1.34);}
+   let flo=pOf(T,lo)-P,fhi=pOf(T,hi)-P;
+   if(!finite(flo)||!finite(fhi)||flo*fhi>0){
+    const roots=densityRoots(T,P,640);
+    if(roots.length<2)throw new Error('Liquid/vapor density root unavailable at this pressure.');
+    return phase==='vapor'?roots[0]:roots[roots.length-1];
+   }
+   return bisect(r=>pOf(T,r)-P,lo,hi,75);
+  }
+  const rv=rootAround('vapor'),rl=rootAround('liquid');
+  return {liquid:sumTerms(T,rl),vapor:sumTerms(T,rv)};
+ }
  function satAtT(T){
   if(!(T>=169.85&&T<TC))throw new RangeError('Saturation T must satisfy 169.85 K ≤ T < 374.21 K.');
   const anc=ancillary(T);
@@ -154,7 +171,7 @@
    liquid:sat.liquid,vapor:sat.vapor,saturation:sat};
  }
  function pHCurve(options={}){
-  const tMin=options.tMin||175,tMax=options.tMax||370,tN=options.tN||52;
+  const tMin=options.tMin||175,tMax=options.tMax||370,tN=options.tN||44;
   const liquid=[],vapor=[],quality={};
   for(let q=1;q<=9;q++)quality[q/10]=[];
   const saturation=[];
