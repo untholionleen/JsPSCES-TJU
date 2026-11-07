@@ -48,7 +48,9 @@ jobs:
           node --check /tmp/tju-thermohub-app.js
           node --check assets/vendor/iapws97-browser.js
           node --check assets/js/steam/full.js
+          node --check assets/js/eos/mixture.js
           node tests/if97-smoke.js
+          node tests/mixture-smoke.js
 
       - name: Prepare static site
         run: |
